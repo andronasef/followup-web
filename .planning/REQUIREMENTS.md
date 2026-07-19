@@ -167,4 +167,91 @@ All 23 PRD functional requirements are covered.
 
 ### Phase mapping
 
-Filled by the roadmapper.
+Every v1 requirement maps to exactly one phase. **71/71 mapped - no orphans, no duplicates.**
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| CHAT-01 | Phase 1 | Pending |
+| CHAT-02 | Phase 1 | Pending |
+| CHAT-03 | Phase 1 | Pending |
+| CHAT-04 | Phase 1 | Pending |
+| CHAT-05 | Phase 1 | Pending |
+| CHAT-06 | Phase 1 | Pending |
+| CHAT-07 | Phase 1 | Pending |
+| CHAT-08 | Phase 1 | Pending |
+| CHAT-09 | Phase 1 | Pending |
+| ID-01 | Phase 1 | Pending |
+| ID-02 | Phase 1 | Pending |
+| ID-03 | Phase 2 | Pending |
+| ID-04 | Phase 2 | Pending |
+| ID-05 | Phase 1 | Pending |
+| LANG-01 | Phase 1 | Pending |
+| LANG-02 | Phase 1 | Pending |
+| LANG-03 | Phase 1 | Pending |
+| LANG-04 | Phase 1 | Pending |
+| LANG-05 | Phase 1 | Pending |
+| LANG-06 | Phase 1 | Pending |
+| LANG-07 | Phase 1 | Pending |
+| PUSH-01 | Phase 2 | Pending |
+| PUSH-02 | Phase 2 | Pending |
+| PUSH-03 | Phase 2 | Pending |
+| PUSH-04 | Phase 2 | Pending |
+| PUSH-05 | Phase 2 | Pending |
+| PUSH-06 | Phase 2 | Pending |
+| PUSH-07 | Phase 2 | Pending |
+| PUSH-08 | Phase 2 | Pending |
+| PUSH-09 | Phase 2 | Pending |
+| PUSH-10 | Phase 2 | Pending |
+| PUSH-11 | Phase 2 | Pending |
+| PUSH-12 | Phase 2 | Pending |
+| TRANS-01 | Phase 2 | Pending |
+| TRANS-02 | Phase 2 | Pending |
+| TRANS-03 | Phase 2 | Pending |
+| TRANS-04 | Phase 2 | Pending |
+| TRANS-05 | Phase 2 | Pending |
+| TRANS-06 | Phase 2 | Pending |
+| TRANS-07 | Phase 2 | Pending |
+| TRANS-08 | Phase 2 | Pending |
+| TRANS-09 | Phase 2 | Pending |
+| TRANS-10 | Phase 2 | Pending |
+| ADMIN-01 | Phase 1 | Pending |
+| ADMIN-02 | Phase 3 | Pending |
+| ADMIN-03 | Phase 1 | Pending |
+| ADMIN-04 | Phase 3 | Pending |
+| ADMIN-05 | Phase 3 | Pending |
+| ADMIN-06 | Phase 3 | Pending |
+| ADMIN-07 | Phase 3 | Pending |
+| ADMIN-08 | Phase 3 | Pending |
+| ADMIN-09 | Phase 2 | Pending |
+| ADMIN-10 | Phase 3 | Pending |
+| ADMIN-11 | Phase 3 | Pending |
+| ADMIN-12 | Phase 3 | Pending |
+| ADMIN-13 | Phase 3 | Pending |
+| OPS-01 | Phase 1 | Pending |
+| OPS-02 | Phase 3 | Pending |
+| OPS-03 | Phase 3 | Pending |
+| OPS-04 | Phase 3 | Pending |
+| OPS-05 | Phase 3 | Pending |
+| OPS-06 | Phase 1 | Pending |
+| OPS-07 | Phase 3 | Pending |
+| OPS-08 | Phase 3 | Pending |
+| OPS-09 | Phase 1 | Pending |
+| OPS-10 | Phase 3 | Pending |
+| OPS-11 | Phase 2 | Pending |
+| FOUND-01 | Phase 1 | Pending |
+| FOUND-02 | Phase 1 | Pending |
+| FOUND-03 | Phase 1 | Pending |
+| FOUND-04 | Phase 1 | Pending |
+
+**Totals:** Phase 1 - 28 | Phase 2 - 26 | Phase 3 - 17 | **Total 71**
+
+**Mapping notes** (where a requirement spans a phase boundary and a single-phase call was made):
+
+- **ADMIN-01 / ADMIN-03 -> Phase 1.** A minimal owner login and reply surface is Phase 1 scope. Without it the realtime spine cannot be exercised end to end until Phase 3. ADMIN-02 (the dashboard being genuinely phone-usable and light/dark aware) stays in Phase 3 with the full owner surface.
+- **ADMIN-09 -> Phase 2.** "Translated plus original on demand" is the owner-side half of the show-original safeguard shipped with the translation worker; splitting it from TRANS-04 would duplicate the same work across two phases.
+- **ADMIN-04 -> Phase 3.** Phase 1 delivers the presence *read* path only - the welcome tells the visitor the truth. The owner-facing toggle and its state indicator land with the dashboard.
+- **LANG-05 -> Phase 1.** The mirror-by-allowlist rule is part of the direction system built alongside LANG-03/LANG-04. Phase 3 re-audits it against the admin surface but does not own the requirement.
+- **OPS-07 -> Phase 3.** The scheduled off-box `pg_dump` is wired in Phase 1 as enabling work for OPS-06, but the requirement text demands a *documented and executed* restore drill, which only closes in the ship phase.
+- **OPS-08 -> Phase 3.** Phase 2 develops against development VAPID keys; the one-time off-box generation and backup of the production keys is a ship-phase act, since key loss is the only unrecoverable event in the system.
+- **OPS-11 -> Phase 2.** The gate funnel is instrumented against the *real* gate. Phase 1's `<Gate>` is a shell behind an env bypass flag and would produce meaningless funnel data.
+- **FOUND-04 -> Phase 1.** The first Coolify deploy happens in Phase 1 so Traefik's long-lived-SSE behaviour is discovered empirically rather than at ship time. Phase 3's "production deploy" is the go-live cutover, covered by OPS-07/OPS-08/OPS-10.
