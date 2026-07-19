@@ -21,7 +21,7 @@ A person opens the URL and, within seconds, is in a warm conversation with a rea
 **Visitor chat**
 - [ ] URL opens directly into a full-screen one-on-one chat, no landing page, no visitor login
 - [ ] Minimal header with exactly two controls: language picker and light/dark toggle
-- [ ] Random anonymous ID generated and stored in the browser on first visit
+- [ ] Anonymous ID issued as a server-set httpOnly cookie on first visit, mirrored to localStorage
 - [ ] On return from the same browser, conversation + language + appearance are restored
 - [ ] Warm welcome message on open, in the owner's voice, in the visitor's language
 - [ ] Owner online → near real-time two-way chat; owner offline → welcome-only, messages still stored
@@ -38,6 +38,7 @@ A person opens the URL and, within seconds, is in a warm conversation with a rea
 - [ ] Declining shows a gentle, localized re-ask explaining why
 - [ ] iOS visitors get a guided "Share → Add to Home Screen" screen before the push prompt
 - [ ] On owner reply, a localized "new reply" push reaches the visitor and reopens the conversation
+- [ ] Push payloads are content-free — no message preview, no sender, no faith reference
 
 **Translation**
 - [ ] Visitor messages translated into the owner's language, original viewable
@@ -52,7 +53,8 @@ A person opens the URL and, within seconds, is in a warm conversation with a rea
 - [ ] Manual faith-decision flag; at-a-glance counts (new, decisions waiting, unanswered)
 
 **Safety & operations**
-- [ ] Per-anonymous-ID and per-IP message rate limiting
+- [ ] Per-anonymous-ID and per-hashed-IP message rate limiting (HMAC the IP — never store it raw)
+- [ ] Reconnecting clients backfill missed messages via Last-Event-ID cursor against `messages.id`
 - [ ] Owner can block an abusive visitor from the dashboard
 - [ ] Owner can manually delete a conversation
 
@@ -74,6 +76,8 @@ Source document: `PRD-chat-site.md` (v4.0). This project initialization resolved
 
 **Accepted identity limits:** clearing the browser, private mode, or switching device produces a brand-new visitor with no link back. The owner cannot reach anyone who does this. This is accepted as the price of anonymity.
 
+**Entry is always a real browser** — the owner will share the URL so it opens in Safari/Chrome, never in an in-app WebView. This matters: a WebView has no "Add to Home Screen" path, which would make the hard push gate a dead end on iOS with no route forward. The guided install screen therefore only has to handle real iOS Safari.
+
 **Supported languages (10):** Arabic, English, Spanish, French, Portuguese, Hindi, Mandarin Chinese, Russian, Indonesian, Swahili.
 
 **Translation provider research (verified 2026-07-20):** OVHcloud AI Endpoints is OpenAI-compatible at `https://oai.endpoints.kepler.ai.cloud.ovh.net/v1` with `Authorization: Bearer <key>`. Findings that shape the build:
@@ -92,7 +96,9 @@ Source document: `PRD-chat-site.md` (v4.0). This project initialization resolved
 - **Tech stack**: Next.js (App Router) single deployable + Postgres. One container, one DB service.
 - **Realtime**: Postgres `LISTEN/NOTIFY` → Server-Sent Events. No Pusher, no socket.io — sends go over `fetch`, so one-directional SSE is sufficient.
 - **Push**: `web-push` with self-generated VAPID keys. No FCM.
-- **Auth**: bcrypt hash in the DB + signed httpOnly session cookie. No NextAuth — there is exactly one user.
+- **Auth**: `@node-rs/argon2` (Argon2id) hash in the DB + signed httpOnly session cookie via `jose`. No NextAuth — there is exactly one user. *Not bcrypt* — OWASP now scopes it to legacy systems, and the native module fails in an Alpine multi-stage build.
+- **TypeScript**: pinned to `6.0.3` exactly. TypeScript 7 dropped `lib/typescript.js` and breaks Next 16.2's TypeScript detection.
+- **Secrets**: VAPID keys are generated once, off-box, and backed up. Losing them makes every existing visitor permanently unreachable — the only unrecoverable event in the system.
 - **i18n**: static JSON locale files + a small lookup. No i18next. RTL via CSS logical properties and `<html dir>`, so one stylesheet serves both directions.
 - **Translation**: OVHcloud AI Endpoints via the OpenAI SDK. Requires 429 backoff and per-message caching.
 - **Mobile-first**: most visitors arrive from mobile; the admin dashboard must work well on a phone.
@@ -107,7 +113,11 @@ Source document: `PRD-chat-site.md` (v4.0). This project initialization resolved
 | OVHcloud AI Endpoints for translation | Free/cheap, OpenAI-compatible, EU data residency (Gravelines) — matters for confidential faith conversations | — Pending |
 | Hard block on push refusal | Reachability is the second goal of the product; an unreachable visitor is a lost person | — Pending |
 | iOS guided "Add to Home Screen" screen | iOS Safari only permits push for installed PWAs; a hard block without guidance would silently lose every iPhone visitor | — Pending |
-| Email + password admin auth | Single owner, self-hosted, no external identity provider to depend on | — Pending |
+| Email + password admin auth, Argon2id | Single owner, self-hosted, no external identity provider. Argon2id over bcrypt per OWASP 2026 guidance and Alpine build compatibility | — Pending |
+| Anonymous ID as server-set httpOnly cookie | A client-generated localStorage UUID is an XSS-exfiltratable bearer token to a pastoral conversation, and WebKit ITP evicts script-writable storage after 7 idle days — a return-visitor loss mode the PRD never accepted | — Pending |
+| Content-free push payloads | A lock-screen faith reference is a physical-safety risk in several target regions. Flagged independently by two researchers | — Pending |
+| Last-Event-ID cursor replay from day one | LISTEN/NOTIFY is fire-and-forget and cannot alone satisfy "no message is ever lost"; `messages.id` as the SSE event id makes backfill a query rather than a subsystem | — Pending |
+| Owner shares the URL to open in a real browser, never a WebView | A WebView has no Add-to-Home-Screen path, which would turn the hard push gate into an iOS dead end | — Pending |
 | Keep conversations indefinitely | These are relationships, not tickets; no personal data is stored, so retention risk is low. Manual delete available | — Pending |
 | Rate limit + owner block for abuse | Anonymous frictionless entry needs a floor, but automated moderation false-positives on faith and crisis language | — Pending |
 | Next.js single deployable, SSE over Postgres NOTIFY | Fewest moving parts that satisfy near-real-time chat; avoids a second realtime service in the container stack | — Pending |
