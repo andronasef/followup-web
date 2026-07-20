@@ -5,8 +5,8 @@ milestone_name: milestone
 current_phase: 1
 current_phase_name: Foundation and the Realtime Spine
 status: planning
-stopped_at: Phase 1 context gathered
-last_updated: "2026-07-20T00:07:55.951Z"
+stopped_at: Phase 1 UI-SPEC approved
+last_updated: "2026-07-20T00:14:46.324Z"
 last_activity: 2026-07-20
 last_activity_desc: Roadmap created; 71 v1 requirements mapped across 3 phases
 progress:
@@ -92,6 +92,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-20T00:07:55.933Z
-Stopped at: Phase 1 context gathered
-Resume file: .planning/phases/01-foundation-and-the-realtime-spine/01-CONTEXT.md
+Last session: 2026-07-20T00:14:46.314Z
+Stopped at: Phase 1 UI-SPEC approved
+Resume file: .planning/phases/01-foundation-and-the-realtime-spine/01-UI-SPEC.md

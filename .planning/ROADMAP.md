@@ -32,7 +32,23 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. Killing the visitor's connection mid-conversation and reconnecting replays every message sent while they were away, in order, with no duplicates and no gaps — and a message written while the owner is offline is still there when the owner comes back.
   5. An Arabic conversation renders right-to-left with a Latin URL and a scripture reference inside it intact and unmangled, and flooding the send endpoint from one browser is rate-limited without the visitor's IP ever being stored raw or their message text ever appearing in container logs.
   6. Restarting the Postgres container deliberately leaves every conversation intact, and the app builds and deploys as a single Coolify container with migrations applied at start.
-**Plans**: TBD
+**Plans**: 13 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Walking Skeleton: Next.js 16 scaffold, full 7-table Drizzle schema/migration, local Postgres, health check
+- [ ] 01-02-PLAN.md — Translation spike (FOUND-01): standalone script, corpus, written go/no-go on the final language list
+- [ ] 01-03-PLAN.md — Realtime & data core: dedicated LISTEN connection, pool, pub-sub hub, repo layer (visitors/conversations/messages/ratelimit)
+- [ ] 01-04-PLAN.md — Auth core: jose session signing (visitor + owner), Argon2id password hashing
+- [ ] 01-05-PLAN.md — i18n foundation: language detection, RTL/LTR direction lookup, locale JSON for the confirmed language list
+- [ ] 01-06-PLAN.md — Visitor identity & first-load correctness: cookie bootstrap, layout dir/theme SSR, localStorage mirror, prefs route
+- [ ] 01-07-PLAN.md — Owner auth wiring: one-time setup route (404-by-construction), non-enumerating login, guard/proxy
+- [ ] 01-08-PLAN.md — Realtime routes & message durability: visitor/admin SSE, Last-Event-ID backfill, polling fallback, durable write routes
+- [ ] 01-09-PLAN.md — Chat shell components: header, push-gate/PWA shell, language sheet, welcome, presence line
+- [ ] 01-10-PLAN.md — Composer, message list, and the EventSource client hook
+- [ ] 01-11-PLAN.md — Admin UI: flat conversation list, thread, reply composer
+- [ ] 01-12-PLAN.md — Wire the final visitor chat page (composes Plans 01-09/01-10)
+- [ ] 01-13-PLAN.md — Dockerize + Coolify deploy, OPS-06/OPS-09 verification
+
 **UI hint**: yes
 
 **Scope notes**: The `<Gate>` ships in this phase as a shell behind an env bypass flag — the real permission gate is Phase 2. Presence is read-only here (the welcome tells the truth about whether the owner is around); the owner-facing toggle is Phase 3. The scheduled off-box `pg_dump` job is wired here as enabling work, but OPS-07 is not closed until the restore drill executes in Phase 3. Gate funnel instrumentation is stubbed here and becomes real in Phase 2 with the real gate.
@@ -79,7 +95,7 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation and the Realtime Spine | 0/TBD | Not started | - |
+| 1. Foundation and the Realtime Spine | 0/13 | Not started | - |
 | 2. Reachability and Language | 0/TBD | Not started | - |
 | 3. Owner Surface, Hardening, Ship | 0/TBD | Not started | - |
 
