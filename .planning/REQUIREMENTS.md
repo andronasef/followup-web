@@ -22,7 +22,7 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 
 ### Identity — anonymous and durable
 
-- [ ] **ID-01**: On first visit the server issues an anonymous visitor ID as a signed `HttpOnly` `Secure` `SameSite=Lax` cookie (F3)
+- [x] **ID-01**: On first visit the server issues an anonymous visitor ID as a signed `HttpOnly` `Secure` `SameSite=Lax` cookie (F3)
 - [ ] **ID-02**: The visitor ID is mirrored to `localStorage` as a recovery copy; the cookie wins on conflict
 - [ ] **ID-03**: A visitor's push endpoint resolves back to their visitor ID, giving a third recovery anchor when cookie and localStorage are both lost
 - [ ] **ID-04**: The signed visitor ID is carried through the PWA `start_url` and the push click URL, so an installed app and a browser tab resolve to the same conversation
@@ -68,7 +68,7 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 
 ### Admin — the owner's surface
 
-- [ ] **ADMIN-01**: Owner logs in with email and password, hashed with Argon2id, into a session held in a signed `HttpOnly` cookie (F18)
+- [x] **ADMIN-01**: Owner logs in with email and password, hashed with Argon2id, into a session held in a signed `HttpOnly` cookie (F18)
 - [ ] **ADMIN-02**: The dashboard is usable on a phone and respects light/dark (F18)
 - [ ] **ADMIN-03**: Owner can read a conversation and send a reply
 - [ ] **ADMIN-04**: Owner can toggle online/offline presence, which changes what new visitors experience (F14, F19)

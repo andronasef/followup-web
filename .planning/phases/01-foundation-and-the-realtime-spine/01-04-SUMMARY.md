@@ -139,3 +139,7 @@ None - no external service configuration required. (`SESSION_SECRET` is already 
 ---
 *Phase: 01-foundation-and-the-realtime-spine*
 *Completed: 2026-07-20*
+
+## Self-Check: PASSED
+
+All 4 created files found on disk; all 4 commit hashes (d1f783f, de01845, 57a7b6e, 5b6f3ba) found in git history.
