@@ -3,6 +3,7 @@
   "sendAriaLabel": "Enviar mensaje",
   "changeLanguageAriaLabel": "Cambiar idioma",
   "languageSheetTitle": "Elige tu idioma",
+  "closeAriaLabel": "Cerrar",
   "appearanceAriaLabelDark": "Cambiar a apariencia oscura",
   "appearanceAriaLabelLight": "Cambiar a apariencia clara",
   "composerPlaceholder": "Escribe un mensaje",

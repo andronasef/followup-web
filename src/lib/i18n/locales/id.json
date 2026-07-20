@@ -3,6 +3,7 @@
   "sendAriaLabel": "Kirim pesan",
   "changeLanguageAriaLabel": "Ganti bahasa",
   "languageSheetTitle": "Pilih bahasa Anda",
+  "closeAriaLabel": "Tutup",
   "appearanceAriaLabelDark": "Beralih ke tampilan gelap",
   "appearanceAriaLabelLight": "Beralih ke tampilan terang",
   "composerPlaceholder": "Tulis pesan",

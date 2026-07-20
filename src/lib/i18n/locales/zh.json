@@ -3,6 +3,7 @@
   "sendAriaLabel": "发送消息",
   "changeLanguageAriaLabel": "更改语言",
   "languageSheetTitle": "选择你的语言",
+  "closeAriaLabel": "关闭",
   "appearanceAriaLabelDark": "切换到深色外观",
   "appearanceAriaLabelLight": "切换到浅色外观",
   "composerPlaceholder": "输入消息",

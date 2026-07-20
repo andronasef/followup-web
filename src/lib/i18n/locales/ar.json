@@ -3,6 +3,7 @@
   "sendAriaLabel": "إرسال الرسالة",
   "changeLanguageAriaLabel": "تغيير اللغة",
   "languageSheetTitle": "اختر لغتك",
+  "closeAriaLabel": "إغلاق",
   "appearanceAriaLabelDark": "التبديل إلى المظهر الداكن",
   "appearanceAriaLabelLight": "التبديل إلى المظهر الفاتح",
   "composerPlaceholder": "اكتب رسالة",

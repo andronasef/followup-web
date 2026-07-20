@@ -3,6 +3,7 @@
   "sendAriaLabel": "Отправить сообщение",
   "changeLanguageAriaLabel": "Изменить язык",
   "languageSheetTitle": "Выберите язык",
+  "closeAriaLabel": "Закрыть",
   "appearanceAriaLabelDark": "Переключить на тёмный режим",
   "appearanceAriaLabelLight": "Переключить на светлый режим",
   "composerPlaceholder": "Напишите сообщение",
