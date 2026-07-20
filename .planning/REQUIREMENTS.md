@@ -33,7 +33,7 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 - [x] **LANG-01**: Interface language is auto-detected from the browser locale on first load (F4)
 - [x] **LANG-02**: Visitor can override the language from the header picker; the choice persists across visits (F4)
 - [x] **LANG-03**: Layout switches fully between RTL and LTR with the selected language (F5)
-- [ ] **LANG-04**: Mixed-direction content renders correctly — a Latin URL or scripture reference inside an Arabic message is bidi-isolated and not mangled
+- [x] **LANG-04**: Mixed-direction content renders correctly — a Latin URL or scripture reference inside an Arabic message is bidi-isolated and not mangled
 - [x] **LANG-05**: Directional icons mirror by allowlist; timestamps, digits, and logos do not
 - [x] **LANG-06**: Light/dark is auto-detected from the system preference and overridable from the header; the choice persists (F6)
 - [x] **LANG-07**: All interface strings, the welcome, gate copy, and system messages are localized into the confirmed language list (F7)
