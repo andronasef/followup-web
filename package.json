@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "migrate": "node scripts/migrate.mjs"
+    "migrate": "node scripts/migrate.mjs",
+    "translation-spike": "node --experimental-strip-types scripts/translation-spike.mjs"
   },
   "dependencies": {
     "@node-rs/argon2": "2.0.2",
