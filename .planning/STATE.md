@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 01
 current_phase_name: Foundation and the Realtime Spine
 status: executing
-stopped_at: Completed 01-04-PLAN.md
-last_updated: "2026-07-20T13:08:03.478Z"
+stopped_at: Completed 01-05-PLAN.md
+last_updated: "2026-07-20T13:19:17.701Z"
 last_activity: 2026-07-20
 last_activity_desc: Translation spike go/no-go closed — owner overrode automated Swahili NO-GO, shipping all 10 languages
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 13
-  completed_plans: 4
+  completed_plans: 5
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-20)
 ## Current Position
 
 Phase: 01 (Foundation and the Realtime Spine) — EXECUTING
-Plan: 5 of 13
+Plan: 6 of 13
 Status: Ready to execute
 Last activity: 2026-07-20 — Translation spike go/no-go closed — owner overrode automated Swahili NO-GO, shipping all 10 languages
 
-Progress: [███░░░░░░░] 31%
+Progress: [████░░░░░░] 38%
 
 ## Performance Metrics
 
@@ -62,6 +62,7 @@ Progress: [███░░░░░░░] 31%
 | Phase 01 P02 | ~35min | 3 tasks | 7 files |
 | Phase 01 P03 | 30min | 3 tasks | 14 files |
 | Phase 01 P04 | 20min | 2 tasks | 4 files |
+| Phase 01 P05 | 12min | 2 tasks | 17 files |
 
 ## Accumulated Context
 
@@ -82,6 +83,8 @@ Recent decisions affecting current work:
 - [Phase ?]: [01-03]: Repo-layer test files run via node --experimental-strip-types + node:test (no jest/vitest added); db/pool.ts and repo/*.ts use explicit .ts import extensions (tsconfig allowImportingTsExtensions) specifically so those files also resolve under plain Node, not just Next's bundler.
 - [Phase ?]: [01-03]: conversations.openFor's client_msg_id/partial-unique-index concurrency safety verified empirically via Promise.all against the local Postgres, not just asserted.
 - [Phase ?]: 01-04: Confirmed @node-rs/argon2 exports hash/verify (not hashAsync/verifyAsync) against installed package's index.d.ts, resolving RESEARCH.md Assumptions Log A2.
+- [Phase ?]: 01-05: Language detection matches only base subtag against SUPPORTED_LANGUAGES membership, zero mapping table (D-10). formatDigits() always renders ASCII digits regardless of locale arg.
+- [Phase ?]: 01-05: All 10 locale JSON files authored with an added languageName (endonym) key beyond the 17 literal Copywriting Contract rows, per plan's explicit call-out for Plan 01-09's language sheet (D-09).
 
 ### Pending Todos
 
@@ -108,6 +111,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-20T13:08:03.462Z
-Stopped at: Completed 01-04-PLAN.md
+Last session: 2026-07-20T13:19:17.688Z
+Stopped at: Completed 01-05-PLAN.md
 Resume file: None

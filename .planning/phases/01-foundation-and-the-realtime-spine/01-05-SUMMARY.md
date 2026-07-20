@@ -180,3 +180,7 @@ None - no external service configuration required. Locale content was hand-autho
 ---
 *Phase: 01-foundation-and-the-realtime-spine*
 *Completed: 2026-07-20*
+
+## Self-Check: PASSED
+
+All 13 created files verified present on disk (detect.ts, dir.ts, format.ts, 10 locale JSON files). All 4 commits (cbcf0f6, 6c4de0a, fd23f15, f589665) verified present in git log.
