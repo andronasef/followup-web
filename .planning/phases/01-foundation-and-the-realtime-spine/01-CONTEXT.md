@@ -68,7 +68,7 @@ Phase 1 delivers the entire message spine and settles the language list before a
 
 ### Claude's Discretion
 
-- **D-15 (stream lifetime)** — the user answered "do the best". I chose the deliberate ~4-minute server-side recycle over hold-open-with-heartbeat. Rationale: recovery code that runs constantly is recovery code that works; the alternative only ever executes when something has already gone wrong. If research surfaces a concrete reason the recycle is worse on the target Coolify/Traefik version, the planner may revisit — but the default is proactive recycle.
+- **Stream lifetime rationale (re: D-15)** — the user answered "do the best". I chose the deliberate ~4-minute server-side recycle over hold-open-with-heartbeat. Rationale: recovery code that runs constantly is recovery code that works; the alternative only ever executes when something has already gone wrong. If research surfaces a concrete reason the recycle is worse on the target Coolify/Traefik version, the planner may revisit — but the default is proactive recycle.
 - **Rate-limit feel (OPS-01)** was offered and not selected. Numbers and the limited-state copy fall to researcher/planner discretion, with one binding constraint from the product: someone in crisis typing fast must not be stonewalled. The limit exists to stop floods, not to police urgency — prefer a generous burst allowance with a gentle, localized message over a hard cutoff.
 - Schema shape, migration layout, SSE payload format, and the internals of the `responders`/assignment columns are all planner territory — no user preference was expressed and none is needed.
 
