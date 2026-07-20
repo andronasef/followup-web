@@ -1,0 +1,20 @@
+{
+  "languageName": "中文",
+  "sendAriaLabel": "发送消息",
+  "changeLanguageAriaLabel": "更改语言",
+  "languageSheetTitle": "选择你的语言",
+  "appearanceAriaLabelDark": "切换到深色外观",
+  "appearanceAriaLabelLight": "切换到浅色外观",
+  "composerPlaceholder": "输入消息",
+  "welcomeLine1": "欢迎你来到这里。无论你心里想着什么，都可以说出来。",
+  "welcomeLine2Online": "我现在在。",
+  "welcomeLine2Offline": "我现在不在电脑前，但我会阅读每一条消息并回复。",
+  "emptyStateHeading": "还没有对话",
+  "emptyStateBody": "当有人打开聊天并发送消息时，它会显示在这里。",
+  "errorSendFailed": "发送失败。点击重试。",
+  "errorRateLimited": "你发送的速度超过了我能跟上的速度。请稍等一下——你写的内容不会丢失。",
+  "errorReconnectStuck": "正在重新连接…",
+  "errorAdminLogin": "邮箱或密码不正确。",
+  "adminCtaLogin": "登录",
+  "adminCtaSetup": "创建管理员账户"
+}

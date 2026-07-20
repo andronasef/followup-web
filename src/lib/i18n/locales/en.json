@@ -1,0 +1,20 @@
+{
+  "languageName": "English",
+  "sendAriaLabel": "Send message",
+  "changeLanguageAriaLabel": "Change language",
+  "languageSheetTitle": "Choose your language",
+  "appearanceAriaLabelDark": "Switch to dark appearance",
+  "appearanceAriaLabelLight": "Switch to light appearance",
+  "composerPlaceholder": "Write a message",
+  "welcomeLine1": "You're welcome here. Whatever's on your mind, you can say it.",
+  "welcomeLine2Online": "I'm here now.",
+  "welcomeLine2Offline": "I'm not at my desk right now, but I read every message and I will reply.",
+  "emptyStateHeading": "No conversations yet",
+  "emptyStateBody": "When someone opens the chat and sends a message, it will appear here.",
+  "errorSendFailed": "Couldn't send. Tap to try again.",
+  "errorRateLimited": "You're sending faster than I can keep up. Give it a moment — nothing you wrote is lost.",
+  "errorReconnectStuck": "Reconnecting…",
+  "errorAdminLogin": "That email or password isn't right.",
+  "adminCtaLogin": "Sign in",
+  "adminCtaSetup": "Create owner account"
+}

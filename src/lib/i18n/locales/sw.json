@@ -1,0 +1,20 @@
+{
+  "languageName": "Kiswahili",
+  "sendAriaLabel": "Tuma ujumbe",
+  "changeLanguageAriaLabel": "Badilisha lugha",
+  "languageSheetTitle": "Chagua lugha yako",
+  "appearanceAriaLabelDark": "Badilisha kwenda muonekano wa giza",
+  "appearanceAriaLabelLight": "Badilisha kwenda muonekano wa mwanga",
+  "composerPlaceholder": "Andika ujumbe",
+  "welcomeLine1": "Unakaribishwa hapa. Chochote kilicho moyoni mwako, unaweza kukisema.",
+  "welcomeLine2Online": "Nipo hapa sasa.",
+  "welcomeLine2Offline": "Sipo mezani kwangu sasa hivi, lakini ninasoma kila ujumbe na nitajibu.",
+  "emptyStateHeading": "Bado hakuna mazungumzo",
+  "emptyStateBody": "Mtu atakapofungua mazungumzo na kutuma ujumbe, utaonekana hapa.",
+  "errorSendFailed": "Imeshindwa kutuma. Gusa ili ujaribu tena.",
+  "errorRateLimited": "Unatuma haraka kuliko ninavyoweza kukufuata. Nipe muda kidogo — hakuna ulichoandika kilichopotea.",
+  "errorReconnectStuck": "Inaunganisha tena…",
+  "errorAdminLogin": "Barua pepe au nenosiri hilo si sahihi.",
+  "adminCtaLogin": "Ingia",
+  "adminCtaSetup": "Unda akaunti ya mmiliki"
+}

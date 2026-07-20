@@ -1,0 +1,20 @@
+{
+  "languageName": "العربية",
+  "sendAriaLabel": "إرسال الرسالة",
+  "changeLanguageAriaLabel": "تغيير اللغة",
+  "languageSheetTitle": "اختر لغتك",
+  "appearanceAriaLabelDark": "التبديل إلى المظهر الداكن",
+  "appearanceAriaLabelLight": "التبديل إلى المظهر الفاتح",
+  "composerPlaceholder": "اكتب رسالة",
+  "welcomeLine1": "أنت موضع ترحيب هنا. مهما كان ما يشغل بالك، يمكنك قوله.",
+  "welcomeLine2Online": "أنا هنا الآن.",
+  "welcomeLine2Offline": "لست أمام مكتبي الآن، لكنني أقرأ كل رسالة وسأرد.",
+  "emptyStateHeading": "لا توجد محادثات بعد",
+  "emptyStateBody": "عندما يفتح شخص ما المحادثة ويرسل رسالة، ستظهر هنا.",
+  "errorSendFailed": "تعذر الإرسال. اضغط للمحاولة مرة أخرى.",
+  "errorRateLimited": "أنت ترسل أسرع مما أستطيع متابعته. أعطها لحظة — لن يضيع شيء مما كتبته.",
+  "errorReconnectStuck": "جارٍ إعادة الاتصال…",
+  "errorAdminLogin": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+  "adminCtaLogin": "تسجيل الدخول",
+  "adminCtaSetup": "إنشاء حساب المالك"
+}

@@ -1,0 +1,20 @@
+{
+  "languageName": "Русский",
+  "sendAriaLabel": "Отправить сообщение",
+  "changeLanguageAriaLabel": "Изменить язык",
+  "languageSheetTitle": "Выберите язык",
+  "appearanceAriaLabelDark": "Переключить на тёмный режим",
+  "appearanceAriaLabelLight": "Переключить на светлый режим",
+  "composerPlaceholder": "Напишите сообщение",
+  "welcomeLine1": "Здесь вам рады. Что бы у вас ни было на душе, вы можете это сказать.",
+  "welcomeLine2Online": "Я сейчас здесь.",
+  "welcomeLine2Offline": "Сейчас меня нет на месте, но я читаю каждое сообщение и обязательно отвечу.",
+  "emptyStateHeading": "Пока нет разговоров",
+  "emptyStateBody": "Когда кто-то откроет чат и отправит сообщение, оно появится здесь.",
+  "errorSendFailed": "Не удалось отправить. Нажмите, чтобы повторить попытку.",
+  "errorRateLimited": "Вы отправляете быстрее, чем я успеваю. Дайте немного времени — ничего из написанного не потеряется.",
+  "errorReconnectStuck": "Переподключение…",
+  "errorAdminLogin": "Неверный адрес почты или пароль.",
+  "adminCtaLogin": "Войти",
+  "adminCtaSetup": "Создать аккаунт владельца"
+}

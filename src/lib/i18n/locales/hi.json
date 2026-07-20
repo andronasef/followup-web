@@ -1,0 +1,20 @@
+{
+  "languageName": "हिन्दी",
+  "sendAriaLabel": "संदेश भेजें",
+  "changeLanguageAriaLabel": "भाषा बदलें",
+  "languageSheetTitle": "अपनी भाषा चुनें",
+  "appearanceAriaLabelDark": "डार्क थीम पर स्विच करें",
+  "appearanceAriaLabelLight": "लाइट थीम पर स्विच करें",
+  "composerPlaceholder": "संदेश लिखें",
+  "welcomeLine1": "यहाँ आपका स्वागत है। आपके मन में जो भी हो, आप कह सकते हैं।",
+  "welcomeLine2Online": "मैं अभी यहाँ हूँ।",
+  "welcomeLine2Offline": "मैं अभी अपनी डेस्क पर नहीं हूँ, लेकिन मैं हर संदेश पढ़ता हूँ और जवाब दूँगा।",
+  "emptyStateHeading": "अभी तक कोई बातचीत नहीं",
+  "emptyStateBody": "जब कोई चैट खोलेगा और संदेश भेजेगा, तो वह यहाँ दिखाई देगा।",
+  "errorSendFailed": "भेजा नहीं जा सका। फिर से कोशिश करने के लिए टैप करें।",
+  "errorRateLimited": "आप जितनी तेज़ी से भेज रहे हैं, मैं उतनी तेज़ी से नहीं रख पा रहा। थोड़ा समय दें — आपने जो लिखा वह खोया नहीं है।",
+  "errorReconnectStuck": "फिर से जुड़ रहा है…",
+  "errorAdminLogin": "वह ईमेल या पासवर्ड सही नहीं है।",
+  "adminCtaLogin": "साइन इन करें",
+  "adminCtaSetup": "मालिक खाता बनाएँ"
+}

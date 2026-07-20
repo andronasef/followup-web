@@ -1,0 +1,20 @@
+{
+  "languageName": "Português",
+  "sendAriaLabel": "Enviar mensagem",
+  "changeLanguageAriaLabel": "Mudar idioma",
+  "languageSheetTitle": "Escolha seu idioma",
+  "appearanceAriaLabelDark": "Mudar para aparência escura",
+  "appearanceAriaLabelLight": "Mudar para aparência clara",
+  "composerPlaceholder": "Escreva uma mensagem",
+  "welcomeLine1": "Você é bem-vindo aqui. Seja o que for que esteja em sua mente, você pode dizer.",
+  "welcomeLine2Online": "Estou aqui agora.",
+  "welcomeLine2Offline": "Não estou na minha mesa agora, mas leio todas as mensagens e vou responder.",
+  "emptyStateHeading": "Ainda não há conversas",
+  "emptyStateBody": "Quando alguém abrir o chat e enviar uma mensagem, ela aparecerá aqui.",
+  "errorSendFailed": "Não foi possível enviar. Toque para tentar novamente.",
+  "errorRateLimited": "Você está enviando mais rápido do que consigo acompanhar. Dê um momento — nada do que você escreveu foi perdido.",
+  "errorReconnectStuck": "Reconectando…",
+  "errorAdminLogin": "Esse e-mail ou senha está incorreto.",
+  "adminCtaLogin": "Entrar",
+  "adminCtaSetup": "Criar conta de proprietário"
+}

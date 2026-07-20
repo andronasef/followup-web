@@ -1,0 +1,20 @@
+{
+  "languageName": "Bahasa Indonesia",
+  "sendAriaLabel": "Kirim pesan",
+  "changeLanguageAriaLabel": "Ganti bahasa",
+  "languageSheetTitle": "Pilih bahasa Anda",
+  "appearanceAriaLabelDark": "Beralih ke tampilan gelap",
+  "appearanceAriaLabelLight": "Beralih ke tampilan terang",
+  "composerPlaceholder": "Tulis pesan",
+  "welcomeLine1": "Anda diterima di sini. Apa pun yang ada di pikiran Anda, Anda bisa mengatakannya.",
+  "welcomeLine2Online": "Saya di sini sekarang.",
+  "welcomeLine2Offline": "Saya sedang tidak di meja saya sekarang, tetapi saya membaca setiap pesan dan akan membalas.",
+  "emptyStateHeading": "Belum ada percakapan",
+  "emptyStateBody": "Saat seseorang membuka obrolan dan mengirim pesan, itu akan muncul di sini.",
+  "errorSendFailed": "Gagal mengirim. Ketuk untuk mencoba lagi.",
+  "errorRateLimited": "Anda mengirim lebih cepat daripada yang bisa saya ikuti. Beri sedikit waktu — tidak ada yang Anda tulis hilang.",
+  "errorReconnectStuck": "Menyambungkan kembali…",
+  "errorAdminLogin": "Email atau kata sandi itu salah.",
+  "adminCtaLogin": "Masuk",
+  "adminCtaSetup": "Buat akun pemilik"
+}
