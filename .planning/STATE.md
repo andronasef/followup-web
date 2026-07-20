@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 01
 current_phase_name: Foundation and the Realtime Spine
 status: executing
-stopped_at: Completed 01-07-PLAN.md
-last_updated: "2026-07-20T14:01:52.138Z"
+stopped_at: Completed 01-08-PLAN.md
+last_updated: "2026-07-20T14:36:16.790Z"
 last_activity: 2026-07-20
 last_activity_desc: Translation spike go/no-go closed — owner overrode automated Swahili NO-GO, shipping all 10 languages
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 13
-  completed_plans: 7
+  completed_plans: 8
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-20)
 ## Current Position
 
 Phase: 01 (Foundation and the Realtime Spine) — EXECUTING
-Plan: 8 of 13
+Plan: 9 of 13
 Status: Ready to execute
 Last activity: 2026-07-20 — Translation spike go/no-go closed — owner overrode automated Swahili NO-GO, shipping all 10 languages
 
-Progress: [█████░░░░░] 54%
+Progress: [██████░░░░] 62%
 
 ## Performance Metrics
 
@@ -65,6 +65,7 @@ Progress: [█████░░░░░] 54%
 | Phase 01 P05 | 12min | 2 tasks | 17 files |
 | Phase 01 P06 | 25min | 3 tasks | 5 files |
 | Phase 01 P07 | 15min | 3 tasks | 9 files |
+| Phase 01 P08 | 15min | 3 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -92,6 +93,9 @@ Recent decisions affecting current work:
 - [Phase ?]: 01-06: 'system' appearance has no server-side resolution (Tailwind class-only dark mode, no prefers-color-scheme CSS fallback) — pre-paint.ts resolves it via matchMedia synchronously before first paint on every load.
 - [Phase ?]: 01-07: Added src/server/repo/responders.ts (not in plan's files list) to keep DB access behind a repo module, matching visitors.ts/conversations.ts precedent.
 - [Phase ?]: 01-07: proxy.ts guards /admin/:path* by allowing /admin/setup and /admin/login through inline (not via matcher negative-lookahead), then verifying typ==='owner' against NextRequest's own cookie jar directly -- separate from guard.ts's next/headers-based requireOwner(), since proxy.ts is nodejs-only and cannot use next/headers.
+- [Phase ?]: 01-08: SSE routes hold only a hub subscription plus short-lived repo queries; a DB-backed pump re-queries repo.messages.since/sinceAll from the last emitted id on every live event so backfilled and live messages can never duplicate or gap.
+- [Phase ?]: 01-08: Write routes split into a next/headers-free send.ts/reply.ts (actual behavior, directly node:test-able) plus a thin route.ts wrapper -- plain Node's ESM resolver cannot resolve next/headers outside Next's bundler.
+- [Phase ?]: 01-08: admin/stream mirrors chat/stream's race-free DB-backed pump design against a new repo.messages.sinceAll(sinceId), giving the owner-scoped firehose its own Last-Event-ID backfill.
 
 ### Pending Todos
 
@@ -118,6 +122,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-20T14:00:33.620Z
-Stopped at: Completed 01-07-PLAN.md
+Last session: 2026-07-20T14:36:16.769Z
+Stopped at: Completed 01-08-PLAN.md
 Resume file: None

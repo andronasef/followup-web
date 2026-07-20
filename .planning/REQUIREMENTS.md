@@ -12,11 +12,11 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 
 - [ ] **CHAT-01**: Visitor opens the URL and lands directly in a full-screen one-on-one chat — no landing page, no menu, no login (F1)
 - [ ] **CHAT-02**: Visitor sees a warm welcome message in their own language, in the owner's voice, on first open (F13)
-- [ ] **CHAT-03**: Visitor can send a message and see it appear immediately with a single "sent" delivery state
-- [ ] **CHAT-04**: Visitor sees the owner's reply arrive in near real-time while the owner is online (F15)
-- [ ] **CHAT-05**: Visitor can send messages while the owner is offline, and the welcome sets that expectation honestly without a queue counter or ETA (F15)
-- [ ] **CHAT-06**: Every message is persisted before any downstream work runs; no message is lost in any failure mode (F16)
-- [ ] **CHAT-07**: A reconnecting visitor receives every message sent while disconnected, via a `Last-Event-ID` cursor against `messages.id`
+- [x] **CHAT-03**: Visitor can send a message and see it appear immediately with a single "sent" delivery state
+- [x] **CHAT-04**: Visitor sees the owner's reply arrive in near real-time while the owner is online (F15)
+- [x] **CHAT-05**: Visitor can send messages while the owner is offline, and the welcome sets that expectation honestly without a queue counter or ETA (F15)
+- [x] **CHAT-06**: Every message is persisted before any downstream work runs; no message is lost in any failure mode (F16)
+- [x] **CHAT-07**: A reconnecting visitor receives every message sent while disconnected, via a `Last-Event-ID` cursor against `messages.id`
 - [x] **CHAT-08**: Returning visitor from the same browser lands back in their existing conversation with history intact (F10)
 - [ ] **CHAT-09**: Header shows exactly two controls — language picker and light/dark toggle — and nothing else (F2)
 
@@ -70,7 +70,7 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 
 - [x] **ADMIN-01**: Owner logs in with email and password, hashed with Argon2id, into a session held in a signed `HttpOnly` cookie (F18)
 - [ ] **ADMIN-02**: The dashboard is usable on a phone and respects light/dark (F18)
-- [ ] **ADMIN-03**: Owner can read a conversation and send a reply
+- [x] **ADMIN-03**: Owner can read a conversation and send a reply
 - [ ] **ADMIN-04**: Owner can toggle online/offline presence, which changes what new visitors experience (F14, F19)
 - [ ] **ADMIN-05**: Inbox lists every conversation with faith decisions sorted to the top, then unanswered, then most recent (F19, F23)
 - [ ] **ADMIN-06**: Inbox items show the anonymous label, visitor language, last-message preview in the owner's language, time, status, faith-decision flag, and push reachability (F20)
