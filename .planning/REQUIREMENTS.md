@@ -17,13 +17,13 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 - [ ] **CHAT-05**: Visitor can send messages while the owner is offline, and the welcome sets that expectation honestly without a queue counter or ETA (F15)
 - [ ] **CHAT-06**: Every message is persisted before any downstream work runs; no message is lost in any failure mode (F16)
 - [ ] **CHAT-07**: A reconnecting visitor receives every message sent while disconnected, via a `Last-Event-ID` cursor against `messages.id`
-- [ ] **CHAT-08**: Returning visitor from the same browser lands back in their existing conversation with history intact (F10)
+- [x] **CHAT-08**: Returning visitor from the same browser lands back in their existing conversation with history intact (F10)
 - [ ] **CHAT-09**: Header shows exactly two controls — language picker and light/dark toggle — and nothing else (F2)
 
 ### Identity — anonymous and durable
 
 - [x] **ID-01**: On first visit the server issues an anonymous visitor ID as a signed `HttpOnly` `Secure` `SameSite=Lax` cookie (F3)
-- [ ] **ID-02**: The visitor ID is mirrored to `localStorage` as a recovery copy; the cookie wins on conflict
+- [x] **ID-02**: The visitor ID is mirrored to `localStorage` as a recovery copy; the cookie wins on conflict
 - [ ] **ID-03**: A visitor's push endpoint resolves back to their visitor ID, giving a third recovery anchor when cookie and localStorage are both lost
 - [ ] **ID-04**: The signed visitor ID is carried through the PWA `start_url` and the push click URL, so an installed app and a browser tab resolve to the same conversation
 - [x] **ID-05**: No name, email, phone, or raw IP is ever collected or stored
@@ -31,11 +31,11 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 ### Language and appearance
 
 - [x] **LANG-01**: Interface language is auto-detected from the browser locale on first load (F4)
-- [ ] **LANG-02**: Visitor can override the language from the header picker; the choice persists across visits (F4)
-- [ ] **LANG-03**: Layout switches fully between RTL and LTR with the selected language (F5)
+- [x] **LANG-02**: Visitor can override the language from the header picker; the choice persists across visits (F4)
+- [x] **LANG-03**: Layout switches fully between RTL and LTR with the selected language (F5)
 - [ ] **LANG-04**: Mixed-direction content renders correctly — a Latin URL or scripture reference inside an Arabic message is bidi-isolated and not mangled
 - [ ] **LANG-05**: Directional icons mirror by allowlist; timestamps, digits, and logos do not
-- [ ] **LANG-06**: Light/dark is auto-detected from the system preference and overridable from the header; the choice persists (F6)
+- [x] **LANG-06**: Light/dark is auto-detected from the system preference and overridable from the header; the choice persists (F6)
 - [x] **LANG-07**: All interface strings, the welcome, gate copy, and system messages are localized into the confirmed language list (F7)
 
 ### Push — the gate and the return path

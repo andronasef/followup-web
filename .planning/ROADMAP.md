@@ -36,7 +36,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   5. An Arabic conversation renders right-to-left with a Latin URL and a scripture reference inside it intact and unmangled, and flooding the send endpoint from one browser is rate-limited without the visitor's IP ever being stored raw or their message text ever appearing in container logs.
   6. Restarting the Postgres container deliberately leaves every conversation intact, and the app builds and deploys as a single Coolify container with migrations applied at start.
 
-**Plans**: 5/13 plans executed
+**Plans**: 6/13 plans executed
 
 Plans:
 **Wave 1**
@@ -52,7 +52,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 01-06-PLAN.md — Visitor identity & first-load correctness: cookie bootstrap, layout dir/theme SSR, localStorage mirror, prefs route
+- [x] 01-06-PLAN.md — Visitor identity & first-load correctness: cookie bootstrap, layout dir/theme SSR, localStorage mirror, prefs route
 - [ ] 01-07-PLAN.md — Owner auth wiring: one-time setup route (404-by-construction), non-enumerating login, guard/proxy
 
 **Wave 4** *(blocked on Wave 3 completion)*
@@ -125,7 +125,7 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation and the Realtime Spine | 5/13 | In Progress|  |
+| 1. Foundation and the Realtime Spine | 6/13 | In Progress|  |
 | 2. Reachability and Language | 0/TBD | Not started | - |
 | 3. Owner Surface, Hardening, Ship | 0/TBD | Not started | - |
 
