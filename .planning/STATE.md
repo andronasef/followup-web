@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 01
 current_phase_name: Foundation and the Realtime Spine
 status: executing
-stopped_at: Completed 01-02-PLAN.md
-last_updated: "2026-07-20T03:10:00.000Z"
+stopped_at: Completed 01-03-PLAN.md
+last_updated: "2026-07-20T12:57:58.609Z"
 last_activity: 2026-07-20
 last_activity_desc: Translation spike go/no-go closed — owner overrode automated Swahili NO-GO, shipping all 10 languages
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 13
-  completed_plans: 2
+  completed_plans: 3
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-20)
 ## Current Position
 
 Phase: 01 (Foundation and the Realtime Spine) — EXECUTING
-Plan: 3 of 13
+Plan: 4 of 13
 Status: Ready to execute
 Last activity: 2026-07-20 — Translation spike go/no-go closed — owner overrode automated Swahili NO-GO, shipping all 10 languages
 
-Progress: [██░░░░░░░░] 15%
+Progress: [██░░░░░░░░] 23%
 
 ## Performance Metrics
 
@@ -60,6 +60,7 @@ Progress: [██░░░░░░░░] 15%
 |------|----------|-------|-------|
 | Phase 01 P01 | 25min | 3 tasks | 25 files |
 | Phase 01 P02 | ~35min | 3 tasks | 7 files |
+| Phase 01 P03 | 30min | 3 tasks | 14 files |
 
 ## Accumulated Context
 
@@ -77,6 +78,8 @@ Recent decisions affecting current work:
 - [Phase ?]: docker-compose.yml Postgres host port moved to 5433 (5432 already bound by an unrelated container on this dev machine); .env.example updated to match
 - [01-02]: Translation provider substituted OVHcloud -> NVIDIA NIM (owner-directed; no OVH key available). Config-driven (`TranslationProvider` pattern), so OVH remains addable later without a rewrite.
 - [01-02]: Owner explicitly overrode the automated D-01 NO-GO on Swahili (75%/67% vs 90% bar) — shipping all 10 languages, risk accepted pending real-dev verification.
+- [Phase ?]: [01-03]: Repo-layer test files run via node --experimental-strip-types + node:test (no jest/vitest added); db/pool.ts and repo/*.ts use explicit .ts import extensions (tsconfig allowImportingTsExtensions) specifically so those files also resolve under plain Node, not just Next's bundler.
+- [Phase ?]: [01-03]: conversations.openFor's client_msg_id/partial-unique-index concurrency safety verified empirically via Promise.all against the local Postgres, not just asserted.
 
 ### Pending Todos
 
@@ -103,6 +106,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-20T02:30:15.030Z
-Stopped at: Completed 01-01-PLAN.md
+Last session: 2026-07-20T12:57:58.586Z
+Stopped at: Completed 01-03-PLAN.md
 Resume file: None

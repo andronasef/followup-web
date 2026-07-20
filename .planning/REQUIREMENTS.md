@@ -84,7 +84,7 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 
 ### Safety, abuse, and operations
 
-- [ ] **OPS-01**: Message sending is rate-limited per visitor and per hashed IP; the IP is HMAC'd with a rotating salt and never stored raw
+- [x] **OPS-01**: Message sending is rate-limited per visitor and per hashed IP; the IP is HMAC'd with a rotating salt and never stored raw
 - [ ] **OPS-02**: Owner can block an abusive visitor from the dashboard
 - [ ] **OPS-03**: Owner can permanently delete a conversation
 - [ ] **OPS-04**: Localized crisis-line resources are reachable for each supported locale
@@ -99,7 +99,7 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 ### Foundation
 
 - [ ] **FOUND-01**: A translation spike benchmarks the candidate OVH models on Arabic and Swahili with faith/scriptural reference text and a prompt-injection set, and produces a go/no-go on the final language list
-- [ ] **FOUND-02**: Realtime delivery uses one dedicated Postgres listener plus a bounded pool — connection count is fixed, not proportional to visitor count
+- [x] **FOUND-02**: Realtime delivery uses one dedicated Postgres listener plus a bounded pool — connection count is fixed, not proportional to visitor count
 - [x] **FOUND-03**: The schema carries a `responders` table and nullable assignment columns from day one, so a second responder is additive rather than a migration
 - [x] **FOUND-04**: The app builds and deploys as a single container on Coolify with migrations applied at start
 
