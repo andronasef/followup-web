@@ -181,3 +181,7 @@ None - no external service configuration required.
 ---
 *Phase: 01-foundation-and-the-realtime-spine*
 *Completed: 2026-07-20*
+
+## Self-Check: PASSED
+
+All 5 created/modified files found on disk (visitor.ts, pre-paint.ts, bootstrap/route.ts, chat/prefs/route.ts, layout.tsx). All 4 commit hashes (d4522b7, 58487a0, eab877a, e72088a) found in git history.
