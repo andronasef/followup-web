@@ -1,0 +1,36 @@
+# Local dev only. Full stack run command (documented per 01-01-PLAN.md
+# Task 3, exercised once during setup):
+#
+#   docker compose up -d db
+#   npm install
+#   npm run migrate
+#   npm run dev
+#   curl localhost:3000/api/health
+#
+# Coolify supplies its own managed Postgres in production — this file is not
+# deployed there, it exists only so a fresh clone can reach a real database
+# without any manual Postgres install.
+
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: onechat
+      POSTGRES_USER: onechat
+      POSTGRES_PASSWORD: onechat
+    ports:
+      # Host port 5433 to avoid colliding with any other local Postgres on
+      # the default 5432 (5432 is already taken on this dev machine).
+      - "5433:5432"
+    volumes:
+      # Named volume — OPS-06 verifies data survives a deliberate restart.
+      - onechat_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U onechat -d onechat"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  onechat_db_data:
