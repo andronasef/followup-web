@@ -11,14 +11,14 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 ### Chat — the visitor experience
 
 - [ ] **CHAT-01**: Visitor opens the URL and lands directly in a full-screen one-on-one chat — no landing page, no menu, no login (F1)
-- [ ] **CHAT-02**: Visitor sees a warm welcome message in their own language, in the owner's voice, on first open (F13)
+- [x] **CHAT-02**: Visitor sees a warm welcome message in their own language, in the owner's voice, on first open (F13)
 - [x] **CHAT-03**: Visitor can send a message and see it appear immediately with a single "sent" delivery state
 - [x] **CHAT-04**: Visitor sees the owner's reply arrive in near real-time while the owner is online (F15)
 - [x] **CHAT-05**: Visitor can send messages while the owner is offline, and the welcome sets that expectation honestly without a queue counter or ETA (F15)
 - [x] **CHAT-06**: Every message is persisted before any downstream work runs; no message is lost in any failure mode (F16)
 - [x] **CHAT-07**: A reconnecting visitor receives every message sent while disconnected, via a `Last-Event-ID` cursor against `messages.id`
 - [x] **CHAT-08**: Returning visitor from the same browser lands back in their existing conversation with history intact (F10)
-- [ ] **CHAT-09**: Header shows exactly two controls — language picker and light/dark toggle — and nothing else (F2)
+- [x] **CHAT-09**: Header shows exactly two controls — language picker and light/dark toggle — and nothing else (F2)
 
 ### Identity — anonymous and durable
 
@@ -34,7 +34,7 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 - [x] **LANG-02**: Visitor can override the language from the header picker; the choice persists across visits (F4)
 - [x] **LANG-03**: Layout switches fully between RTL and LTR with the selected language (F5)
 - [ ] **LANG-04**: Mixed-direction content renders correctly — a Latin URL or scripture reference inside an Arabic message is bidi-isolated and not mangled
-- [ ] **LANG-05**: Directional icons mirror by allowlist; timestamps, digits, and logos do not
+- [x] **LANG-05**: Directional icons mirror by allowlist; timestamps, digits, and logos do not
 - [x] **LANG-06**: Light/dark is auto-detected from the system preference and overridable from the header; the choice persists (F6)
 - [x] **LANG-07**: All interface strings, the welcome, gate copy, and system messages are localized into the confirmed language list (F7)
 

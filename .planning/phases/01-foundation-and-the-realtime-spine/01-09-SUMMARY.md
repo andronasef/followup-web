@@ -240,3 +240,7 @@ None - no external service configuration required. `NEXT_PUBLIC_PUSH_GATE_BYPASS
 ---
 *Phase: 01-foundation-and-the-realtime-spine*
 *Completed: 2026-07-20*
+
+## Self-Check: PASSED
+
+All 9 created files (Header.tsx, Gate.tsx, LanguageSheet.tsx, Welcome.tsx, PresenceLine.tsx, usePresence.ts, strings.ts, manifest.webmanifest, sw.js) verified present on disk. All 4 commit hashes (a9b0896, 06664c5, 62a1270, fc2b8b7) verified present in git log.

@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 01
 current_phase_name: Foundation and the Realtime Spine
 status: executing
-stopped_at: Completed 01-08-PLAN.md
-last_updated: "2026-07-20T14:36:16.790Z"
+stopped_at: Completed 01-09-PLAN.md
+last_updated: "2026-07-20T14:57:32.156Z"
 last_activity: 2026-07-20
 last_activity_desc: Translation spike go/no-go closed — owner overrode automated Swahili NO-GO, shipping all 10 languages
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 13
-  completed_plans: 8
+  completed_plans: 9
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-20)
 ## Current Position
 
 Phase: 01 (Foundation and the Realtime Spine) — EXECUTING
-Plan: 9 of 13
+Plan: 10 of 13
 Status: Ready to execute
 Last activity: 2026-07-20 — Translation spike go/no-go closed — owner overrode automated Swahili NO-GO, shipping all 10 languages
 
-Progress: [██████░░░░] 62%
+Progress: [███████░░░] 69%
 
 ## Performance Metrics
 
@@ -66,6 +66,7 @@ Progress: [██████░░░░] 62%
 | Phase 01 P06 | 25min | 3 tasks | 5 files |
 | Phase 01 P07 | 15min | 3 tasks | 9 files |
 | Phase 01 P08 | 15min | 3 tasks | 13 files |
+| Phase 01 P09 | ~20min | 3 tasks | 20 files |
 
 ## Accumulated Context
 
@@ -96,6 +97,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 01-08: SSE routes hold only a hub subscription plus short-lived repo queries; a DB-backed pump re-queries repo.messages.since/sinceAll from the last emitted id on every live event so backfilled and live messages can never duplicate or gap.
 - [Phase ?]: 01-08: Write routes split into a next/headers-free send.ts/reply.ts (actual behavior, directly node:test-able) plus a thin route.ts wrapper -- plain Node's ESM resolver cannot resolve next/headers outside Next's bundler.
 - [Phase ?]: 01-08: admin/stream mirrors chat/stream's race-free DB-backed pump design against a new repo.messages.sinceAll(sinceId), giving the owner-scoped firehose its own Last-Event-ID backfill.
+- [Phase ?]: [01-09]: usePresence.ts modeled as a useSyncExternalStore module store (setPresence/usePresence), not React context -- the mechanism that lets Plan 01-09's UI and Plan 01-10's SSE-stream owner connect later without either plan's file needing to change.
+- [Phase ?]: [01-09]: Added src/lib/i18n/strings.ts (shared getStrings(lang) lookup) and a closeAriaLabel key across all 10 locale JSON files -- both missing-critical additions needed to satisfy UI-SPEC.md's no-hardcoded-string requirement across Header/LanguageSheet/Welcome/PresenceLine.
 
 ### Pending Todos
 
@@ -122,6 +125,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-20T14:36:16.769Z
-Stopped at: Completed 01-08-PLAN.md
+Last session: 2026-07-20T14:57:32.133Z
+Stopped at: Completed 01-09-PLAN.md
 Resume file: None
