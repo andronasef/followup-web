@@ -14,6 +14,15 @@ import { messages } from "../db/schema.ts";
 export type Message = typeof messages.$inferSelect;
 export type MessageSender = "visitor" | "owner";
 
+// Structural subset of `db` (also satisfied by a `db.transaction()`
+// callback's `tx` argument, since drizzle-orm's PgTransaction extends
+// PgDatabase) -- lets create() run either against the shared pool
+// (default) or inside a caller-supplied transaction. Plan 01-08's write
+// routes pass their own `tx` so the insert and the same-transaction
+// pg_notify call commit or roll back together (CHAT-06's durability-first
+// requirement).
+type DbExecutor = Pick<typeof db, "select" | "insert">;
+
 /**
  * Inserts a message and returns the full row (its new id becomes the SSE
  * event id). If `clientMsgId` is given and a row already exists for
@@ -34,9 +43,10 @@ export async function create(
   sender: MessageSender,
   body: string,
   clientMsgId?: string | null,
+  executor: DbExecutor = db,
 ): Promise<Message> {
   if (clientMsgId) {
-    const [existing] = await db
+    const [existing] = await executor
       .select()
       .from(messages)
       .where(and(eq(messages.conversationId, conversationId), eq(messages.clientMsgId, clientMsgId)))
@@ -44,18 +54,27 @@ export async function create(
     if (existing) return existing;
   }
 
-  const [created] = await db
+  const [created] = await executor
     .insert(messages)
     .values({ conversationId, sender, body, clientMsgId: clientMsgId ?? null })
     .returning();
   return created;
 }
 
-/** All messages for a conversation with id > sinceId, ascending by id. */
+/** All messages for a conversation with id > sinceId, ascending by id. This
+ * is the exact shared query behind both SSE Last-Event-ID backfill (Plan
+ * 01-08) and the D-16 polling fallback (GET /api/messages?since=). */
 export async function since(conversationId: number, sinceId: number): Promise<Message[]> {
   return db
     .select()
     .from(messages)
     .where(and(eq(messages.conversationId, conversationId), gt(messages.id, sinceId)))
     .orderBy(asc(messages.id));
+}
+
+/** All messages across every conversation with id > sinceId, ascending by
+ * id -- the admin firehose's (D-13) own Last-Event-ID backfill, so an
+ * owner reconnect never loses a message either. */
+export async function sinceAll(sinceId: number): Promise<Message[]> {
+  return db.select().from(messages).where(gt(messages.id, sinceId)).orderBy(asc(messages.id));
 }

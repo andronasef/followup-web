@@ -38,3 +38,13 @@ export async function findByEmail(email: string): Promise<Responder | null> {
     .limit(1);
   return found ?? null;
 }
+
+// D-06/D-07: the presence read path. Exactly one responder exists in Phase
+// 1 (FOUND-03's assignment columns are nullable/unwritten this phase), so
+// "is anyone online" is just that single row's is_online column -- Phase
+// 3's toggle (ADMIN-04) writes to the same column, this read path stays
+// unchanged.
+export async function getPresence(): Promise<boolean> {
+  const [row] = await db.select({ isOnline: responders.isOnline }).from(responders).limit(1);
+  return row?.isOnline ?? false;
+}
