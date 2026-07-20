@@ -8,7 +8,7 @@
     "start": "next start",
     "migrate": "node scripts/migrate.mjs",
     "translation-spike": "node --experimental-strip-types scripts/translation-spike.mjs",
-    "test": "node --experimental-strip-types --env-file=.env.local --test src/server/repo/*.test.ts src/server/auth/*.test.ts src/server/i18n/*.test.ts src/lib/i18n/*.test.ts"
+    "test": "node --experimental-strip-types --env-file=.env.local --test src/server/repo/*.test.ts src/server/auth/*.test.ts src/server/i18n/*.test.ts src/lib/i18n/*.test.ts src/app/api/chat/messages/*.test.ts src/app/api/admin/messages/*.test.ts"
   },
   "dependencies": {
     "@node-rs/argon2": "2.0.2",
