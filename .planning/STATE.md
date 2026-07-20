@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 01
 current_phase_name: Foundation and the Realtime Spine
 status: executing
-stopped_at: Completed 01-01-PLAN.md
-last_updated: "2026-07-20T02:30:15.041Z"
+stopped_at: Completed 01-02-PLAN.md
+last_updated: "2026-07-20T03:10:00.000Z"
 last_activity: 2026-07-20
-last_activity_desc: Phase 01 execution started
+last_activity_desc: Translation spike go/no-go closed — owner overrode automated Swahili NO-GO, shipping all 10 languages
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 13
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-20)
 ## Current Position
 
 Phase: 01 (Foundation and the Realtime Spine) — EXECUTING
-Plan: 2 of 13
+Plan: 3 of 13
 Status: Ready to execute
-Last activity: 2026-07-20 — Phase 01 execution started
+Last activity: 2026-07-20 — Translation spike go/no-go closed — owner overrode automated Swahili NO-GO, shipping all 10 languages
 
-Progress: [█░░░░░░░░░] 8%
+Progress: [██░░░░░░░░] 15%
 
 ## Performance Metrics
 
@@ -59,6 +59,7 @@ Progress: [█░░░░░░░░░] 8%
 | Plan | Duration | Tasks | Files |
 |------|----------|-------|-------|
 | Phase 01 P01 | 25min | 3 tasks | 25 files |
+| Phase 01 P02 | ~35min | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -74,6 +75,8 @@ Recent decisions affecting current work:
 - [Roadmap]: OPS-07 (off-box backups + restore drill) is mapped to Phase 3 because the requirement only closes when a restore is actually executed; the backup job itself is wired in Phase 1.
 - [Phase ?]: Serial (not uuid) primary keys for conversations/responders — only messages.id is ever exposed as the SSE event id / Last-Event-ID cursor
 - [Phase ?]: docker-compose.yml Postgres host port moved to 5433 (5432 already bound by an unrelated container on this dev machine); .env.example updated to match
+- [01-02]: Translation provider substituted OVHcloud -> NVIDIA NIM (owner-directed; no OVH key available). Config-driven (`TranslationProvider` pattern), so OVH remains addable later without a rewrite.
+- [01-02]: Owner explicitly overrode the automated D-01 NO-GO on Swahili (75%/67% vs 90% bar) — shipping all 10 languages, risk accepted pending real-dev verification.
 
 ### Pending Todos
 
@@ -83,8 +86,9 @@ None yet.
 
 ### Blockers/Concerns
 
-- **Owner prerequisite (blocks Phase 1 spike):** An OVH Public Cloud project and API key must be created manually. The anonymous free tier is 2 req/min per IP and is unusable for the spike.
-- **Open risk (Phase 1):** No OVH model documents Swahili support. If the spike fails on Swahili, the choice is to drop it from the language list or add a second provider for that language only.
+- **Resolved (was: OVH key blocker):** OVH Public Cloud key was never provisioned; owner substituted an NVIDIA NIM API key instead. NVIDIA NIM is now the active translation provider (config-driven, OVH addable later). See 01-02-SUMMARY.md.
+- **Deferred risk (was: open blocker) — Swahili translation quality:** Live spike scored Swahili at 75% overall / 67% on the injection subset against a 90% bar (dropped scripture citation, one truncated response). Owner explicitly overrode the automated NO-GO and chose to ship all 10 languages anyway, accepting the risk. Verify empirically against real dev/staging before treating Swahili as production-ready. See TRANSLATION-SPIKE-GO-NO-GO.md.
+- **Coverage gap:** 8 of 10 languages (all but Swahili, which is fully tested, and Arabic, partially tested) were not live-spike-tested this session due to free-tier API latency. Corpus is complete for all 10; re-run via `npm run translation-spike` at any time.
 - **Unrecoverable failure mode (Phase 3):** VAPID key loss permanently unreachable-ifies every existing visitor. Keys are generated once off-box and backed up — never in a Dockerfile or startup script.
 - **Needs real hardware (Phase 2):** iOS push under an installed PWA is the lowest-confidence area in the research corpus and cannot be simulated.
 - **Verify empirically (Phase 1 first deploy):** Traefik idle timeouts on long-lived SSE connections on the target Coolify version — silent failure mode, community-sourced only.

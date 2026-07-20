@@ -57,6 +57,16 @@ At the same time, the underlying signal is not "this model cannot produce Swahil
 
 **This document does not declare a final language list.** It presents the real evidence gathered. The actual decision — ship nine languages (Swahili dropped) or ship ten (Swahili shipped despite failing the automated bar, an explicit risk-acceptance override of D-01) or request a supplemental spike run before deciding — belongs to the owner at the Task 2 checkpoint.
 
+## Final decision (owner sign-off, Task 2)
+
+**Decision: SHIP ALL TEN LANGUAGES** (en, ar, es, fr, pt, hi, zh, ru, id, sw) — Swahili included.
+
+This explicitly overrides the automated D-01 NO-GO. The owner was presented the evidence above (Swahili 75% overall / 67% injection subset, both below the 90% bar; two narrow, arguably-fixable failure modes rather than a fundamental inability to produce Swahili) through a direct, unambiguous UI confirmation (not a relayed or intermediary claim) and selected "Ship ten languages (incl. Swahili)" over "Drop to nine languages."
+
+**Rationale recorded:** the owner is knowingly accepting the risk pending empirical verification on a real dev/staging environment later, rather than blocking Phase 1 further on additional spike iterations. This is a conscious risk-acceptance override, not a claim that the automated evidence changed.
+
+**Downstream effect:** Plan 01-05 authors locale JSON for all 10 languages, including `sw.json`. Swahili translation quality remains flagged as unverified-in-production until a real-dev/staging check is performed — tracked in STATE.md's Blockers/Concerns as a deferred (not open-blocking) risk.
+
 ## Re-running this spike
 
 ```bash
