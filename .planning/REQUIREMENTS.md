@@ -26,7 +26,7 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 - [ ] **ID-02**: The visitor ID is mirrored to `localStorage` as a recovery copy; the cookie wins on conflict
 - [ ] **ID-03**: A visitor's push endpoint resolves back to their visitor ID, giving a third recovery anchor when cookie and localStorage are both lost
 - [ ] **ID-04**: The signed visitor ID is carried through the PWA `start_url` and the push click URL, so an installed app and a browser tab resolve to the same conversation
-- [ ] **ID-05**: No name, email, phone, or raw IP is ever collected or stored
+- [x] **ID-05**: No name, email, phone, or raw IP is ever collected or stored
 
 ### Language and appearance
 
@@ -100,8 +100,8 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 
 - [ ] **FOUND-01**: A translation spike benchmarks the candidate OVH models on Arabic and Swahili with faith/scriptural reference text and a prompt-injection set, and produces a go/no-go on the final language list
 - [ ] **FOUND-02**: Realtime delivery uses one dedicated Postgres listener plus a bounded pool — connection count is fixed, not proportional to visitor count
-- [ ] **FOUND-03**: The schema carries a `responders` table and nullable assignment columns from day one, so a second responder is additive rather than a migration
-- [ ] **FOUND-04**: The app builds and deploys as a single container on Coolify with migrations applied at start
+- [x] **FOUND-03**: The schema carries a `responders` table and nullable assignment columns from day one, so a second responder is additive rather than a migration
+- [x] **FOUND-04**: The app builds and deploys as a single container on Coolify with migrations applied at start
 
 ---
 

@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 1
+current_phase: 01
 current_phase_name: Foundation and the Realtime Spine
 status: executing
-stopped_at: Phase 1 UI-SPEC approved
-last_updated: "2026-07-20T01:21:21.134Z"
+stopped_at: Completed 01-01-PLAN.md
+last_updated: "2026-07-20T02:30:15.041Z"
 last_activity: 2026-07-20
-last_activity_desc: Roadmap created; 71 v1 requirements mapped across 3 phases
+last_activity_desc: Phase 01 execution started
 progress:
   total_phases: 1
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 13
+  completed_plans: 1
 ---
 
 # Project State
@@ -23,16 +23,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-20)
 
 **Core value:** A person opens the URL and, within seconds, is in a warm conversation with a real human being in their own language — and can always be reached again when that human replies.
-**Current focus:** Phase 1 — Foundation and the Realtime Spine
+**Current focus:** Phase 01 — Foundation and the Realtime Spine
 
 ## Current Position
 
-Phase: 1 of 3 (Foundation and the Realtime Spine)
-Plan: 0 of TBD in current phase
+Phase: 01 (Foundation and the Realtime Spine) — EXECUTING
+Plan: 2 of 13
 Status: Ready to execute
-Last activity: 2026-07-20 — Roadmap created; 71 v1 requirements mapped across 3 phases
+Last activity: 2026-07-20 — Phase 01 execution started
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [█░░░░░░░░░] 8%
 
 ## Performance Metrics
 
@@ -54,6 +54,11 @@ Progress: [░░░░░░░░░░] 0%
 - Trend: —
 
 *Updated after each plan completion*
+**Per-Plan Metrics:**
+
+| Plan | Duration | Tasks | Files |
+|------|----------|-------|-------|
+| Phase 01 P01 | 25min | 3 tasks | 25 files |
 
 ## Accumulated Context
 
@@ -67,6 +72,8 @@ Recent decisions affecting current work:
 - [Roadmap]: `Last-Event-ID` cursor replay is Phase 1 architecture, not Phase 3 hardening — LISTEN/NOTIFY alone cannot satisfy "no message is ever lost".
 - [Roadmap]: The naive chat → push+translation → dashboard split was rejected by both the architecture and pitfalls research passes for the same two reasons.
 - [Roadmap]: OPS-07 (off-box backups + restore drill) is mapped to Phase 3 because the requirement only closes when a restore is actually executed; the backup job itself is wired in Phase 1.
+- [Phase ?]: Serial (not uuid) primary keys for conversations/responders — only messages.id is ever exposed as the SSE event id / Last-Event-ID cursor
+- [Phase ?]: docker-compose.yml Postgres host port moved to 5433 (5432 already bound by an unrelated container on this dev machine); .env.example updated to match
 
 ### Pending Todos
 
@@ -92,6 +99,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-20T00:14:46.314Z
-Stopped at: Phase 1 UI-SPEC approved
-Resume file: .planning/phases/01-foundation-and-the-realtime-spine/01-UI-SPEC.md
+Last session: 2026-07-20T02:30:15.030Z
+Stopped at: Completed 01-01-PLAN.md
+Resume file: None
