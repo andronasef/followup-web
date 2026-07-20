@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 01
 current_phase_name: Foundation and the Realtime Spine
 status: executing
-stopped_at: Completed 01-06-PLAN.md
-last_updated: "2026-07-20T13:40:52.108Z"
+stopped_at: Completed 01-07-PLAN.md
+last_updated: "2026-07-20T14:01:52.138Z"
 last_activity: 2026-07-20
 last_activity_desc: Translation spike go/no-go closed — owner overrode automated Swahili NO-GO, shipping all 10 languages
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 13
-  completed_plans: 6
+  completed_plans: 7
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-20)
 ## Current Position
 
 Phase: 01 (Foundation and the Realtime Spine) — EXECUTING
-Plan: 7 of 13
+Plan: 8 of 13
 Status: Ready to execute
 Last activity: 2026-07-20 — Translation spike go/no-go closed — owner overrode automated Swahili NO-GO, shipping all 10 languages
 
-Progress: [█████░░░░░] 46%
+Progress: [█████░░░░░] 54%
 
 ## Performance Metrics
 
@@ -64,6 +64,7 @@ Progress: [█████░░░░░] 46%
 | Phase 01 P04 | 20min | 2 tasks | 4 files |
 | Phase 01 P05 | 12min | 2 tasks | 17 files |
 | Phase 01 P06 | 25min | 3 tasks | 5 files |
+| Phase 01 P07 | 15min | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -89,6 +90,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 01-06: requireVisitor({allowCookieWrite}) — RSC render never calls cookies().set() (Next.js throws); a new POST /api/visitor/bootstrap Route Handler (not in the plan's file list) is the one legal cookie-issuance path, invoked client-side on first paint by pre-paint.ts.
 - [Phase ?]: 01-06: A no-cookie Server Component render performs zero DB writes — only the bootstrap Route Handler creates the visitor+conversation, avoiding orphaned rows from bots/no-JS/retry page loads.
 - [Phase ?]: 01-06: 'system' appearance has no server-side resolution (Tailwind class-only dark mode, no prefers-color-scheme CSS fallback) — pre-paint.ts resolves it via matchMedia synchronously before first paint on every load.
+- [Phase ?]: 01-07: Added src/server/repo/responders.ts (not in plan's files list) to keep DB access behind a repo module, matching visitors.ts/conversations.ts precedent.
+- [Phase ?]: 01-07: proxy.ts guards /admin/:path* by allowing /admin/setup and /admin/login through inline (not via matcher negative-lookahead), then verifying typ==='owner' against NextRequest's own cookie jar directly -- separate from guard.ts's next/headers-based requireOwner(), since proxy.ts is nodejs-only and cannot use next/headers.
 
 ### Pending Todos
 
@@ -115,6 +118,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-20T13:40:52.093Z
-Stopped at: Completed 01-06-PLAN.md
+Last session: 2026-07-20T14:00:33.620Z
+Stopped at: Completed 01-07-PLAN.md
 Resume file: None
