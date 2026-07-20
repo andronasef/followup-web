@@ -1,8 +1,15 @@
 import assert from "node:assert/strict";
-import { test } from "node:test";
+import { after, test } from "node:test";
 import { sql } from "../db/pool.ts";
 import { getOrCreate as getOrCreateVisitor } from "./visitors.ts";
 import { openFor } from "./conversations.ts";
+
+// node:test runs each file in its own process; without closing the pool the
+// process never exits (open sockets keep the event loop alive) and the
+// whole `node --test` run hangs waiting on this file's child process.
+after(async () => {
+  await sql.end({ timeout: 5 });
+});
 
 async function cleanup(visitorId: string) {
   await sql`delete from conversations where visitor_id = ${visitorId}`;

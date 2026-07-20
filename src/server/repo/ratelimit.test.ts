@@ -1,8 +1,15 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
-import { test } from "node:test";
+import { after, test } from "node:test";
 import { sql } from "../db/pool.ts";
 import { check } from "./ratelimit.ts";
+
+// node:test runs each file in its own process; without closing the pool the
+// process never exits (open sockets keep the event loop alive) and the
+// whole `node --test` run hangs waiting on this file's child process.
+after(async () => {
+  await sql.end({ timeout: 5 });
+});
 
 async function cleanup(key: string) {
   await sql`delete from rate_limit_buckets where key = ${key}`;
