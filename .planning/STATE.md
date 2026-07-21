@@ -4,17 +4,17 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 02
 current_phase_name: reachability-and-language
-current_plan: 2
+current_plan: 3
 status: executing
-stopped_at: Completed 02-01-PLAN.md
-last_updated: "2026-07-21T20:38:22.222Z"
+stopped_at: Completed 02-02-PLAN.md
+last_updated: "2026-07-21T20:49:29.788Z"
 last_activity: 2026-07-21
 last_activity_desc: Phase 02 execution started
 progress:
   total_phases: 2
   completed_phases: 1
   total_plans: 21
-  completed_plans: 14
+  completed_plans: 15
 ---
 
 # Project State
@@ -32,7 +32,7 @@ Phase: 02 (reachability-and-language) — EXECUTING
 Phase: 02 (Reachability and Language) — PLANNED (8 plans across 4 waves, RESEARCH.md/PATTERNS.md/COVERAGE.md/UI-SPEC.md all complete and committed)
 Status: Ready to execute
 Last activity: 2026-07-21 — Phase 02 execution started
-Current Plan: 2
+Current Plan: 3
 Total Plans in Phase: 8
 
 Progress (Phase 1): [██████████] 100%
@@ -76,6 +76,7 @@ Progress (overall, by phase count): [███░░░░░░░░] 33%
 | Phase 01 P12 | 45min | 2 tasks | 3 files |
 | Phase 01 P13 | ~3h | 4 tasks | 5 files |
 | Phase 02 P01 | 35min | 3 tasks | 15 files |
+| Phase 02 P02 | 12min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -125,6 +126,8 @@ Recent decisions affecting current work:
 - [02-CONTEXT]: Gate funnel metrics (shown/prompt-reached/granted by platform) live as an all-time-totals stats row on the existing conversation-list screen, not a new admin screen. An unreachable conversation (revoked/expired push subscription) gets a quiet inline badge, purely informational -- no retry/re-notify action (that's Phase 3 status-control scope).
 - [Phase ?]: [02-01]: docker-compose.yml's db service host port restored as loopback-only (127.0.0.1:5433:5432) -- Plan 01-13 removed it entirely for production security, but that also broke local dev connectivity this plan's own migrate/test steps require.
 - [Phase ?]: [02-01]: gateFunnel.ts/pushSubscriptions.ts use single-statement race-free upserts (COALESCE set-once / onConflictDoUpdate), mirroring ratelimit.ts's established pattern; getVisitorLangFor returns null (not a hardcoded 'en') when the visitor's lang column is null, leaving the fallback decision to the caller (Plan 02-05).
+- [Phase ?]: [02-02]: translate.ts's module-scope openai client apiKey falls back to a non-empty placeholder when the real provider env var isn't loaded (e.g. plain node --test with no --env-file) -- the SDK throws at construction time on a missing/empty apiKey, which would otherwise crash every test before a mock could run; a real key always takes precedence when present.
+- [Phase ?]: [02-02]: translate()'s signature dropped the spike's client parameter -- openaiClient is module-internal (exported only for test mocking), since there is exactly one real client instance in the running app.
 
 ### Pending Todos
 
@@ -153,6 +156,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-21T20:38:22.199Z
-Stopped at: Completed 02-01-PLAN.md
+Last session: 2026-07-21T20:49:29.773Z
+Stopped at: Completed 02-02-PLAN.md
 Resume file: None

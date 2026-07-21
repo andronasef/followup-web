@@ -61,10 +61,10 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 - [ ] **TRANS-04**: Both sides can reveal the original text alongside the translation, per message (F11, F12)
 - [ ] **TRANS-05**: Visitor→owner translation runs asynchronously *after* the message is durably persisted — the translation provider is never a prerequisite for durability
 - [ ] **TRANS-06**: Each `(message, target language)` pair is translated at most once; same-language pairs are skipped entirely
-- [ ] **TRANS-07**: Translation output is validated at runtime (script-block match, length ratio, refusal markers, preservation of emoji/URLs/digits) and fails toward showing the untranslated original — never toward a plausible fabrication
-- [ ] **TRANS-08**: Visitor text cannot inject instructions into the translation prompt; the model translates rather than answers
+- [x] **TRANS-07**: Translation output is validated at runtime (script-block match, length ratio, refusal markers, preservation of emoji/URLs/digits) and fails toward showing the untranslated original — never toward a plausible fabrication
+- [x] **TRANS-08**: Visitor text cannot inject instructions into the translation prompt; the model translates rather than answers
 - [ ] **TRANS-09**: A failed or rate-limited translation still renders the original message; never an empty bubble or an indefinite spinner
-- [ ] **TRANS-10**: Rate-limit responses (429) are handled with backoff and a circuit breaker
+- [x] **TRANS-10**: Rate-limit responses (429) are handled with backoff and a circuit breaker
 
 ### Admin — the owner's surface
 
