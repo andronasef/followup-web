@@ -14,12 +14,31 @@ export type Subscriber = (event: HubEvent) => void;
 
 type Unsubscribe = () => void;
 
+// The subscriber maps MUST be a single process-wide singleton. In Next's
+// standalone build the module graph reachable from instrumentation.ts (which
+// imports db/listener.ts -> this hub, the ONLY caller of publishChat/
+// publishPresence) can be bundled separately from the module graph reachable
+// from the app's SSE route handlers (the ONLY callers of subscribe/
+// subscribeAll). A plain module-level `new Map()` then yields TWO distinct
+// hub instances: the listener publishes into one set of maps while every SSE
+// connection is registered on the other, so live events are never delivered
+// even though DB-backed Last-Event-ID backfill and the heartbeat timer both
+// keep working (they don't depend on the hub). Pinning the state on globalThis
+// makes both graphs share one set of maps -- the same singleton discipline
+// db/listener.ts already applies to its LISTEN connection.
+const globalForHub = globalThis as unknown as {
+  __onechatHubPerConversation?: Map<number, Set<Subscriber>>;
+  __onechatHubFirehose?: Set<Subscriber>;
+};
+
 // Per-conversation scope — visitor-side SSE routes subscribe here.
-const perConversation = new Map<number, Set<Subscriber>>();
+const perConversation: Map<number, Set<Subscriber>> =
+  globalForHub.__onechatHubPerConversation ?? (globalForHub.__onechatHubPerConversation = new Map());
 
 // Admin firehose scope (D-13) — the owner side subscribes to everything,
 // regardless of conversation.
-const firehose = new Set<Subscriber>();
+const firehose: Set<Subscriber> =
+  globalForHub.__onechatHubFirehose ?? (globalForHub.__onechatHubFirehose = new Set());
 
 /** Subscribe to one conversation's events. Returns an unsubscribe handle. */
 export function subscribe(conversationId: number, subscriber: Subscriber): Unsubscribe {
