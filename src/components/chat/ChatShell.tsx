@@ -114,7 +114,7 @@ export function ChatShell({ initialLang, initialAppearance, initialMessages }: C
   }
 
   return (
-    <Gate>
+    <Gate lang={lang}>
       <div className="flex min-h-dvh flex-col bg-background">
         <Header
           lang={lang}
