@@ -49,12 +49,33 @@ function prePaintAndMirror() {
         // server's plain defaults stand; nothing to correct.
       }
 
+      // ID-04: a fresh, cookie-less storage context (the exact shape of a
+      // newly-installed iOS Home Screen app relaunch) may arrive with a
+      // `?vid=` URL param -- a token IosWalkthrough.tsx obtained from
+      // GET /api/visitor/vid-token and wrote onto the current page before
+      // telling the visitor to relaunch. Passed through to bootstrap so
+      // requireVisitor({vidParam}) resolves to the SAME existing visitor
+      // id instead of minting a new one, synchronously, on this very first
+      // bootstrap call -- no race (see visitor.ts's
+      // assumption_delta_decision).
+      var vid = "";
+      try {
+        vid = new URLSearchParams(window.location.search).get("vid") || "";
+      } catch (e) {
+        // URLSearchParams unavailable -- treated as no vid, same as absent.
+      }
+
       // Make the correction durable: ask the one legal cookie-issuing
       // Route Handler to create + sign + set it for the next request.
       // Fire-and-forget -- a failed bootstrap just means the next page
       // load retries from the same no-cookie state.
       try {
-        fetch("/api/visitor/bootstrap", { method: "POST", keepalive: true });
+        fetch("/api/visitor/bootstrap", {
+          method: "POST",
+          keepalive: true,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ vid: vid }),
+        });
       } catch (e) {
         // Best-effort only.
       }
