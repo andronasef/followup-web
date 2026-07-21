@@ -92,7 +92,7 @@ Plans:
   5. A conversation whose subscription has been revoked or expired shows as unreachable to the owner instead of silently swallowing replies, and no visitor is ever pushed for a message they have already acknowledged receiving.
   6. The owner can see how many people were shown the gate, how many reached the native prompt, and how many granted — split by platform.
 
-**Plans**: 6/8 plans executed
+**Plans**: 7/8 plans executed
 
 Plans:
 **Wave 1**
@@ -113,7 +113,7 @@ Plans:
 **Wave 4** *(blocked on Wave 3 completion)*
 
 - [ ] 02-07-PLAN.md — Push gate UI, iOS walkthrough, service worker handlers, PWA icons (includes a real-hardware human-verify checkpoint)
-- [ ] 02-08-PLAN.md — Translation UI: composer draft-preview, show-original both sides, admin gate-funnel stats + unreachable badge
+- [x] 02-08-PLAN.md — Translation UI: composer draft-preview, show-original both sides, admin gate-funnel stats + unreachable badge
 
 **UI hint**: yes
 
@@ -148,7 +148,7 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation and the Realtime Spine | 13/13 | Complete | 2026-07-21 |
-| 2. Reachability and Language | 6/8 | In Progress|  |
+| 2. Reachability and Language | 7/8 | In Progress|  |
 | 3. Owner Surface, Hardening, Ship | 0/TBD | Not started | - |
 
 ## Requirement Coverage

@@ -4,17 +4,17 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 02
 current_phase_name: reachability-and-language
-current_plan: 7
+current_plan: 8
 status: executing
-stopped_at: Completed 02-06-PLAN.md
-last_updated: "2026-07-21T23:05:16.277Z"
+stopped_at: Completed 02-08-PLAN.md
+last_updated: "2026-07-21T23:44:02.012Z"
 last_activity: 2026-07-21
 last_activity_desc: Phase 02 execution started
 progress:
   total_phases: 2
   completed_phases: 1
   total_plans: 21
-  completed_plans: 19
+  completed_plans: 20
 ---
 
 # Project State
@@ -32,7 +32,7 @@ Phase: 02 (reachability-and-language) — EXECUTING
 Phase: 02 (Reachability and Language) — PLANNED (8 plans across 4 waves, RESEARCH.md/PATTERNS.md/COVERAGE.md/UI-SPEC.md all complete and committed)
 Status: Ready to execute
 Last activity: 2026-07-21 — Phase 02 execution started
-Current Plan: 7
+Current Plan: 8
 Total Plans in Phase: 8
 
 Progress (Phase 1): [██████████] 100%
@@ -81,6 +81,7 @@ Progress (overall, by phase count): [███░░░░░░░░] 33%
 | Phase 02 P04 | 35min | 3 tasks | 13 files |
 | Phase 02 P05 | 30min | 3 tasks | 14 files |
 | Phase 02 P06 | 35min | 3 tasks | 15 files |
+| Phase 02 P08 | 35min | 3 tasks | 14 files |
 
 ## Accumulated Context
 
@@ -142,6 +143,8 @@ Recent decisions affecting current work:
 - [Phase ?]: [02-06]: src/server/push/recover.ts added (not in plan's file list) to keep ID-03's handleRecover next/headers-free and directly node:test-able, mirroring ack.ts/route.ts's split.
 - [Phase ?]: [02-06]: conversations.getVisitorAndLangFor added -- one query resolving both visitorId+lang for the admin push trigger, also turning an unknown conversationId into a clean 400 instead of an unhandled FK error.
 - [Phase ?]: [02-06]: requireVisitor()'s next/headers import makes it unimportable under plain node:test (confirmed empirically); its vidParam behavior is verified via source inspection plus real DB-backed tests of its extractable primitives (verifySession/getOrCreate reuse) and handleRecover, plus a live scripted bootstrap/vid-token round trip against a running server.
+- [Phase ?]: [02-08]: MessageBubble.tsx's two mirrored translation-reveal directions (visitor: primary=body/reveal=translation gated on sender==='owner'; admin Thread.tsx: primary=translation??body/reveal=body, both senders) share one component via a new translationPrimary prop rather than a fork.
+- [Phase ?]: [02-08]: MessageList.tsx (not in plan's files_modified) additively extended to thread showOriginalLabel/hideOriginalLabel from ChatShell down to MessageBubble -- required for the visitor-side toggle to receive locale-driven copy at all.
 
 ### Pending Todos
 
@@ -170,6 +173,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-21T23:05:16.266Z
-Stopped at: Completed 02-06-PLAN.md
+Last session: 2026-07-21T23:44:02.001Z
+Stopped at: Completed 02-08-PLAN.md
 Resume file: None

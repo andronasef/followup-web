@@ -76,7 +76,7 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 - [ ] **ADMIN-06**: Inbox items show the anonymous label, visitor language, last-message preview in the owner's language, time, status, faith-decision flag, and push reachability (F20)
 - [ ] **ADMIN-07**: Owner can filter by All / Decisions / New / In progress / Closed (F20)
 - [ ] **ADMIN-08**: Owner can search across conversations (F20)
-- [ ] **ADMIN-09**: Conversation view shows each message translated plus its original on demand (F21)
+- [x] **ADMIN-09**: Conversation view shows each message translated plus its original on demand (F21)
 - [ ] **ADMIN-10**: Owner can set conversation status — New / In progress / Closed (F21)
 - [ ] **ADMIN-11**: Owner can manually flag or unflag a conversation as a faith decision (F22)
 - [ ] **ADMIN-12**: Overview shows counts of new conversations, decisions awaiting follow-up, and unanswered messages (F22)
