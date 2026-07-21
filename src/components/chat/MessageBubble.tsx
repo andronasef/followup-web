@@ -38,8 +38,14 @@ export interface MessageBubbleProps {
 
 function formatTime(value: ChatMessageLike["createdAt"]): string {
   const date = value instanceof Date ? value : new Date(value);
-  const hh = formatDigits(date.getHours());
-  const mm = formatDigits(date.getMinutes()).padStart(2, "0");
+  // UTC, not local-time getters: this renders server-side (initial HTML,
+  // in the container's timezone) and again client-side during hydration
+  // (in the visitor's own browser timezone) -- local getHours()/getMinutes()
+  // produced a different string in each place, a hydration text mismatch
+  // (React error #418) that broke React's reconciliation for every message
+  // after it, masquerading as "SSE messages never live-update".
+  const hh = formatDigits(date.getUTCHours());
+  const mm = formatDigits(date.getUTCMinutes()).padStart(2, "0");
   return `${hh}:${mm}`;
 }
 
