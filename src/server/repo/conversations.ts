@@ -47,6 +47,14 @@ export interface ConversationPreview {
   lastMessageBody: string | null;
   lastMessageSender: MessageSender | null;
   lastMessageAt: Date;
+  /**
+   * OPS-11/D-18: true only for a visitor who was once granted push
+   * (`push_gate_funnel.granted_at is not null`) and now has ZERO live
+   * `push_subscriptions` rows -- distinct from "never granted push at all",
+   * which is NOT unreachable, just never-subscribed (RESEARCH.md
+   * Architecture Pattern 5).
+   */
+  unreachable: boolean;
 }
 
 /**
@@ -66,12 +74,19 @@ export async function listWithPreview(): Promise<ConversationPreview[]> {
     last_message_body: string | null;
     last_message_sender: MessageSender | null;
     last_message_at: Date;
+    unreachable: boolean;
   }>(rawSql`
     select
       c.id as id,
       lm.body as last_message_body,
       lm.sender as last_message_sender,
-      coalesce(lm.created_at, c.created_at) as last_message_at
+      coalesce(lm.created_at, c.created_at) as last_message_at,
+      (
+        gf.granted_at is not null
+        and not exists (
+          select 1 from push_subscriptions ps where ps.visitor_id = c.visitor_id
+        )
+      ) as unreachable
     from conversations c
     left join lateral (
       select body, sender, created_at
@@ -80,6 +95,7 @@ export async function listWithPreview(): Promise<ConversationPreview[]> {
       order by messages.id desc
       limit 1
     ) lm on true
+    left join push_gate_funnel gf on gf.visitor_id = c.visitor_id
     order by last_message_at desc
   `);
 
@@ -88,6 +104,7 @@ export async function listWithPreview(): Promise<ConversationPreview[]> {
     lastMessageBody: row.last_message_body,
     lastMessageSender: row.last_message_sender,
     lastMessageAt: row.last_message_at,
+    unreachable: row.unreachable,
   }));
 }
 

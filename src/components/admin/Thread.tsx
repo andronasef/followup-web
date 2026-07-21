@@ -1,11 +1,14 @@
 "use client";
 
-// ADMIN-03/D-13: the owner's thread view. Reuses
+// ADMIN-03/D-13/ADMIN-09: the owner's thread view. Reuses
 // src/components/chat/MessageBubble.tsx for individual message rendering
 // (bidi isolation, ASCII-digit timestamps) instead of duplicating that
 // logic -- T-01-33's mitigation: no dangerouslySetInnerHTML is introduced on
-// the admin side either. No translation UI exists yet (ADMIN-09 is Phase
-// 2) -- messages render as their original stored text only.
+// the admin side either. Plan 02-08: `translation` renders as the PRIMARY
+// bubble text for EVERY message (both senders -- MessageBubble's
+// `translationPrimary` prop), with a "See original"/"Hide original" toggle
+// revealing the stored `body` whenever a genuinely distinct translation
+// exists (TRANS-06).
 //
 // D-13: /api/admin/stream is a firehose across every conversation -- this
 // component's own job is to filter incoming "message" events down to the
@@ -24,6 +27,7 @@ export interface ThreadMessage {
   body: string;
   clientMsgId: string | null;
   createdAt: string | number | Date;
+  translation: string | null;
 }
 
 export interface ThreadProps {
@@ -38,6 +42,7 @@ interface StreamMessagePayload {
   body: string;
   clientMsgId: string | null;
   createdAt: string;
+  translation: string | null;
 }
 
 export function Thread({ conversationId, initialMessages }: ThreadProps) {
@@ -92,7 +97,13 @@ export function Thread({ conversationId, initialMessages }: ThreadProps) {
       </header>
       <div ref={containerRef} className="flex flex-1 flex-col gap-2 overflow-y-auto px-4 py-2">
         {messages.map((message) => (
-          <MessageBubble key={message.id} message={message} />
+          <MessageBubble
+            key={message.id}
+            message={message}
+            translationPrimary
+            showOriginalLabel="See original"
+            hideOriginalLabel="Hide original"
+          />
         ))}
       </div>
       <ReplyBox conversationId={conversationId} onSent={handleReplySent} />

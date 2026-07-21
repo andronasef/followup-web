@@ -34,6 +34,7 @@ export default async function AdminConversationPage({ params }: AdminConversatio
   const messages: ThreadMessage[] = rows.map((row) => ({
     ...row,
     sender: row.sender as ThreadMessage["sender"],
+    translation: row.translation,
   }));
 
   return <Thread conversationId={conversationId} initialMessages={messages} />;

@@ -6,7 +6,9 @@
 import { redirect } from "next/navigation";
 import { requireOwner } from "@/server/auth/guard";
 import { listWithPreview } from "@/server/repo/conversations";
+import { statsByPlatform } from "@/server/repo/gateFunnel";
 import { ConversationRow } from "@/components/admin/ConversationRow";
+import { GateFunnelStats } from "@/components/admin/GateFunnelStats";
 
 export const dynamic = "force-dynamic";
 
@@ -16,13 +18,15 @@ export default async function AdminConversationListPage() {
     redirect("/admin/login");
   }
 
-  const conversations = await listWithPreview();
+  const [conversations, funnelStats] = await Promise.all([listWithPreview(), statsByPlatform()]);
 
   return (
     <main className="flex min-h-dvh flex-col bg-background">
       <header className="px-4 py-8">
         <h1 className="text-[20px] leading-[1.3] font-semibold text-foreground">Conversations</h1>
       </header>
+
+      <GateFunnelStats stats={funnelStats} />
 
       {conversations.length === 0 ? (
         // UI-SPEC.md Copywriting Contract's exact locked empty-state heading
@@ -41,6 +45,7 @@ export default async function AdminConversationListPage() {
                 id={conversation.id}
                 lastMessageBody={conversation.lastMessageBody}
                 lastMessageAt={conversation.lastMessageAt}
+                unreachable={conversation.unreachable}
               />
             </li>
           ))}
