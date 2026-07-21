@@ -10,18 +10,27 @@
  * Statically imports all 10 locale files (they are small, and this keeps
  * every locale in one client bundle — no per-language code-splitting
  * complexity for a JSON-only i18n system).
+ *
+ * Import attributes (`with { type: "json" }`) added in Plan 02-04: plain
+ * Node's ESM loader (used by every `node --experimental-strip-types --test`
+ * invocation in this repo) requires an explicit `type: "json"` import
+ * attribute on a `.json` specifier since Node 22 — without it, importing
+ * this module outside Next's bundler throws `ERR_IMPORT_ATTRIBUTE_MISSING`.
+ * Next's bundler and TypeScript 6's checker both already support this
+ * standard ESM syntax, so this is additive, not a behavior change for the
+ * existing client components that import `getStrings`.
  */
 import type { SupportedLanguage } from "@/server/i18n/detect";
-import en from "./locales/en.json";
-import ar from "./locales/ar.json";
-import es from "./locales/es.json";
-import fr from "./locales/fr.json";
-import pt from "./locales/pt.json";
-import hi from "./locales/hi.json";
-import zh from "./locales/zh.json";
-import ru from "./locales/ru.json";
-import id from "./locales/id.json";
-import sw from "./locales/sw.json";
+import en from "./locales/en.json" with { type: "json" };
+import ar from "./locales/ar.json" with { type: "json" };
+import es from "./locales/es.json" with { type: "json" };
+import fr from "./locales/fr.json" with { type: "json" };
+import pt from "./locales/pt.json" with { type: "json" };
+import hi from "./locales/hi.json" with { type: "json" };
+import zh from "./locales/zh.json" with { type: "json" };
+import ru from "./locales/ru.json" with { type: "json" };
+import id from "./locales/id.json" with { type: "json" };
+import sw from "./locales/sw.json" with { type: "json" };
 
 export type Strings = typeof en;
 
