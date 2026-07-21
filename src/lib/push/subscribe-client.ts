@@ -14,11 +14,16 @@
  * `Uint8Array`, not the raw URL-safe base64 string
  * `NEXT_PUBLIC_VAPID_PUBLIC_KEY` is stored as.
  */
-export function urlBase64ToUint8Array(base64: string): Uint8Array {
+export function urlBase64ToUint8Array(base64: string): Uint8Array<ArrayBuffer> {
   const padding = "=".repeat((4 - (base64.length % 4)) % 4);
   const base64Safe = (base64 + padding).replace(/-/g, "+").replace(/_/g, "/");
   const rawData = atob(base64Safe);
-  const outputArray = new Uint8Array(rawData.length);
+  // Explicit ArrayBuffer generic -- `applicationServerKey` requires
+  // `BufferSource` (`ArrayBufferView<ArrayBuffer>`), which a bare
+  // `Uint8Array` return type no longer satisfies under recent TS DOM lib
+  // typings (its default generic widened to `ArrayBufferLike`, which also
+  // covers `SharedArrayBuffer`).
+  const outputArray: Uint8Array<ArrayBuffer> = new Uint8Array(rawData.length);
   for (let i = 0; i < rawData.length; i++) {
     outputArray[i] = rawData.charCodeAt(i);
   }
