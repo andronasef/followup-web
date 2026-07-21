@@ -24,5 +24,15 @@
   "pushGateConfirming": "正在确认…",
   "pushGateDeclinedHeading": "没有通知，我将无法再联系到你",
   "pushGateDeclinedBody": "如果你现在离开，仍然可以稍后打开这个聊天，但我回复时将无法通知你。你仍然可以选择同意。",
-  "pushGateRetryCta": "重试"
+  "pushGateRetryCta": "重试",
+  "iosWalkthroughHeading": "请先将 One Chat 添加到主屏幕",
+  "iosWalkthroughIntro": "iPhone 只允许已添加到主屏幕的应用发送通知。这只需要几秒钟。",
+  "iosWalkthroughStep1": "点击分享图标",
+  "iosWalkthroughStep2": "点击“添加到主屏幕”",
+  "iosWalkthroughStep3": "从主屏幕打开 One Chat 以继续",
+  "iosWalkthroughCta": "我已添加",
+  "showOriginalLabel": "查看原文",
+  "hideOriginalLabel": "隐藏原文",
+  "pushNotificationTitle": "你有一条新回复",
+  "pushNotificationBody": "点击打开对话。"
 }

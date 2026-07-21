@@ -24,5 +24,15 @@
   "pushGateConfirming": "جارٍ التأكيد…",
   "pushGateDeclinedHeading": "بدون الإشعارات، لن أتمكن من الوصول إليك مجددًا",
   "pushGateDeclinedBody": "إذا غادرت الآن، يمكنك فتح هذه المحادثة لاحقًا، لكنني لن أتمكن من إعلامك عندما أرد. ما زال بإمكانك الموافقة.",
-  "pushGateRetryCta": "حاول مرة أخرى"
+  "pushGateRetryCta": "حاول مرة أخرى",
+  "iosWalkthroughHeading": "أضف One Chat إلى شاشتك الرئيسية أولاً",
+  "iosWalkthroughIntro": "لا يسمح آيفون بالإشعارات إلا للتطبيقات المضافة إلى الشاشة الرئيسية. يستغرق الأمر بضع ثوانٍ فقط.",
+  "iosWalkthroughStep1": "اضغط على أيقونة المشاركة",
+  "iosWalkthroughStep2": "اضغط على \"أضف إلى الشاشة الرئيسية\"",
+  "iosWalkthroughStep3": "افتح One Chat من شاشتك الرئيسية للمتابعة",
+  "iosWalkthroughCta": "لقد أضفتُه",
+  "showOriginalLabel": "عرض النص الأصلي",
+  "hideOriginalLabel": "إخفاء النص الأصلي",
+  "pushNotificationTitle": "لديك رد جديد",
+  "pushNotificationBody": "اضغط لفتح المحادثة."
 }

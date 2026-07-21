@@ -24,5 +24,15 @@
   "pushGateConfirming": "Confirming…",
   "pushGateDeclinedHeading": "Without notifications, I can't reach you again",
   "pushGateDeclinedBody": "If you leave now, you can still open this chat later, but I won't be able to let you know when I've replied. You can still say yes.",
-  "pushGateRetryCta": "Try again"
+  "pushGateRetryCta": "Try again",
+  "iosWalkthroughHeading": "Add One Chat to your Home Screen first",
+  "iosWalkthroughIntro": "iPhone only allows notifications for apps added to your Home Screen. It takes a few seconds.",
+  "iosWalkthroughStep1": "Tap the Share icon",
+  "iosWalkthroughStep2": "Tap \"Add to Home Screen\"",
+  "iosWalkthroughStep3": "Open One Chat from your Home Screen to continue",
+  "iosWalkthroughCta": "I've added it",
+  "showOriginalLabel": "See original",
+  "hideOriginalLabel": "Hide original",
+  "pushNotificationTitle": "You have a new reply",
+  "pushNotificationBody": "Tap to open the conversation."
 }

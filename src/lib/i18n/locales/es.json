@@ -24,5 +24,15 @@
   "pushGateConfirming": "Confirmando…",
   "pushGateDeclinedHeading": "Sin notificaciones, no podré contactarte de nuevo",
   "pushGateDeclinedBody": "Si te vas ahora, podrás abrir este chat más tarde, pero no podré avisarte cuando responda. Aún puedes decir que sí.",
-  "pushGateRetryCta": "Intentar de nuevo"
+  "pushGateRetryCta": "Intentar de nuevo",
+  "iosWalkthroughHeading": "Primero, agrega One Chat a tu pantalla de inicio",
+  "iosWalkthroughIntro": "El iPhone solo permite notificaciones para apps agregadas a la pantalla de inicio. Toma solo unos segundos.",
+  "iosWalkthroughStep1": "Toca el ícono de compartir",
+  "iosWalkthroughStep2": "Toca \"Agregar a pantalla de inicio\"",
+  "iosWalkthroughStep3": "Abre One Chat desde tu pantalla de inicio para continuar",
+  "iosWalkthroughCta": "Ya lo agregué",
+  "showOriginalLabel": "Ver original",
+  "hideOriginalLabel": "Ocultar original",
+  "pushNotificationTitle": "Tienes una nueva respuesta",
+  "pushNotificationBody": "Toca para abrir la conversación."
 }

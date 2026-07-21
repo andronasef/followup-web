@@ -24,5 +24,15 @@
   "pushGateConfirming": "Mengonfirmasi…",
   "pushGateDeclinedHeading": "Tanpa notifikasi, saya tidak bisa menghubungi Anda lagi",
   "pushGateDeclinedBody": "Jika Anda pergi sekarang, Anda tetap bisa membuka obrolan ini nanti, tetapi saya tidak akan bisa memberi tahu Anda saat saya membalas. Anda masih bisa mengatakan ya.",
-  "pushGateRetryCta": "Coba lagi"
+  "pushGateRetryCta": "Coba lagi",
+  "iosWalkthroughHeading": "Tambahkan One Chat ke Layar Utama terlebih dahulu",
+  "iosWalkthroughIntro": "iPhone hanya mengizinkan notifikasi untuk aplikasi yang ditambahkan ke Layar Utama. Hanya perlu beberapa detik.",
+  "iosWalkthroughStep1": "Ketuk ikon Bagikan",
+  "iosWalkthroughStep2": "Ketuk \"Tambah ke Layar Utama\"",
+  "iosWalkthroughStep3": "Buka One Chat dari Layar Utama Anda untuk melanjutkan",
+  "iosWalkthroughCta": "Sudah saya tambahkan",
+  "showOriginalLabel": "Lihat teks asli",
+  "hideOriginalLabel": "Sembunyikan teks asli",
+  "pushNotificationTitle": "Anda mendapat balasan baru",
+  "pushNotificationBody": "Ketuk untuk membuka percakapan."
 }

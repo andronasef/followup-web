@@ -24,5 +24,15 @@
   "pushGateConfirming": "Подтверждение…",
   "pushGateDeclinedHeading": "Без уведомлений я не смогу связаться с вами снова",
   "pushGateDeclinedBody": "Если вы уйдёте сейчас, вы всё ещё сможете открыть этот чат позже, но я не смогу сообщить вам, когда отвечу. Вы всё ещё можете согласиться.",
-  "pushGateRetryCta": "Попробовать снова"
+  "pushGateRetryCta": "Попробовать снова",
+  "iosWalkthroughHeading": "Сначала добавьте One Chat на главный экран",
+  "iosWalkthroughIntro": "iPhone разрешает уведомления только для приложений, добавленных на главный экран. Это займёт всего несколько секунд.",
+  "iosWalkthroughStep1": "Нажмите на значок «Поделиться»",
+  "iosWalkthroughStep2": "Нажмите «На экран «Домой»»",
+  "iosWalkthroughStep3": "Откройте One Chat с главного экрана, чтобы продолжить",
+  "iosWalkthroughCta": "Я добавил(а)",
+  "showOriginalLabel": "Показать оригинал",
+  "hideOriginalLabel": "Скрыть оригинал",
+  "pushNotificationTitle": "У вас новый ответ",
+  "pushNotificationBody": "Нажмите, чтобы открыть беседу."
 }

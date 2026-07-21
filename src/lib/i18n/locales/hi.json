@@ -24,5 +24,15 @@
   "pushGateConfirming": "पुष्टि हो रही है…",
   "pushGateDeclinedHeading": "सूचनाओं के बिना, मैं आप तक दोबारा नहीं पहुँच पाऊँगा",
   "pushGateDeclinedBody": "अगर आप अभी चले जाते हैं, तो आप बाद में भी यह चैट खोल सकते हैं, लेकिन जब मैं जवाब दूँगा तो मैं आपको बता नहीं पाऊँगा। आप अभी भी हाँ कह सकते हैं।",
-  "pushGateRetryCta": "फिर से कोशिश करें"
+  "pushGateRetryCta": "फिर से कोशिश करें",
+  "iosWalkthroughHeading": "पहले One Chat को अपनी होम स्क्रीन पर जोड़ें",
+  "iosWalkthroughIntro": "iPhone केवल उन्हीं ऐप्स के लिए सूचनाओं की अनुमति देता है जो होम स्क्रीन पर जोड़े गए हों। इसमें बस कुछ सेकंड लगते हैं।",
+  "iosWalkthroughStep1": "शेयर आइकन पर टैप करें",
+  "iosWalkthroughStep2": "\"होम स्क्रीन में जोड़ें\" पर टैप करें",
+  "iosWalkthroughStep3": "जारी रखने के लिए अपनी होम स्क्रीन से One Chat खोलें",
+  "iosWalkthroughCta": "मैंने जोड़ लिया है",
+  "showOriginalLabel": "मूल देखें",
+  "hideOriginalLabel": "मूल छिपाएँ",
+  "pushNotificationTitle": "आपके लिए एक नया जवाब है",
+  "pushNotificationBody": "बातचीत खोलने के लिए टैप करें।"
 }

@@ -24,5 +24,15 @@
   "pushGateConfirming": "Inathibitisha…",
   "pushGateDeclinedHeading": "Bila arifa, sitaweza kukufikia tena",
   "pushGateDeclinedBody": "Ukiondoka sasa, bado unaweza kufungua mazungumzo haya baadaye, lakini sitaweza kukujulisha nikishajibu. Bado unaweza kusema ndiyo.",
-  "pushGateRetryCta": "Jaribu tena"
+  "pushGateRetryCta": "Jaribu tena",
+  "iosWalkthroughHeading": "Ongeza One Chat kwenye Skrini ya Nyumbani kwanza",
+  "iosWalkthroughIntro": "iPhone huruhusu arifa tu kwa programu zilizoongezwa kwenye Skrini ya Nyumbani. Inachukua sekunde chache tu.",
+  "iosWalkthroughStep1": "Gusa aikoni ya Shiriki",
+  "iosWalkthroughStep2": "Gusa \"Ongeza kwenye Skrini ya Nyumbani\"",
+  "iosWalkthroughStep3": "Fungua One Chat kutoka Skrini yako ya Nyumbani ili kuendelea",
+  "iosWalkthroughCta": "Nimeshaongeza",
+  "showOriginalLabel": "Ona asili",
+  "hideOriginalLabel": "Ficha asili",
+  "pushNotificationTitle": "Una jibu jipya",
+  "pushNotificationBody": "Gusa ili kufungua mazungumzo."
 }
