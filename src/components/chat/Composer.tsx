@@ -18,6 +18,17 @@ export interface ComposerProps {
   lang: SupportedLanguage;
   /** Fires once a bubble durably settles to 'sent', carrying the server-confirmed id/createdAt -- lets a caller merge it into the real transcript. Optional so this component is fully self-contained without it (Plan 01-12 wires this up). */
   onSent?: (result: { clientMsgId: string; id: number; createdAt: string }) => void;
+  /**
+   * clientMsgIds already visible in the durable, SSE-confirmed transcript a
+   * parent renders elsewhere (e.g. MessageList). Once a locally-optimistic
+   * bubble's clientMsgId appears here, it's hidden from this component's own
+   * render -- the same message would otherwise appear twice: once as
+   * Composer's own bubble, once as the durable row the visitor's own SSE
+   * connection echoes back (Plan 01-12's page composition). Optional/absent
+   * by default so Composer keeps rendering every bubble it owns when used
+   * standalone, without a parent merging into a shared transcript.
+   */
+  confirmedClientMsgIds?: ReadonlySet<string>;
 }
 
 // Body role: 16px/1.5 -- one line is 24px. Capped at 5 lines (UI-SPEC.md
@@ -26,7 +37,7 @@ const LINE_HEIGHT_PX = 24;
 const MAX_LINES = 5;
 const MAX_TEXTAREA_HEIGHT_PX = LINE_HEIGHT_PX * MAX_LINES;
 
-export function Composer({ lang, onSent }: ComposerProps) {
+export function Composer({ lang, onSent, confirmedClientMsgIds }: ComposerProps) {
   const strings = getStrings(lang);
   const [text, setText] = useState("");
   const [bubbles, setBubbles] = useState<OptimisticBubble[]>([]);
@@ -92,11 +103,18 @@ export function Composer({ lang, onSent }: ComposerProps) {
 
   const canSend = guardSubmit(text) !== null;
 
+  // Hide any bubble whose clientMsgId a parent has confirmed already
+  // appears in the durable, SSE-backed transcript (Plan 01-12) -- prevents
+  // a just-sent message from rendering twice.
+  const visibleBubbles = confirmedClientMsgIds
+    ? bubbles.filter((bubble) => !confirmedClientMsgIds.has(bubble.clientMsgId))
+    : bubbles;
+
   return (
     <div className="border-t border-border bg-muted pb-[env(safe-area-inset-bottom)]">
-      {bubbles.length > 0 && (
+      {visibleBubbles.length > 0 && (
         <div className="flex flex-col gap-2 px-4 pt-2">
-          {bubbles.map((bubble) => (
+          {visibleBubbles.map((bubble) => (
             <MessageBubble
               key={bubble.clientMsgId}
               message={{
