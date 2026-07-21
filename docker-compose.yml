@@ -22,9 +22,13 @@ services:
     image: postgres:17
     restart: unless-stopped
     environment:
-      POSTGRES_DB: onechat
-      POSTGRES_USER: onechat
-      POSTGRES_PASSWORD: onechat
+      # Parameterized (not hardcoded) so a real password can be supplied in
+      # production via Dokploy's Compose environment-variable editor -- the
+      # local-dev defaults below are intentionally weak/well-known, never
+      # meant to survive past a laptop.
+      POSTGRES_DB: ${POSTGRES_DB:-onechat}
+      POSTGRES_USER: ${POSTGRES_USER:-onechat}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-onechat}
     # OPS-09: never let pastoral/faith message text reach container logs.
     # log_statement=none disables all statement-text logging outright.
     # log_min_duration_statement=-1 (disabled, the Postgres default) is set
@@ -35,15 +39,16 @@ services:
     # equivalent Coolify-side config: its managed Postgres resource accepts
     # the same `-c` flags via its "Custom Postgres Configuration" field.
     command: ["postgres", "-c", "log_statement=none", "-c", "log_min_duration_statement=-1"]
-    ports:
-      # Host port 5433 to avoid colliding with any other local Postgres on
-      # the default 5432 (5432 is already taken on this dev machine).
-      - "5433:5432"
+    # No `ports:` mapping here on purpose -- publishing 5432 to the host
+    # would expose Postgres directly on the server's public IP in a real
+    # deployment (Dokploy/production). `app` reaches it over the compose
+    # network by service name (db:5432) below; local dev that needs a host
+    # port for e.g. a GUI client can add one back temporarily.
     volumes:
       # Named volume — OPS-06 verifies data survives a deliberate restart.
       - onechat_db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U onechat -d onechat"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-onechat} -d ${POSTGRES_DB:-onechat}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -63,7 +68,11 @@ services:
         condition: service_healthy
     environment:
       # Service-name DNS inside the compose network, not localhost:5433.
-      DATABASE_URL: postgres://onechat:onechat@db:5432/onechat
+      # Must be built from the same POSTGRES_USER/PASSWORD/DB vars as the
+      # `db` service above -- if you override those in Dokploy, override
+      # this to match (Dokploy's ${VAR} interpolation doesn't compose these
+      # sub-values automatically).
+      DATABASE_URL: ${DATABASE_URL:-postgres://onechat:onechat@db:5432/onechat}
       SESSION_SECRET: ${SESSION_SECRET:-local-dev-session-secret-not-for-prod}
       SETUP_TOKEN: ${SETUP_TOKEN:-local-dev-setup-token}
       IP_HASH_SECRET: ${IP_HASH_SECRET:-local-dev-ip-hash-secret}
