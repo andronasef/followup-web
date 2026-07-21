@@ -80,6 +80,9 @@ export const messages = pgTable(
     // Send idempotency — lets a retried POST from the composer be a no-op.
     clientMsgId: text("client_msg_id"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().default(sql`now()`),
+    // PUSH-08: durable ACK marker set once a push-woken client confirms
+    // receipt of this message. Starts null; never defaulted.
+    deliveredAt: timestamp("delivered_at", { withTimezone: true }),
   },
   (table) => [check("messages_sender_check", sql`${table.sender} in ('visitor', 'owner')`)],
 );
@@ -99,15 +102,45 @@ export const pushSubscriptions = pgTable("push_subscriptions", {
 });
 
 // Schema only this phase — Phase 2 writes here (translation worker).
-export const messageTranslations = pgTable("message_translations", {
-  id: serial("id").primaryKey(),
-  messageId: bigint("message_id", { mode: "number" })
-    .notNull()
-    .references(() => messages.id),
-  targetLang: text("target_lang").notNull(),
-  translatedText: text("translated_text"),
-  status: text("status").notNull().default("pending"),
-});
+export const messageTranslations = pgTable(
+  "message_translations",
+  {
+    id: serial("id").primaryKey(),
+    messageId: bigint("message_id", { mode: "number" })
+      .notNull()
+      .references(() => messages.id),
+    targetLang: text("target_lang").notNull(),
+    translatedText: text("translated_text"),
+    status: text("status").notNull().default("pending"),
+  },
+  (table) => [
+    // Prevents duplicate in-flight/completed translations of the same
+    // message into the same target language (e.g. a retried translation
+    // job racing the original).
+    uniqueIndex("message_translations_message_lang_idx").on(table.messageId, table.targetLang),
+  ],
+);
+
+// PUSH-01/OPS-11: per-visitor, per-platform push-gate funnel state. Each
+// stage timestamp is set at most once (COALESCE-based upsert in
+// server/repo/gateFunnel.ts) -- concurrent/repeated calls are idempotent and
+// never overwrite an already-recorded stage.
+export const pushGateFunnel = pgTable(
+  "push_gate_funnel",
+  {
+    visitorId: uuid("visitor_id")
+      .notNull()
+      .primaryKey()
+      .references(() => visitors.id),
+    platform: text("platform").notNull(),
+    shownAt: timestamp("shown_at", { withTimezone: true }),
+    promptReachedAt: timestamp("prompt_reached_at", { withTimezone: true }),
+    grantedAt: timestamp("granted_at", { withTimezone: true }),
+  },
+  (table) => [
+    check("push_gate_funnel_platform_check", sql`${table.platform} in ('ios', 'other')`),
+  ],
+);
 
 // OPS-01 — Postgres-native token bucket, race-free via the ON CONFLICT
 // upsert in server/repo/ratelimit.ts. `key` is 'v:<visitor_uuid>' or

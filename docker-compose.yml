@@ -39,11 +39,16 @@ services:
     # equivalent Coolify-side config: its managed Postgres resource accepts
     # the same `-c` flags via its "Custom Postgres Configuration" field.
     command: ["postgres", "-c", "log_statement=none", "-c", "log_min_duration_statement=-1"]
-    # No `ports:` mapping here on purpose -- publishing 5432 to the host
-    # would expose Postgres directly on the server's public IP in a real
-    # deployment (Dokploy/production). `app` reaches it over the compose
-    # network by service name (db:5432) below; local dev that needs a host
-    # port for e.g. a GUI client can add one back temporarily.
+    # Loopback-only host publish -- binds 127.0.0.1 (never 0.0.0.0), so this
+    # is reachable at localhost:5433 (or explicitly 127.0.0.1:5433, if a
+    # given machine's "localhost" resolves to ::1 first and Docker's IPv6
+    # loopback binding isn't available -- a known WSL2/Docker Desktop
+    # limitation) for local dev (`npm run migrate`, `npm test`, a GUI
+    # client), without exposing Postgres on the server's public IP in a
+    # real deployment (Dokploy/production). `app` reaches it over the
+    # compose network by service name (db:5432) regardless.
+    ports:
+      - "127.0.0.1:5433:5432"
     volumes:
       # Named volume — OPS-06 verifies data survives a deliberate restart.
       - onechat_db_data:/var/lib/postgresql/data
