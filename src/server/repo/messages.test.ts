@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
 import { after, test } from "node:test";
 import { sql } from "../db/pool.ts";
+import { OWNER_LANG } from "../config/models.ts";
 import { getOrCreate as getOrCreateVisitor } from "./visitors.ts";
 import { openFor } from "./conversations.ts";
-import { belongsToConversation, create, markDelivered, since } from "./messages.ts";
+import { upsert as upsertTranslation } from "./messageTranslations.ts";
+import { belongsToConversation, create, markDelivered, since, sinceAll } from "./messages.ts";
 
 // node:test runs each file in its own process; without closing the pool the
 // process never exits (open sockets keep the event loop alive) and the
@@ -19,6 +21,7 @@ async function makeConversation() {
 }
 
 async function cleanup(conversationId: number, visitorId: string) {
+  await sql`delete from message_translations where message_id in (select id from messages where conversation_id = ${conversationId})`;
   await sql`delete from messages where conversation_id = ${conversationId}`;
   await sql`delete from conversations where id = ${conversationId}`;
   await sql`delete from visitors where id = ${visitorId}`;
@@ -129,6 +132,58 @@ test("messages.belongsToConversation: false for a nonexistent message id", async
   try {
     const result = await belongsToConversation(-1, conversation.id);
     assert.equal(result, false);
+  } finally {
+    await cleanup(conversation.id, visitor.id);
+  }
+});
+
+test("messages.since: rows carry translation: null when no message_translations row exists for OWNER_LANG", async () => {
+  const { visitor, conversation } = await makeConversation();
+  try {
+    await create(conversation.id, "visitor", "hello");
+    const [row] = await since(conversation.id, 0);
+    assert.equal(row.translation, null);
+  } finally {
+    await cleanup(conversation.id, visitor.id);
+  }
+});
+
+test("messages.since: rows carry translation populated from the message's OWNER_LANG message_translations row", async () => {
+  const { visitor, conversation } = await makeConversation();
+  try {
+    const message = await create(conversation.id, "visitor", "hola");
+    await upsertTranslation(message.id, OWNER_LANG, "hello", "ready");
+
+    const [row] = await since(conversation.id, 0);
+    assert.equal(row.translation, "hello");
+  } finally {
+    await cleanup(conversation.id, visitor.id);
+  }
+});
+
+test("messages.since: a message_translations row for a DIFFERENT target_lang never populates translation", async () => {
+  const { visitor, conversation } = await makeConversation();
+  try {
+    const message = await create(conversation.id, "visitor", "hola");
+    await upsertTranslation(message.id, "fr", "bonjour", "ready");
+
+    const [row] = await since(conversation.id, 0);
+    assert.equal(row.translation, null, "a non-OWNER_LANG translation row must never populate translation");
+  } finally {
+    await cleanup(conversation.id, visitor.id);
+  }
+});
+
+test("messages.sinceAll: rows carry translation populated from the message's OWNER_LANG message_translations row", async () => {
+  const { visitor, conversation } = await makeConversation();
+  try {
+    const message = await create(conversation.id, "visitor", "hola");
+    await upsertTranslation(message.id, OWNER_LANG, "hello", "ready");
+
+    const rows = await sinceAll(message.id - 1);
+    const row = rows.find((r) => r.id === message.id);
+    assert.ok(row);
+    assert.equal(row?.translation, "hello");
   } finally {
     await cleanup(conversation.id, visitor.id);
   }

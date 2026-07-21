@@ -154,10 +154,49 @@ test("sendVisitorMessage: a burst of exactly capacity succeeds, the very next se
 });
 
 test("sendVisitorMessage: does not import the openai package or reference translation/OVH", async () => {
+  const sendSource = await readFile(new URL("./send.ts", import.meta.url), "utf8");
+  assert.doesNotMatch(sendSource, /openai/i);
+  assert.doesNotMatch(sendSource, /translat/i);
+});
+
+test("sendVisitorMessage: a valid send's 200 result includes messageBody (the just-persisted body) alongside id/createdAt", async () => {
+  const { visitor, conversation } = await freshConversation();
+  try {
+    const result = await sendVisitorMessage({
+      conversationId: conversation.id,
+      visitorId: visitor.id,
+      ip: randomUUID(),
+      rawBody: { body: "Hello, is anyone there?" },
+    });
+
+    assert.equal(result.status, 200);
+    assert.ok("messageBody" in result.body && typeof result.body.messageBody === "string");
+    assert.equal((result.body as { messageBody: string }).messageBody, "Hello, is anyone there?");
+  } finally {
+    await cleanup(conversation.id, visitor.id);
+  }
+});
+
+// route.ts imports next/headers (via requireVisitor) transitively, so it
+// cannot be imported directly by node:test outside Next's bundler -- see
+// send.ts's own header comment for the same class of constraint. Its
+// after()-triggered translation call is instead verified by source
+// inspection (an allowed fallback per this plan's own acceptance criteria).
+test("route.ts: schedules the visitor->owner translation trigger via after(), never inside send.ts", async () => {
   const routeSource = await readFile(new URL("./route.ts", import.meta.url), "utf8");
   const sendSource = await readFile(new URL("./send.ts", import.meta.url), "utf8");
-  for (const source of [routeSource, sendSource]) {
-    assert.doesNotMatch(source, /openai/i);
-    assert.doesNotMatch(source, /translat/i);
-  }
+
+  const afterCallsInRoute = (routeSource.match(/after\(/g) ?? []).length;
+  const afterCallsInSend = (sendSource.match(/after\(/g) ?? []).length;
+  assert.ok(afterCallsInRoute >= 1, "route.ts must call after() at least once");
+  assert.equal(afterCallsInSend, 0, "send.ts must never call after() -- it has no request scope");
+});
+
+test("route.ts: guards the translation trigger on session.lang !== OWNER_LANG so a same-language visitor triggers zero calls", async () => {
+  const routeSource = await readFile(new URL("./route.ts", import.meta.url), "utf8");
+  assert.match(
+    routeSource,
+    /session\.lang\s*!==\s*OWNER_LANG/,
+    "route.ts must guard the translation trigger on session.lang !== OWNER_LANG",
+  );
 });

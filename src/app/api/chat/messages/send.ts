@@ -71,7 +71,12 @@ export interface SendVisitorMessageInput {
 }
 
 export type SendVisitorMessageResult =
-  | { status: 200; body: { id: number; createdAt: Message["createdAt"] } }
+  // messageBody is additive -- Plan 02-05's route.ts wrapper reads it to
+  // kick off its own post-persist async pipeline (request-scope-only APIs;
+  // see this file's own header comment) without re-parsing the request
+  // body. Existing client code only destructures {id, createdAt}, so this
+  // is a harmless superset of the existing JSON shape.
+  | { status: 200; body: { id: number; createdAt: Message["createdAt"]; messageBody: string } }
   | { status: 400; body: { error: string } }
   | { status: 429; body: { error: string } };
 
@@ -106,5 +111,5 @@ export async function sendVisitorMessage(input: SendVisitorMessageInput): Promis
     return row;
   });
 
-  return { status: 200, body: { id: created.id, createdAt: created.createdAt } };
+  return { status: 200, body: { id: created.id, createdAt: created.createdAt, messageBody: created.body } };
 }

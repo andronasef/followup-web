@@ -9,10 +9,43 @@
 // the insert, per 01-RESEARCH.md's durability-first Anti-Pattern note.
 import { and, asc, eq, gt, isNull } from "drizzle-orm";
 import { db } from "../db/pool.ts";
-import { messages } from "../db/schema.ts";
+import { OWNER_LANG } from "../config/models.ts";
+import { messages, messageTranslations } from "../db/schema.ts";
 
 export type Message = typeof messages.$inferSelect;
 export type MessageSender = "visitor" | "owner";
+
+// Plan 02-05: since()/sinceAll()'s rows carry this superset shape so every
+// existing SSE/polling/SSR consumer (chat/stream/route.ts,
+// admin/stream/route.ts, src/app/api/messages/route.ts -- all three forward
+// the whole row object as-is) transparently gains each message's OWNER_LANG
+// translation with zero changes to those consumer files.
+export type MessageWithTranslation = Message & { translation: string | null };
+
+const MESSAGE_COLUMNS = {
+  id: messages.id,
+  conversationId: messages.conversationId,
+  sender: messages.sender,
+  body: messages.body,
+  clientMsgId: messages.clientMsgId,
+  createdAt: messages.createdAt,
+  deliveredAt: messages.deliveredAt,
+  translation: messageTranslations.translatedText,
+} as const;
+
+// Shared LEFT JOIN filtered to OWNER_LANG -- a message with no
+// message_translations row for OWNER_LANG (not yet translated, same-language
+// skip, or a failed translation) yields `translation: null`, never a
+// degenerate row.
+function messagesWithOwnerLangTranslation() {
+  return db
+    .select(MESSAGE_COLUMNS)
+    .from(messages)
+    .leftJoin(
+      messageTranslations,
+      and(eq(messageTranslations.messageId, messages.id), eq(messageTranslations.targetLang, OWNER_LANG)),
+    );
+}
 
 // Structural subset of `db` (also satisfied by a `db.transaction()`
 // callback's `tx` argument, since drizzle-orm's PgTransaction extends
@@ -63,20 +96,24 @@ export async function create(
 
 /** All messages for a conversation with id > sinceId, ascending by id. This
  * is the exact shared query behind both SSE Last-Event-ID backfill (Plan
- * 01-08) and the D-16 polling fallback (GET /api/messages?since=). */
-export async function since(conversationId: number, sinceId: number): Promise<Message[]> {
-  return db
-    .select()
-    .from(messages)
+ * 01-08) and the D-16 polling fallback (GET /api/messages?since=). Plan
+ * 02-05: each row also carries `translation: string | null` (the message's
+ * OWNER_LANG translation, or null when none exists). */
+export async function since(conversationId: number, sinceId: number): Promise<MessageWithTranslation[]> {
+  return messagesWithOwnerLangTranslation()
     .where(and(eq(messages.conversationId, conversationId), gt(messages.id, sinceId)))
     .orderBy(asc(messages.id));
 }
 
 /** All messages across every conversation with id > sinceId, ascending by
  * id -- the admin firehose's (D-13) own Last-Event-ID backfill, so an
- * owner reconnect never loses a message either. */
-export async function sinceAll(sinceId: number): Promise<Message[]> {
-  return db.select().from(messages).where(gt(messages.id, sinceId)).orderBy(asc(messages.id));
+ * owner reconnect never loses a message either. Plan 02-05: each row also
+ * carries `translation: string | null` (the message's OWNER_LANG
+ * translation, or null when none exists). */
+export async function sinceAll(sinceId: number): Promise<MessageWithTranslation[]> {
+  return messagesWithOwnerLangTranslation()
+    .where(gt(messages.id, sinceId))
+    .orderBy(asc(messages.id));
 }
 
 /**
