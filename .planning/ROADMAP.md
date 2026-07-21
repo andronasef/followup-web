@@ -92,7 +92,29 @@ Plans:
   5. A conversation whose subscription has been revoked or expired shows as unreachable to the owner instead of silently swallowing replies, and no visitor is ever pushed for a message they have already acknowledged receiving.
   6. The owner can see how many people were shown the gate, how many reached the native prompt, and how many granted — split by platform.
 
-**Plans**: TBD
+**Plans**: 8 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 02-01-PLAN.md — Schema additions (push_gate_funnel, message_translations unique idx, messages.delivered_at) + web-push install + VAPID config + push/funnel repo layer
+- [ ] 02-02-PLAN.md — Translation core: translate() + validators extracted from the spike (rebuilt on the openai SDK), circuit breaker (TRANS-10)
+- [ ] 02-03-PLAN.md — Locale keys: push-gate, iOS walkthrough, show-original, notification copy across all 10 languages
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 02-04-PLAN.md — Push subscribe/probe/send backend + client subscribe/re-sync/beacon helpers
+- [ ] 02-05-PLAN.md — Translation wiring: cache layer, visitor→owner async trigger, owner→visitor draft-preview, since/sinceAll translation join
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 02-06-PLAN.md — Push delivery integration: ACK endpoint, admin push-send trigger, ID-03/ID-04 identity recovery
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 02-07-PLAN.md — Push gate UI, iOS walkthrough, service worker handlers, PWA icons (includes a real-hardware human-verify checkpoint)
+- [ ] 02-08-PLAN.md — Translation UI: composer draft-preview, show-original both sides, admin gate-funnel stats + unreachable badge
+
 **UI hint**: yes
 
 **Scope notes**: Exit criterion is real-hardware iPhone testing across both the Safari tab and the installed PWA — this is not deferred to Phase 3. Translation is asymmetric by design: visitor→owner runs async *after* durable persistence; owner→visitor runs synchronously against the draft and is persisted `ready` in the same transaction.
@@ -126,7 +148,7 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation and the Realtime Spine | 13/13 | Complete | 2026-07-21 |
-| 2. Reachability and Language | 0/TBD | Not started | - |
+| 2. Reachability and Language | 0/8 | Planned | - |
 | 3. Owner Surface, Hardening, Ship | 0/TBD | Not started | - |
 
 ## Requirement Coverage
