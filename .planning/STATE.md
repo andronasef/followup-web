@@ -2,17 +2,17 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 01
+current_phase: 02
 current_phase_name: Reachability and Language
-status: discussing
-stopped_at: Phase 2 UI-SPEC approved
-last_updated: "2026-07-21T14:04:29.112Z"
+status: planned
+stopped_at: Phase 2 planned (8 plans, research, patterns, coverage matrix, UI-SPEC all complete and committed)
+last_updated: "2026-07-21T20:08:06.000Z"
 last_activity: 2026-07-21
-last_activity_desc: Phase 2 discussion complete; push gate softened from unconditional hard block to shown-once-per-device (requirements change, ROADMAP.md/PROJECT.md updated)
+last_activity_desc: Reconciled STATE.md with actual repo state -- Phase 2 already had a complete 8-plan set, RESEARCH.md, PATTERNS.md, and COVERAGE.md committed (bdcdf24, 8d20dc8) that gsd-tools' init.plan-phase query was not detecting; UI-SPEC.md added and approved this session. Ready for /gsd-execute-phase 2.
 progress:
-  total_phases: 2
+  total_phases: 3
   completed_phases: 1
-  total_plans: 13
+  total_plans: 21
   completed_plans: 13
 ---
 
@@ -23,17 +23,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-20)
 
 **Core value:** A person opens the URL and, within seconds, is in a warm conversation with a real human being in their own language — and can always be reached again when that human replies.
-**Current focus:** Phase 02 — Reachability and Language (context gathered, ready to plan)
+**Current focus:** Phase 02 — Reachability and Language (planned, 8 plans ready to execute)
 
 ## Current Position
 
 Phase: 01 (Foundation and the Realtime Spine) — COMPLETE (13/13 plans, live deployment verified)
-Phase: 02 (Reachability and Language) — CONTEXT GATHERED, not yet planned
-Status: Ready for `/gsd-plan-phase 2`
-Last activity: 2026-07-21 — Phase 2 discussion complete; push gate softened from unconditional hard block to shown-once-per-device (requirements change, ROADMAP.md/PROJECT.md updated)
+Phase: 02 (Reachability and Language) — PLANNED (8 plans across 4 waves, RESEARCH.md/PATTERNS.md/COVERAGE.md/UI-SPEC.md all complete and committed)
+Status: Ready for `/gsd-execute-phase 2`
+Last activity: 2026-07-21 — Reconciled STATE.md with actual repo state (see Session Continuity)
 
 Progress (Phase 1): [██████████] 100%
-Progress (overall, by phase count): [███░░░░░░░] 33%
+Progress (overall, by phase count): [███░░░░░░░░] 33%
 
 ## Performance Metrics
 
@@ -147,6 +147,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-21T14:04:29.100Z
-Stopped at: Phase 2 UI-SPEC approved
-Resume file: .planning/phases/02-reachability-and-language/02-UI-SPEC.md
+Last session: 2026-07-21T20:08:06.000Z
+Stopped at: Phase 2 reconciled as planned -- 8 plans, research, patterns, coverage, UI-SPEC all complete
+Resume file: .planning/phases/02-reachability-and-language/02-08-PLAN.md
