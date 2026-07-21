@@ -34,7 +34,7 @@ A person opens the URL and, within seconds, is in a warm conversation with a rea
 - [ ] All interface strings, welcome, gate copy, and system messages localized into the supported languages
 
 **Push gate**
-- [ ] Visitor must accept browser notifications before the chat opens (hard block)
+- [ ] Visitor must accept browser notifications before the chat opens, shown once per device (softened from an unconditional hard block — Phase 2 discussion, 2026-07-21: declining or ignoring it on the first attempt lets the visitor through to chat without push from their next visit onward)
 - [ ] Declining shows a gentle, localized re-ask explaining why
 - [ ] iOS visitors get a guided "Share → Add to Home Screen" screen before the push prompt
 - [ ] On owner reply, a localized "new reply" push reaches the visitor and reopens the conversation
