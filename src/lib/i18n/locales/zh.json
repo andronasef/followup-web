@@ -17,5 +17,12 @@
   "errorReconnectStuck": "正在重新连接…",
   "errorAdminLogin": "邮箱或密码不正确。",
   "adminCtaLogin": "登录",
-  "adminCtaSetup": "创建管理员账户"
+  "adminCtaSetup": "创建管理员账户",
+  "pushGateHeading": "保持可联系",
+  "pushGateBody": "为了在你关闭此标签页后仍能联系到你，请允许通知。系统只会告诉你有新回复在等待——在你自己打开聊天之前，不会显示任何内容。",
+  "pushGateAllowCta": "允许通知",
+  "pushGateConfirming": "正在确认…",
+  "pushGateDeclinedHeading": "没有通知，我将无法再联系到你",
+  "pushGateDeclinedBody": "如果你现在离开，仍然可以稍后打开这个聊天，但我回复时将无法通知你。你仍然可以选择同意。",
+  "pushGateRetryCta": "重试"
 }

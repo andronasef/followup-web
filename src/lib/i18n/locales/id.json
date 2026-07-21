@@ -17,5 +17,12 @@
   "errorReconnectStuck": "Menyambungkan kembali…",
   "errorAdminLogin": "Email atau kata sandi itu salah.",
   "adminCtaLogin": "Masuk",
-  "adminCtaSetup": "Buat akun pemilik"
+  "adminCtaSetup": "Buat akun pemilik",
+  "pushGateHeading": "Tetap dapat dihubungi",
+  "pushGateBody": "Agar saya bisa menghubungi Anda setelah Anda menutup tab ini, izinkan notifikasi. Anda hanya akan diberi tahu bahwa ada balasan yang menunggu — tidak ada isinya yang ditampilkan sampai Anda membuka sendiri obrolannya.",
+  "pushGateAllowCta": "Izinkan notifikasi",
+  "pushGateConfirming": "Mengonfirmasi…",
+  "pushGateDeclinedHeading": "Tanpa notifikasi, saya tidak bisa menghubungi Anda lagi",
+  "pushGateDeclinedBody": "Jika Anda pergi sekarang, Anda tetap bisa membuka obrolan ini nanti, tetapi saya tidak akan bisa memberi tahu Anda saat saya membalas. Anda masih bisa mengatakan ya.",
+  "pushGateRetryCta": "Coba lagi"
 }

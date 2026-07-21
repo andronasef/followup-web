@@ -17,5 +17,12 @@
   "errorReconnectStuck": "Reconnecting…",
   "errorAdminLogin": "That email or password isn't right.",
   "adminCtaLogin": "Sign in",
-  "adminCtaSetup": "Create owner account"
+  "adminCtaSetup": "Create owner account",
+  "pushGateHeading": "Stay reachable",
+  "pushGateBody": "So I can reach you after you close this tab, allow notifications. You'll only ever be told a reply is waiting — nothing about it is shown until you open the chat yourself.",
+  "pushGateAllowCta": "Allow notifications",
+  "pushGateConfirming": "Confirming…",
+  "pushGateDeclinedHeading": "Without notifications, I can't reach you again",
+  "pushGateDeclinedBody": "If you leave now, you can still open this chat later, but I won't be able to let you know when I've replied. You can still say yes.",
+  "pushGateRetryCta": "Try again"
 }

@@ -17,5 +17,12 @@
   "errorReconnectStuck": "Reconectando…",
   "errorAdminLogin": "Ese correo o contraseña no es correcto.",
   "adminCtaLogin": "Iniciar sesión",
-  "adminCtaSetup": "Crear cuenta de propietario"
+  "adminCtaSetup": "Crear cuenta de propietario",
+  "pushGateHeading": "Mantente disponible",
+  "pushGateBody": "Para poder contactarte después de que cierres esta pestaña, permite las notificaciones. Solo se te avisará que hay una respuesta esperando — no se mostrará nada de su contenido hasta que abras el chat tú mismo.",
+  "pushGateAllowCta": "Permitir notificaciones",
+  "pushGateConfirming": "Confirmando…",
+  "pushGateDeclinedHeading": "Sin notificaciones, no podré contactarte de nuevo",
+  "pushGateDeclinedBody": "Si te vas ahora, podrás abrir este chat más tarde, pero no podré avisarte cuando responda. Aún puedes decir que sí.",
+  "pushGateRetryCta": "Intentar de nuevo"
 }

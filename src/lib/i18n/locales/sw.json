@@ -17,5 +17,12 @@
   "errorReconnectStuck": "Inaunganisha tena…",
   "errorAdminLogin": "Barua pepe au nenosiri hilo si sahihi.",
   "adminCtaLogin": "Ingia",
-  "adminCtaSetup": "Unda akaunti ya mmiliki"
+  "adminCtaSetup": "Unda akaunti ya mmiliki",
+  "pushGateHeading": "Endelea kupatikana",
+  "pushGateBody": "Ili niweze kukufikia baada ya kufunga kichupo hiki, ruhusu arifa. Utaambiwa tu kwamba jibu linakusubiri — hakuna chochote kuhusu maudhui yake kitakachoonyeshwa mpaka ufungue mazungumzo mwenyewe.",
+  "pushGateAllowCta": "Ruhusu arifa",
+  "pushGateConfirming": "Inathibitisha…",
+  "pushGateDeclinedHeading": "Bila arifa, sitaweza kukufikia tena",
+  "pushGateDeclinedBody": "Ukiondoka sasa, bado unaweza kufungua mazungumzo haya baadaye, lakini sitaweza kukujulisha nikishajibu. Bado unaweza kusema ndiyo.",
+  "pushGateRetryCta": "Jaribu tena"
 }

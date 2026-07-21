@@ -17,5 +17,12 @@
   "errorReconnectStuck": "Reconnexion…",
   "errorAdminLogin": "Cet e-mail ou ce mot de passe est incorrect.",
   "adminCtaLogin": "Se connecter",
-  "adminCtaSetup": "Créer le compte propriétaire"
+  "adminCtaSetup": "Créer le compte propriétaire",
+  "pushGateHeading": "Restez joignable",
+  "pushGateBody": "Pour que je puisse vous joindre après avoir fermé cet onglet, autorisez les notifications. On vous dira seulement qu'une réponse vous attend — rien de son contenu ne sera affiché avant que vous n'ouvriez vous-même la discussion.",
+  "pushGateAllowCta": "Autoriser les notifications",
+  "pushGateConfirming": "Confirmation…",
+  "pushGateDeclinedHeading": "Sans notifications, je ne pourrai plus vous joindre",
+  "pushGateDeclinedBody": "Si vous partez maintenant, vous pourrez toujours rouvrir cette discussion plus tard, mais je ne pourrai pas vous prévenir quand j'aurai répondu. Vous pouvez encore dire oui.",
+  "pushGateRetryCta": "Réessayer"
 }
