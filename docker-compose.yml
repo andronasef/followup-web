@@ -25,6 +25,16 @@ services:
       POSTGRES_DB: onechat
       POSTGRES_USER: onechat
       POSTGRES_PASSWORD: onechat
+    # OPS-09: never let pastoral/faith message text reach container logs.
+    # log_statement=none disables all statement-text logging outright.
+    # log_min_duration_statement=-1 (disabled, the Postgres default) is set
+    # explicitly rather than left implicit -- that setting also logs full
+    # statement text for slow queries independent of log_statement, so it
+    # must stay off too, or a slow query would leak message content into
+    # the Postgres log the same way log_statement would. This is the exact
+    # equivalent Coolify-side config: its managed Postgres resource accepts
+    # the same `-c` flags via its "Custom Postgres Configuration" field.
+    command: ["postgres", "-c", "log_statement=none", "-c", "log_min_duration_statement=-1"]
     ports:
       # Host port 5433 to avoid colliding with any other local Postgres on
       # the default 5432 (5432 is already taken on this dev machine).
