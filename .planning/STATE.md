@@ -4,16 +4,16 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 01
 current_phase_name: Foundation and the Realtime Spine
-status: executing
-stopped_at: Completed 01-12-PLAN.md
-last_updated: "2026-07-21T11:17:05.136Z"
-last_activity: 2026-07-20
-last_activity_desc: Translation spike go/no-go closed — owner overrode automated Swahili NO-GO, shipping all 10 languages
+status: complete
+stopped_at: Completed 01-13-PLAN.md -- Phase 1 complete
+last_updated: "2026-07-21T13:30:00.000Z"
+last_activity: 2026-07-21
+last_activity_desc: Live Dokploy deployment verified end-to-end (health, direct render, live send/reply, OPS-06 restart persistence, 10-language locale check) -- Phase 1 fully complete
 progress:
   total_phases: 1
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 13
-  completed_plans: 12
+  completed_plans: 13
 ---
 
 # Project State
@@ -27,12 +27,12 @@ See: .planning/PROJECT.md (updated 2026-07-20)
 
 ## Current Position
 
-Phase: 01 (Foundation and the Realtime Spine) — EXECUTING
+Phase: 01 (Foundation and the Realtime Spine) — COMPLETE
 Plan: 13 of 13
-Status: Ready to execute
-Last activity: 2026-07-20 — Translation spike go/no-go closed — owner overrode automated Swahili NO-GO, shipping all 10 languages
+Status: Complete — live deployment verified
+Last activity: 2026-07-21 — Live Dokploy deployment verified end-to-end (health, direct render, live send/reply, OPS-06 restart persistence, 10-language locale check)
 
-Progress: [█████████░] 92%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -70,6 +70,7 @@ Progress: [█████████░] 92%
 | Phase 01 P10 | ~25min | 3 tasks | 7 files |
 | Phase 01 P11 | ~20min | 3 tasks | 6 files |
 | Phase 01 P12 | 45min | 2 tasks | 3 files |
+| Phase 01 P13 | ~3h | 4 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -108,6 +109,11 @@ Recent decisions affecting current work:
 - [Phase ?]: 01-11: Message['sender'] (drizzle infers plain string from schema.ts's untyped text column, guarded only by a Postgres CHECK constraint) is cast to the 'visitor'|'owner' union at the SSR-fetch and SSE-parse boundaries where repo/wire rows flow into MessageBubble/ThreadMessage.
 - [Phase ?]: Split page composition into page.tsx (Server Component, data fetch) + ChatShell.tsx (client boundary owning useChatStream/hooks) -- Server Components cannot call hooks, so this split (matching Plan 01-11's page.tsx/Thread.tsx precedent) was the only way to satisfy both requirements
 - [Phase ?]: Added confirmedClientMsgIds prop to Composer.tsx so a visitor's own sent message hides from Composer's local optimistic-bubble list once it's visible in the SSE-confirmed transcript, preventing a permanent duplicate render
+- [01-13]: Hosting platform substituted Coolify -> Dokploy (owner-directed, mid-Plan 01-13's Task 3 checkpoint). App and Dockerfile are unchanged (both are Dockerfile-build + Traefik-fronted self-hosted PaaS); only deployment-config specifics differ: Dokploy has no build/runtime env-var checkbox (vars in its Environment Variables tab reach only the running container by default, so no Build Args needed for any of the 5 runtime secrets), and it uses its own port + healthCheck-path fields instead of Coolify's "Ports Exposes". Dokploy application is named "followup".
+- [01-13]: Postgres deployed as a docker-compose service (Dokploy Compose type), not Dokploy's managed database resource -- owner-directed. Required parameterizing previously-hardcoded onechat/onechat creds and removing host-port publishes on both db and app services (Traefik/Dokploy routes internally once a Domain is assigned; host-port publishes only caused a real security exposure and a real port conflict with a leftover deployment).
+- [01-13]: Real domain + Let's Encrypt HTTPS required for the deployment -- the owner-session cookie's secure:true (Plan 01-07's deliberate design, not a bug) is correctly rejected by browsers over plain HTTP, and the free sslip.io domain doesn't support HTTPS at all. Confirms the cookie design was correct; the deployment needed real TLS.
+- [01-13]: Message timestamps render in UTC (MessageBubble.formatTime), not local time -- local Date.getHours()/getMinutes() produced different strings during server-render (container, UTC) vs. client hydration (owner's browser, Africa/Cairo), a React hydration text mismatch (error #418) that broke reconciliation for the whole tree and looked like "SSE replies never arrive live."
+- [01-13]: Realtime hub (src/server/realtime/hub.ts) subscriber registries pinned on globalThis, mirroring db/listener.ts's existing singleton pattern -- Next's standalone build gave instrumentation.ts's module graph (the LISTEN callback) and the SSE routes' module graph two separate hub instances, so publishChat/publishPresence never reached any subscriber even though DB-backed backfill and the heartbeat timer (neither touches the hub) kept working normally. This was the actual root cause of "replies never arrive live" (the timezone fix above was a real, separate bug, but not sufficient on its own).
 
 ### Pending Todos
 
@@ -122,7 +128,8 @@ None yet.
 - **Coverage gap:** 8 of 10 languages (all but Swahili, which is fully tested, and Arabic, partially tested) were not live-spike-tested this session due to free-tier API latency. Corpus is complete for all 10; re-run via `npm run translation-spike` at any time.
 - **Unrecoverable failure mode (Phase 3):** VAPID key loss permanently unreachable-ifies every existing visitor. Keys are generated once off-box and backed up — never in a Dockerfile or startup script.
 - **Needs real hardware (Phase 2):** iOS push under an installed PWA is the lowest-confidence area in the research corpus and cannot be simulated.
-- **Verify empirically (Phase 1 first deploy):** Traefik idle timeouts on long-lived SSE connections on the target Coolify version — silent failure mode, community-sourced only.
+- **Verify empirically (Phase 1 first deploy):** Traefik idle timeouts on long-lived SSE connections on the target deployment platform — silent failure mode, community-sourced only. Applies equally on Dokploy (also Traefik-fronted) as it would have on Coolify.
+- **Resolved — Platform substitution (Phase 1, Plan 01-13):** Hosting moved from Coolify (CLAUDE.md's originally documented default) to Dokploy, owner-directed. Deployment is now live and fully verified. CLAUDE.md's "Hosting" constraint line still says "Coolify" — should be updated to "Dokploy" when the user next asks for CLAUDE.md changes (project-instructions files are edited only on direct request, not proactively).
 
 ## Deferred Items
 
@@ -134,6 +141,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-21T11:17:05.126Z
-Stopped at: Completed 01-12-PLAN.md
+Last session: 2026-07-21T13:30:00.000Z
+Stopped at: Completed 01-13-PLAN.md -- Phase 1 (Foundation and the Realtime Spine) fully complete, live deployment verified
 Resume file: None

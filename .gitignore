@@ -12,6 +12,7 @@
 .env.local
 .env*.local
 
+
 # misc
 .DS_Store
 *.pem
@@ -20,3 +21,4 @@ npm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.gstack/

@@ -89,10 +89,10 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 - [ ] **OPS-03**: Owner can permanently delete a conversation
 - [ ] **OPS-04**: Localized crisis-line resources are reachable for each supported locale
 - [ ] **OPS-05**: Admin login has lockout on repeated failure and sessions the owner can revoke
-- [ ] **OPS-06**: Postgres data lives on a named volume, verified by a deliberate container restart
+- [x] **OPS-06**: Postgres data lives on a named volume, verified by a deliberate container restart
 - [ ] **OPS-07**: Off-box backups run on a schedule, with one documented and executed restore drill
 - [ ] **OPS-08**: VAPID keys are generated once off-box and backed up; they are never generated in a Dockerfile or startup script
-- [ ] **OPS-09**: Pastoral message content never reaches container logs — parameterized writes and `log_statement=none`
+- [x] **OPS-09**: Pastoral message content never reaches container logs — parameterized writes and `log_statement=none`
 - [ ] **OPS-10**: A health check endpoint reports app and database liveness
 - [ ] **OPS-11**: Gate funnel is instrumented — gate shown → prompt shown → granted, split by platform — since no benchmark exists for push as a hard prerequisite
 
@@ -171,27 +171,27 @@ Every v1 requirement maps to exactly one phase. **71/71 mapped - no orphans, no 
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CHAT-01 | Phase 1 | Pending |
-| CHAT-02 | Phase 1 | Pending |
-| CHAT-03 | Phase 1 | Pending |
-| CHAT-04 | Phase 1 | Pending |
-| CHAT-05 | Phase 1 | Pending |
-| CHAT-06 | Phase 1 | Pending |
-| CHAT-07 | Phase 1 | Pending |
-| CHAT-08 | Phase 1 | Pending |
-| CHAT-09 | Phase 1 | Pending |
-| ID-01 | Phase 1 | Pending |
-| ID-02 | Phase 1 | Pending |
+| CHAT-01 | Phase 1 | Complete |
+| CHAT-02 | Phase 1 | Complete |
+| CHAT-03 | Phase 1 | Complete |
+| CHAT-04 | Phase 1 | Complete |
+| CHAT-05 | Phase 1 | Complete |
+| CHAT-06 | Phase 1 | Complete |
+| CHAT-07 | Phase 1 | Complete |
+| CHAT-08 | Phase 1 | Complete |
+| CHAT-09 | Phase 1 | Complete |
+| ID-01 | Phase 1 | Complete |
+| ID-02 | Phase 1 | Complete |
 | ID-03 | Phase 2 | Pending |
 | ID-04 | Phase 2 | Pending |
-| ID-05 | Phase 1 | Pending |
-| LANG-01 | Phase 1 | Pending |
-| LANG-02 | Phase 1 | Pending |
-| LANG-03 | Phase 1 | Pending |
-| LANG-04 | Phase 1 | Pending |
-| LANG-05 | Phase 1 | Pending |
-| LANG-06 | Phase 1 | Pending |
-| LANG-07 | Phase 1 | Pending |
+| ID-05 | Phase 1 | Complete |
+| LANG-01 | Phase 1 | Complete |
+| LANG-02 | Phase 1 | Complete |
+| LANG-03 | Phase 1 | Complete |
+| LANG-04 | Phase 1 | Complete |
+| LANG-05 | Phase 1 | Complete |
+| LANG-06 | Phase 1 | Complete |
+| LANG-07 | Phase 1 | Complete |
 | PUSH-01 | Phase 2 | Pending |
 | PUSH-02 | Phase 2 | Pending |
 | PUSH-03 | Phase 2 | Pending |
@@ -214,9 +214,9 @@ Every v1 requirement maps to exactly one phase. **71/71 mapped - no orphans, no 
 | TRANS-08 | Phase 2 | Pending |
 | TRANS-09 | Phase 2 | Pending |
 | TRANS-10 | Phase 2 | Pending |
-| ADMIN-01 | Phase 1 | Pending |
+| ADMIN-01 | Phase 1 | Complete |
 | ADMIN-02 | Phase 3 | Pending |
-| ADMIN-03 | Phase 1 | Pending |
+| ADMIN-03 | Phase 1 | Complete |
 | ADMIN-04 | Phase 3 | Pending |
 | ADMIN-05 | Phase 3 | Pending |
 | ADMIN-06 | Phase 3 | Pending |
@@ -227,21 +227,21 @@ Every v1 requirement maps to exactly one phase. **71/71 mapped - no orphans, no 
 | ADMIN-11 | Phase 3 | Pending |
 | ADMIN-12 | Phase 3 | Pending |
 | ADMIN-13 | Phase 3 | Pending |
-| OPS-01 | Phase 1 | Pending |
+| OPS-01 | Phase 1 | Complete |
 | OPS-02 | Phase 3 | Pending |
 | OPS-03 | Phase 3 | Pending |
 | OPS-04 | Phase 3 | Pending |
 | OPS-05 | Phase 3 | Pending |
-| OPS-06 | Phase 1 | Pending |
+| OPS-06 | Phase 1 | Complete |
 | OPS-07 | Phase 3 | Pending |
 | OPS-08 | Phase 3 | Pending |
-| OPS-09 | Phase 1 | Pending |
+| OPS-09 | Phase 1 | Complete |
 | OPS-10 | Phase 3 | Pending |
 | OPS-11 | Phase 2 | Pending |
-| FOUND-01 | Phase 1 | Pending |
-| FOUND-02 | Phase 1 | Pending |
-| FOUND-03 | Phase 1 | Pending |
-| FOUND-04 | Phase 1 | Pending |
+| FOUND-01 | Phase 1 | Complete |
+| FOUND-02 | Phase 1 | Complete |
+| FOUND-03 | Phase 1 | Complete |
+| FOUND-04 | Phase 1 | Complete |
 
 **Totals:** Phase 1 - 28 | Phase 2 - 26 | Phase 3 - 17 | **Total 71**
 

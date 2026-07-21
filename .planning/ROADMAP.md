@@ -15,7 +15,7 @@ The phase split deliberately rejects the naive "chat → push + translation → 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation and the Realtime Spine** - Language list settled, messages durable and replayable, a visitor and the owner can hold a live conversation
+- [x] **Phase 1: Foundation and the Realtime Spine** - Language list settled, messages durable and replayable, a visitor and the owner can hold a live conversation
 - [ ] **Phase 2: Reachability and Language** - The hard push gate ships for real (including iPhone), and both sides read each other in their own language
 - [ ] **Phase 3: Owner Surface, Hardening, Ship** - The pastoral inbox, safety controls, and the operational work that makes it live
 
@@ -125,7 +125,7 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation and the Realtime Spine | 12/13 | In Progress|  |
+| 1. Foundation and the Realtime Spine | 13/13 | Complete | 2026-07-21 |
 | 2. Reachability and Language | 0/TBD | Not started | - |
 | 3. Owner Surface, Hardening, Ship | 0/TBD | Not started | - |
 
