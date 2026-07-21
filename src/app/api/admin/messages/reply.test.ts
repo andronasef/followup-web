@@ -66,6 +66,37 @@ test("handleAdminReply: with a valid ownerId persists an owner-sender row via th
   }
 });
 
+test("handleAdminReply: a 200 result's body includes conversationId/visitorId/visitorLang alongside id/createdAt (PUSH-06/08's push trigger needs all three)", async () => {
+  const { visitor, conversation } = await freshConversation();
+  try {
+    const result = await handleAdminReply({
+      ownerId: "1",
+      rawBody: { conversationId: conversation.id, body: "we're praying for you" },
+    });
+
+    assert.equal(result.status, 200);
+    const body = result.body as {
+      conversationId: number;
+      visitorId: string;
+      visitorLang: string;
+    };
+    assert.equal(body.conversationId, conversation.id);
+    assert.equal(body.visitorId, visitor.id);
+    assert.equal(typeof body.visitorLang, "string");
+  } finally {
+    await cleanup(conversation.id, visitor.id);
+  }
+});
+
+test("handleAdminReply: a conversationId that does not exist returns 400 (never an unhandled foreign-key error)", async () => {
+  const result = await handleAdminReply({
+    ownerId: "1",
+    rawBody: { conversationId: 999_999_999, body: "we're praying for you" },
+  });
+
+  assert.equal(result.status, 400);
+});
+
 test("handleAdminReply: a non-empty originalBody that differs from body persists a message_translations(messageId, OWNER_LANG) row in the same transaction", async () => {
   const { visitor, conversation } = await freshConversation();
   try {

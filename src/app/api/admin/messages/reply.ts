@@ -11,6 +11,7 @@ import { db } from "../../../../server/db/pool.ts";
 import { OWNER_LANG } from "../../../../server/config/models.ts";
 import { create as createMessage, type Message } from "../../../../server/repo/messages.ts";
 import { upsert as upsertTranslation } from "../../../../server/repo/messageTranslations.ts";
+import { getVisitorAndLangFor } from "../../../../server/repo/conversations.ts";
 
 // Same bound as the visitor route -- Unicode-code-point-aware, not UTF-16
 // code units.
@@ -41,7 +42,21 @@ export interface AdminReplyInput {
 }
 
 export type AdminReplyResult =
-  | { status: 200; body: { id: number; createdAt: Message["createdAt"] } }
+  // conversationId/visitorId/visitorLang are additive -- Plan 02-06's
+  // route.ts wrapper reads them to kick off its own post-persist push-send
+  // trigger without a second conversation/visitor lookup of its own.
+  // Existing callers only destructure {id, createdAt}, so this is a
+  // harmless superset of the existing JSON shape.
+  | {
+      status: 200;
+      body: {
+        id: number;
+        createdAt: Message["createdAt"];
+        conversationId: number;
+        visitorId: string;
+        visitorLang: string;
+      };
+    }
   | { status: 400; body: { error: string } }
   | { status: 401; body: { error: string } };
 
@@ -58,6 +73,16 @@ export async function handleAdminReply(input: AdminReplyInput): Promise<AdminRep
   const parsed = bodySchema.safeParse(input.rawBody);
   if (!parsed.success) {
     return { status: 400, body: { error: "invalid_body" } };
+  }
+
+  // PUSH-06/08: resolve the recipient visitor id + lang up front -- the
+  // exact lookup route.ts's push trigger needs, echoed back below rather
+  // than making route.ts issue a second query. A conversationId that
+  // doesn't exist is rejected here (400) instead of surfacing as an
+  // unhandled foreign-key error from the insert below.
+  const visitorAndLang = await getVisitorAndLangFor(parsed.data.conversationId);
+  if (!visitorAndLang) {
+    return { status: 400, body: { error: "conversation_not_found" } };
   }
 
   const created = await db.transaction(async (tx) => {
@@ -88,5 +113,14 @@ export async function handleAdminReply(input: AdminReplyInput): Promise<AdminRep
     return row;
   });
 
-  return { status: 200, body: { id: created.id, createdAt: created.createdAt } };
+  return {
+    status: 200,
+    body: {
+      id: created.id,
+      createdAt: created.createdAt,
+      conversationId: parsed.data.conversationId,
+      visitorId: visitorAndLang.visitorId,
+      visitorLang: visitorAndLang.lang ?? "en",
+    },
+  };
 }

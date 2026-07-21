@@ -110,3 +110,30 @@ export async function getVisitorLangFor(conversationId: number): Promise<string 
   const [row] = rows;
   return row?.lang ?? null;
 }
+
+export interface VisitorAndLang {
+  visitorId: string;
+  lang: string | null;
+}
+
+/**
+ * Plan 02-06: resolves BOTH the visitor id and stored lang for
+ * `conversationId` in one query -- the admin reply route's push trigger
+ * (sendPushToVisitor's visitorId/lang params) needs both, and this is the
+ * single lookup reply.ts's handleAdminReply performs up front so route.ts
+ * never has to issue a second query of its own. Returns null when
+ * `conversationId` doesn't exist -- the caller should treat this as a
+ * 400, not attempt the message insert against a foreign key that will
+ * fail anyway.
+ */
+export async function getVisitorAndLangFor(conversationId: number): Promise<VisitorAndLang | null> {
+  const rows = await db.execute<{ visitor_id: string; lang: string | null }>(rawSql`
+    select v.id as visitor_id, v.lang as lang
+    from conversations c
+    join visitors v on v.id = c.visitor_id
+    where c.id = ${conversationId}
+  `);
+  const [row] = rows;
+  if (!row) return null;
+  return { visitorId: row.visitor_id, lang: row.lang };
+}
