@@ -86,6 +86,7 @@ export function ChatShell({ initialLang, initialAppearance, initialMessages }: C
         sender: message.sender,
         body: message.body,
         createdAt: message.createdAt,
+        translation: message.translation,
       })),
     [messages],
   );
@@ -130,7 +131,11 @@ export function ChatShell({ initialLang, initialAppearance, initialMessages }: C
         />
         <Welcome lang={lang} />
         <PresenceLine lang={lang} />
-        <MessageList messages={messageListItems} />
+        <MessageList
+          messages={messageListItems}
+          showOriginalLabel={strings.showOriginalLabel}
+          hideOriginalLabel={strings.hideOriginalLabel}
+        />
         {isReconnecting && (
           <p className="px-4 pb-1 text-[14px] leading-[1.4] font-normal text-muted-foreground">
             {strings.errorReconnectStuck}

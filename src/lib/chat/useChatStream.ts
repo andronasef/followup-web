@@ -34,6 +34,32 @@ export interface ChatStreamMessage {
   body: string;
   clientMsgId: string | null;
   createdAt: string;
+  /** Plan 02-05's OWNER_LANG-joined translation field, passed through unchanged -- null when no distinct translation exists (not yet translated, same-language skip, or failed). */
+  translation: string | null;
+}
+
+/**
+ * PUSH-08: the client half of send.ts's grace-period ACK -- the SSE
+ * "message" event's own arrival is proof of receipt, so this fires
+ * fire-and-forget (matches pre-paint.ts's existing bootstrap-fetch style:
+ * keepalive, no await, errors swallowed) the instant an owner reply is
+ * rendered. A failed ack just means send.ts's grace-period re-check will
+ * (harmlessly) still fire a push -- never blocks or delays message
+ * rendering.
+ */
+function ackOwnerMessage(messageId: number) {
+  try {
+    fetch("/api/chat/messages/ack", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messageId }),
+      keepalive: true,
+    }).catch(() => {
+      // Best-effort only -- see doc comment above.
+    });
+  } catch {
+    // Synchronous throw (e.g. fetch unavailable) -- still best-effort only.
+  }
 }
 
 export interface UseChatStreamResult {
@@ -78,6 +104,7 @@ export function useChatStream(url = "/api/chat/stream"): UseChatStreamResult {
       if (seenIdsRef.current.has(row.id)) return;
       seenIdsRef.current.add(row.id);
       setMessages((prev) => [...prev, row]);
+      if (row.sender === "owner") ackOwnerMessage(row.id);
     });
 
     es.onerror = () => {

@@ -45,6 +45,7 @@ export default async function Page() {
         body: message.body,
         clientMsgId: message.clientMsgId,
         createdAt: message.createdAt.toISOString(),
+        translation: message.translation,
       }))
     : [];
 

@@ -21,11 +21,20 @@ export interface MessageListProps {
   /** Locked failed-state copy, forwarded to each MessageBubble -- sourced from locale JSON by the caller. */
   failedLabel?: string;
   onRetry?: (id: MessageListItem["id"]) => void;
+  /** D-12: locale-JSON "See original"/"Hide original" copy, forwarded to each MessageBubble's tap-to-reveal toggle. */
+  showOriginalLabel?: string;
+  hideOriginalLabel?: string;
 }
 
 const AT_BOTTOM_THRESHOLD_PX = 32;
 
-export function MessageList({ messages, failedLabel, onRetry }: MessageListProps) {
+export function MessageList({
+  messages,
+  failedLabel,
+  onRetry,
+  showOriginalLabel,
+  hideOriginalLabel,
+}: MessageListProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const isAtBottomRef = useRef(true);
   const hasMountedRef = useRef(false);
@@ -72,6 +81,8 @@ export function MessageList({ messages, failedLabel, onRetry }: MessageListProps
           pending={message.pending}
           failedLabel={failedLabel}
           onRetry={onRetry ? () => onRetry(message.id) : undefined}
+          showOriginalLabel={showOriginalLabel}
+          hideOriginalLabel={hideOriginalLabel}
         />
       ))}
     </div>
