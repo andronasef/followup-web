@@ -105,3 +105,19 @@ export async function belongsToConversation(messageId: number, conversationId: n
     .limit(1);
   return row !== undefined;
 }
+
+/**
+ * PUSH-08: reads the current `delivered_at` value for `messageId` -- a
+ * natural sibling to `markDelivered` above, added in Plan 02-04 for
+ * `send.ts`'s grace-period re-check (skip the push send entirely if the
+ * visitor's own SSE-receipt ack already landed). Returns `null` both when
+ * the message hasn't been acked yet and when `messageId` doesn't exist.
+ */
+export async function getDeliveredAt(messageId: number): Promise<Date | null> {
+  const [row] = await db
+    .select({ deliveredAt: messages.deliveredAt })
+    .from(messages)
+    .where(eq(messages.id, messageId))
+    .limit(1);
+  return row?.deliveredAt ?? null;
+}
