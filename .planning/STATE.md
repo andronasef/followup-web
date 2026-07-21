@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 01
-current_phase_name: Foundation and the Realtime Spine
-status: complete
-stopped_at: Completed 01-13-PLAN.md -- Phase 1 complete
-last_updated: "2026-07-21T13:30:00.000Z"
+current_phase: 02
+current_phase_name: Reachability and Language
+status: discussing
+stopped_at: Phase 2 context gathered
+last_updated: "2026-07-21T15:00:00.000Z"
 last_activity: 2026-07-21
-last_activity_desc: Live Dokploy deployment verified end-to-end (health, direct render, live send/reply, OPS-06 restart persistence, 10-language locale check) -- Phase 1 fully complete
+last_activity_desc: Phase 2 discussion complete -- VAPID lifecycle, iOS walkthrough, translation provider, owner draft-preview UX, notification copy, subscription refresh, gate-funnel/unreachable-conversation admin surface. Push gate softened (requirements change) -- ROADMAP.md/PROJECT.md updated.
 progress:
-  total_phases: 1
+  total_phases: 3
   completed_phases: 1
   total_plans: 13
   completed_plans: 13
@@ -23,16 +23,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-20)
 
 **Core value:** A person opens the URL and, within seconds, is in a warm conversation with a real human being in their own language — and can always be reached again when that human replies.
-**Current focus:** Phase 01 — Foundation and the Realtime Spine
+**Current focus:** Phase 02 — Reachability and Language (context gathered, ready to plan)
 
 ## Current Position
 
-Phase: 01 (Foundation and the Realtime Spine) — COMPLETE
-Plan: 13 of 13
-Status: Complete — live deployment verified
-Last activity: 2026-07-21 — Live Dokploy deployment verified end-to-end (health, direct render, live send/reply, OPS-06 restart persistence, 10-language locale check)
+Phase: 01 (Foundation and the Realtime Spine) — COMPLETE (13/13 plans, live deployment verified)
+Phase: 02 (Reachability and Language) — CONTEXT GATHERED, not yet planned
+Status: Ready for `/gsd-plan-phase 2`
+Last activity: 2026-07-21 — Phase 2 discussion complete; push gate softened from unconditional hard block to shown-once-per-device (requirements change, ROADMAP.md/PROJECT.md updated)
 
-Progress: [██████████] 100%
+Progress (Phase 1): [██████████] 100%
+Progress (overall, by phase count): [███░░░░░░░] 33%
 
 ## Performance Metrics
 
@@ -114,6 +115,10 @@ Recent decisions affecting current work:
 - [01-13]: Real domain + Let's Encrypt HTTPS required for the deployment -- the owner-session cookie's secure:true (Plan 01-07's deliberate design, not a bug) is correctly rejected by browsers over plain HTTP, and the free sslip.io domain doesn't support HTTPS at all. Confirms the cookie design was correct; the deployment needed real TLS.
 - [01-13]: Message timestamps render in UTC (MessageBubble.formatTime), not local time -- local Date.getHours()/getMinutes() produced different strings during server-render (container, UTC) vs. client hydration (owner's browser, Africa/Cairo), a React hydration text mismatch (error #418) that broke reconciliation for the whole tree and looked like "SSE replies never arrive live."
 - [01-13]: Realtime hub (src/server/realtime/hub.ts) subscriber registries pinned on globalThis, mirroring db/listener.ts's existing singleton pattern -- Next's standalone build gave instrumentation.ts's module graph (the LISTEN callback) and the SSE routes' module graph two separate hub instances, so publishChat/publishPresence never reached any subscriber even though DB-backed backfill and the heartbeat timer (neither touches the hub) kept working normally. This was the actual root cause of "replies never arrive live" (the timezone fix above was a real, separate bug, but not sufficient on its own).
+- [02-CONTEXT]: Owner will generate the VAPID keypair themselves, off-box, before Phase 2 planning locks in env var names; private key backed up in a second physical/cloud location outside Dokploy; treated as permanent, rotated only as a break-glass response to compromise (accepting the visitor-loss cost).
+- [02-CONTEXT]: **Requirements change** -- the push gate is softened from an unconditional hard block to shown-once-per-device: a visitor who declines/ignores the iOS walkthrough+permission prompt on their first attempt is let through to chat without push from their next visit onward. Owner explicitly accepted that some visitors become permanently unreachable in exchange for never permanently blocking a returning visitor. ROADMAP.md §Phase 2 success criterion 2 and PROJECT.md's "Push gate" section updated to match.
+- [02-CONTEXT]: Translation stays on NVIDIA NIM (no OVH switch, no Qwen3.6-27B cost/latency spike this phase). Owner draft-preview is an inline swap (not side-by-side) and the owner CAN edit the translated text directly (not approve/reject-only) -- a real risk since the owner may not verify a target-language edit, mitigated only by the visitor's existing show-original tap-through, not a UI-level safeguard.
+- [02-CONTEXT]: Gate funnel metrics (shown/prompt-reached/granted by platform) live as an all-time-totals stats row on the existing conversation-list screen, not a new admin screen. An unreachable conversation (revoked/expired push subscription) gets a quiet inline badge, purely informational -- no retry/re-notify action (that's Phase 3 status-control scope).
 
 ### Pending Todos
 
@@ -126,8 +131,9 @@ None yet.
 - **Resolved (was: OVH key blocker):** OVH Public Cloud key was never provisioned; owner substituted an NVIDIA NIM API key instead. NVIDIA NIM is now the active translation provider (config-driven, OVH addable later). See 01-02-SUMMARY.md.
 - **Deferred risk (was: open blocker) — Swahili translation quality:** Live spike scored Swahili at 75% overall / 67% on the injection subset against a 90% bar (dropped scripture citation, one truncated response). Owner explicitly overrode the automated NO-GO and chose to ship all 10 languages anyway, accepting the risk. Verify empirically against real dev/staging before treating Swahili as production-ready. See TRANSLATION-SPIKE-GO-NO-GO.md.
 - **Coverage gap:** 8 of 10 languages (all but Swahili, which is fully tested, and Arabic, partially tested) were not live-spike-tested this session due to free-tier API latency. Corpus is complete for all 10; re-run via `npm run translation-spike` at any time.
-- **Unrecoverable failure mode (Phase 3):** VAPID key loss permanently unreachable-ifies every existing visitor. Keys are generated once off-box and backed up — never in a Dockerfile or startup script.
+- **Unrecoverable failure mode (Phase 2):** VAPID key loss permanently unreachable-ifies every existing visitor. Owner will generate the keypair off-box and back up the private key in a second location outside Dokploy before Phase 2 execution — never in a Dockerfile or startup script. See 02-CONTEXT.md D-01…D-03.
 - **Needs real hardware (Phase 2):** iOS push under an installed PWA is the lowest-confidence area in the research corpus and cannot be simulated.
+- **Accepted tradeoff (Phase 2, requirements change):** the push gate now lets a visitor through to chat without push after one declined/ignored attempt, per device. Some visitors will therefore be permanently unreachable by push. Owner explicitly accepted this over an unconditional hard block. See 02-CONTEXT.md D-04/D-06.
 - **Verify empirically (Phase 1 first deploy):** Traefik idle timeouts on long-lived SSE connections on the target deployment platform — silent failure mode, community-sourced only. Applies equally on Dokploy (also Traefik-fronted) as it would have on Coolify.
 - **Resolved — Platform substitution (Phase 1, Plan 01-13):** Hosting moved from Coolify (CLAUDE.md's originally documented default) to Dokploy, owner-directed. Deployment is now live and fully verified. CLAUDE.md's "Hosting" constraint line still says "Coolify" — should be updated to "Dokploy" when the user next asks for CLAUDE.md changes (project-instructions files are edited only on direct request, not proactively).
 
@@ -141,6 +147,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-21T13:30:00.000Z
-Stopped at: Completed 01-13-PLAN.md -- Phase 1 (Foundation and the Realtime Spine) fully complete, live deployment verified
-Resume file: None
+Last session: 2026-07-21T15:00:00.000Z
+Stopped at: Phase 2 context gathered
+Resume file: .planning/phases/02-reachability-and-language/02-CONTEXT.md
