@@ -10,6 +10,12 @@
 # Coolify supplies its own managed Postgres in production — this file is not
 # deployed there, it exists only so a fresh clone can reach a real database
 # without any manual Postgres install.
+#
+# The `app` service (below) is optional and exists so
+# `docker compose up --build app` exercises the exact same Dockerfile image
+# that ships to Coolify, against this same local Postgres — a local
+# end-to-end check of Plan 01-13's build/migrate/start path without needing
+# a Coolify instance.
 
 services:
   db:
@@ -31,6 +37,34 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
+  # Optional: builds and runs the same production Dockerfile locally,
+  # against the `db` service above. Not started by a bare `docker compose up`
+  # (no `depends_on` reference elsewhere) — run explicitly via
+  # `docker compose up --build app`. Coolify does not use this compose file;
+  # it builds the same Dockerfile directly against its own managed Postgres.
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Service-name DNS inside the compose network, not localhost:5433.
+      DATABASE_URL: postgres://onechat:onechat@db:5432/onechat
+      SESSION_SECRET: ${SESSION_SECRET:-local-dev-session-secret-not-for-prod}
+      SETUP_TOKEN: ${SETUP_TOKEN:-local-dev-setup-token}
+      IP_HASH_SECRET: ${IP_HASH_SECRET:-local-dev-ip-hash-secret}
+      OVH_API_KEY: ${OVH_API_KEY:-}
+      OVH_BASE_URL: ${OVH_BASE_URL:-https://oai.endpoints.kepler.ai.cloud.ovh.net/v1}
+      TRANSLATION_PROVIDER: ${TRANSLATION_PROVIDER:-nvidia}
+      NVIDIA_API_KEY: ${NVIDIA_API_KEY:-}
+      NVIDIA_BASE_URL: ${NVIDIA_BASE_URL:-https://integrate.api.nvidia.com/v1}
+      NVIDIA_MODEL_ID: ${NVIDIA_MODEL_ID:-qwen/qwen3.5-397b-a17b}
+    ports:
+      - "3000:3000"
 
 volumes:
   onechat_db_data:

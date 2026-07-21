@@ -1,0 +1,17 @@
+node_modules
+.next
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+npm-debug.log*
+*.tsbuildinfo
+.planning
+.claude
+.gstack
+Dockerfile
+.dockerignore
+docker-compose.yml
+README.md
+PRD-chat-site.md
