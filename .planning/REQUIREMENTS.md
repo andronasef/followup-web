@@ -40,7 +40,7 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 
 ### Push — the gate and the return path
 
-- [ ] **PUSH-01**: The chat does not open until the visitor grants browser notification permission — a hard block (F8)
+- [ ] **PUSH-01**: The chat does not open until the visitor grants browser notification permission, on their first attempt per device — a hard block on that first attempt only; if they decline or ignore it, they are let through to chat without push starting on their very next visit (F8; softened from an unconditional hard block — Phase 2 discussion, 2026-07-21, see D-06)
 - [ ] **PUSH-02**: A custom pre-prompt explains why before the native permission prompt is triggered, so a decline remains recoverable (the native prompt fires only once, ever)
 - [ ] **PUSH-03**: Declining shows a gentle, localized re-ask explaining the reason (F9)
 - [ ] **PUSH-04**: `requestPermission()` is called as the first statement in the click handler — no `await` before it, which would launder the user gesture

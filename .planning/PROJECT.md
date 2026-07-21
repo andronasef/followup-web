@@ -111,7 +111,7 @@ Source document: `PRD-chat-site.md` (v4.0). This project initialization resolved
 |----------|-----------|---------|
 | Self-hosted Docker on Coolify | Owner controls infrastructure and data for sensitive pastoral conversations; no per-seat vendor costs | — Pending |
 | OVHcloud AI Endpoints for translation | Free/cheap, OpenAI-compatible, EU data residency (Gravelines) — matters for confidential faith conversations | — Pending |
-| Hard block on push refusal | Reachability is the second goal of the product; an unreachable visitor is a lost person | — Pending |
+| Push gate shown once per device, not an unconditional hard block | Reachability is the second goal of the product, but the owner accepted that some visitors will never grant push in exchange for never permanently blocking a returning visitor from the chat (softened from an unconditional hard block — Phase 2 discussion, 2026-07-21) | — Pending |
 | iOS guided "Add to Home Screen" screen | iOS Safari only permits push for installed PWAs; a hard block without guidance would silently lose every iPhone visitor | — Pending |
 | Email + password admin auth, Argon2id | Single owner, self-hosted, no external identity provider. Argon2id over bcrypt per OWASP 2026 guidance and Alpine build compatibility | — Pending |
 | Anonymous ID as server-set httpOnly cookie | A client-generated localStorage UUID is an XSS-exfiltratable bearer token to a pastoral conversation, and WebKit ITP evicts script-writable storage after 7 idle days — a return-visitor loss mode the PRD never accepted | — Pending |
