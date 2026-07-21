@@ -12,8 +12,15 @@ import { requireVisitor } from "../../../../server/auth/visitor.ts";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-export async function POST() {
-  const session = await requireVisitor();
+export async function POST(request: Request) {
+  // ID-04: an optional `vid` field lets pre-paint.ts's URL-carried token
+  // (?vid=, read from location.search) recover an existing visitor
+  // identity in a fresh, cookie-less storage context (the iOS Home Screen
+  // relaunch case) -- see visitor.ts's requireVisitor({vidParam}).
+  const body = await request.json().catch(() => ({}) as { vid?: unknown });
+  const vidParam = typeof body?.vid === "string" && body.vid.length > 0 ? body.vid : undefined;
+
+  const session = await requireVisitor({ vidParam });
   return Response.json({
     visitorId: session.visitorId,
     lang: session.lang,

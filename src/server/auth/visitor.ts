@@ -44,9 +44,18 @@ export interface VisitorSession {
  * paint (src/app/pre-paint.ts) for a brand-new visitor, and
  * src/app/api/chat/prefs/route.ts's PATCH, which re-signs an existing
  * one. Both call this function with the default `allowCookieWrite: true`.
+ *
+ * ID-04: `vidParam` is a second, strictly best-effort recovery anchor --
+ * see this plan's assumption_delta_decision. It is consulted ONLY when
+ * there is no existing valid cookie: a verified `vidParam` reuses that
+ * EXISTING visitor id (via getOrCreate's own id-preserving update path)
+ * instead of minting a new one. An invalid/unverifiable/absent `vidParam`
+ * falls through to today's unchanged mint-new behavior -- this never
+ * throws, and a `vidParam` is never consulted at all when a valid cookie
+ * is already present (the cookie always wins).
  */
 export async function requireVisitor(
-  opts: { allowCookieWrite?: boolean } = {},
+  opts: { allowCookieWrite?: boolean; vidParam?: string } = {},
 ): Promise<VisitorSession> {
   const allowCookieWrite = opts.allowCookieWrite ?? true;
   const cookieStore = await cookies();
@@ -82,7 +91,24 @@ export async function requireVisitor(
     return { visitorId: null, lang, appearance, conversation: null, isNewCookie: true };
   }
 
-  const visitor = await getOrCreate(null, lang, appearance);
+  // T-02-18: `vidParam` is only ever trusted after `verifySession` proves
+  // it is a `jose`-signed JWT this app itself issued -- never a raw,
+  // client-supplied visitor id. A forged/tampered/expired token fails
+  // verification and `existingVisitorId` stays null, falling through to
+  // the exact same mint-new path an invalid cookie already takes.
+  let existingVisitorId: string | null = null;
+  if (opts.vidParam) {
+    try {
+      const vidPayload = await verifySession(opts.vidParam);
+      if (vidPayload.typ === "visitor") {
+        existingVisitorId = vidPayload.sub;
+      }
+    } catch {
+      // Invalid/expired/tampered vid token -- ignored, mint-new below.
+    }
+  }
+
+  const visitor = await getOrCreate(existingVisitorId, lang, appearance);
   const conversation = await openFor(visitor.id);
   const signed = await signVisitorId(visitor.id, { lang, appearance });
 

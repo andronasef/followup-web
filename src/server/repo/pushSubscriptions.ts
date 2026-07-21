@@ -41,6 +41,17 @@ export async function listForVisitor(visitorId: string): Promise<PushSubscriptio
   return db.select().from(pushSubscriptions).where(eq(pushSubscriptions.visitorId, visitorId));
 }
 
+/**
+ * ID-03: looks up a subscription by its endpoint alone -- the general
+ * lost-both-cookie-and-localStorage recovery path (Plan 02-06's
+ * POST /api/push/recover). Returns null when no row matches, never
+ * inventing a subscription/visitor from an unknown endpoint.
+ */
+export async function getByEndpoint(endpoint: string): Promise<PushSubscriptionRow | null> {
+  const [row] = await db.select().from(pushSubscriptions).where(eq(pushSubscriptions.endpoint, endpoint)).limit(1);
+  return row ?? null;
+}
+
 export async function markSuccess(endpoint: string): Promise<void> {
   await db
     .update(pushSubscriptions)
