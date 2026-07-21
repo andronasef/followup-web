@@ -82,8 +82,13 @@ services:
       NVIDIA_API_KEY: ${NVIDIA_API_KEY:-}
       NVIDIA_BASE_URL: ${NVIDIA_BASE_URL:-https://integrate.api.nvidia.com/v1}
       NVIDIA_MODEL_ID: ${NVIDIA_MODEL_ID:-qwen/qwen3.5-397b-a17b}
-    ports:
-      - "3000:3000"
+    # No `ports:` publish on purpose -- Dokploy/Traefik reaches this
+    # container over the internal compose network once a Domain is assigned
+    # to the `app` service (container port 3000), and a host-port publish
+    # here is exactly what collided with another already-running deployment
+    # on the same server (see 01-13-SUMMARY.md's Dokploy deploy notes). For
+    # local dev curl-testing, add a temporary `ports: ["3000:3000"]` back or
+    # run `docker compose exec app wget -qO- localhost:3000/api/health`.
 
 volumes:
   onechat_db_data:
