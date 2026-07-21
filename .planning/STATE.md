@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 01
 current_phase_name: Foundation and the Realtime Spine
 status: executing
-stopped_at: Completed 01-11-PLAN.md
-last_updated: "2026-07-21T10:55:02.815Z"
+stopped_at: Completed 01-12-PLAN.md
+last_updated: "2026-07-21T11:17:05.136Z"
 last_activity: 2026-07-20
 last_activity_desc: Translation spike go/no-go closed — owner overrode automated Swahili NO-GO, shipping all 10 languages
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 13
-  completed_plans: 11
+  completed_plans: 12
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-20)
 ## Current Position
 
 Phase: 01 (Foundation and the Realtime Spine) — EXECUTING
-Plan: 12 of 13
+Plan: 13 of 13
 Status: Ready to execute
 Last activity: 2026-07-20 — Translation spike go/no-go closed — owner overrode automated Swahili NO-GO, shipping all 10 languages
 
-Progress: [█████████░] 85%
+Progress: [█████████░] 92%
 
 ## Performance Metrics
 
@@ -69,6 +69,7 @@ Progress: [█████████░] 85%
 | Phase 01 P09 | ~20min | 3 tasks | 20 files |
 | Phase 01 P10 | ~25min | 3 tasks | 7 files |
 | Phase 01 P11 | ~20min | 3 tasks | 6 files |
+| Phase 01 P12 | 45min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -105,6 +106,8 @@ Recent decisions affecting current work:
 - [Phase ?]: [01-10]: useChatStream.ts exposes the raw EventSource instance instead of importing usePresence.ts directly, keeping the two hook files decoupled -- Plan 01-12 wires a 'presence' listener to usePresence.setPresence.
 - [Phase ?]: 01-11: repo.conversations.listWithPreview() added (LEFT JOIN LATERAL, most-recent-message-per-conversation, coalesce fallback for message-less conversations) -- required by Task 1's own action text, not in the plan's files_modified list.
 - [Phase ?]: 01-11: Message['sender'] (drizzle infers plain string from schema.ts's untyped text column, guarded only by a Postgres CHECK constraint) is cast to the 'visitor'|'owner' union at the SSR-fetch and SSE-parse boundaries where repo/wire rows flow into MessageBubble/ThreadMessage.
+- [Phase ?]: Split page composition into page.tsx (Server Component, data fetch) + ChatShell.tsx (client boundary owning useChatStream/hooks) -- Server Components cannot call hooks, so this split (matching Plan 01-11's page.tsx/Thread.tsx precedent) was the only way to satisfy both requirements
+- [Phase ?]: Added confirmedClientMsgIds prop to Composer.tsx so a visitor's own sent message hides from Composer's local optimistic-bubble list once it's visible in the SSE-confirmed transcript, preventing a permanent duplicate render
 
 ### Pending Todos
 
@@ -131,6 +134,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-21T10:55:02.803Z
-Stopped at: Completed 01-11-PLAN.md
+Last session: 2026-07-21T11:17:05.126Z
+Stopped at: Completed 01-12-PLAN.md
 Resume file: None

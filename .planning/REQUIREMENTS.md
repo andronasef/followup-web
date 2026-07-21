@@ -10,7 +10,7 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 
 ### Chat — the visitor experience
 
-- [ ] **CHAT-01**: Visitor opens the URL and lands directly in a full-screen one-on-one chat — no landing page, no menu, no login (F1)
+- [x] **CHAT-01**: Visitor opens the URL and lands directly in a full-screen one-on-one chat — no landing page, no menu, no login (F1)
 - [x] **CHAT-02**: Visitor sees a warm welcome message in their own language, in the owner's voice, on first open (F13)
 - [x] **CHAT-03**: Visitor can send a message and see it appear immediately with a single "sent" delivery state
 - [x] **CHAT-04**: Visitor sees the owner's reply arrive in near real-time while the owner is online (F15)
