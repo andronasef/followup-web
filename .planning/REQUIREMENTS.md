@@ -55,15 +55,15 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 
 ### Translation — carrier, never author
 
-- [ ] **TRANS-01**: Visitor messages are translated into the owner's language for the dashboard (F11)
-- [ ] **TRANS-02**: Owner replies are translated into the visitor's language on send (F12)
-- [ ] **TRANS-03**: The owner previews the translation before the reply sends, and can send anyway if translation fails or times out (F12)
-- [ ] **TRANS-04**: Both sides can reveal the original text alongside the translation, per message (F11, F12)
-- [ ] **TRANS-05**: Visitor→owner translation runs asynchronously *after* the message is durably persisted — the translation provider is never a prerequisite for durability
-- [ ] **TRANS-06**: Each `(message, target language)` pair is translated at most once; same-language pairs are skipped entirely
+- [x] **TRANS-01**: Visitor messages are translated into the owner's language for the dashboard (F11)
+- [x] **TRANS-02**: Owner replies are translated into the visitor's language on send (F12)
+- [x] **TRANS-03**: The owner previews the translation before the reply sends, and can send anyway if translation fails or times out (F12)
+- [x] **TRANS-04**: Both sides can reveal the original text alongside the translation, per message (F11, F12)
+- [x] **TRANS-05**: Visitor→owner translation runs asynchronously *after* the message is durably persisted — the translation provider is never a prerequisite for durability
+- [x] **TRANS-06**: Each `(message, target language)` pair is translated at most once; same-language pairs are skipped entirely
 - [x] **TRANS-07**: Translation output is validated at runtime (script-block match, length ratio, refusal markers, preservation of emoji/URLs/digits) and fails toward showing the untranslated original — never toward a plausible fabrication
 - [x] **TRANS-08**: Visitor text cannot inject instructions into the translation prompt; the model translates rather than answers
-- [ ] **TRANS-09**: A failed or rate-limited translation still renders the original message; never an empty bubble or an indefinite spinner
+- [x] **TRANS-09**: A failed or rate-limited translation still renders the original message; never an empty bubble or an indefinite spinner
 - [x] **TRANS-10**: Rate-limit responses (429) are handled with backoff and a circuit breaker
 
 ### Admin — the owner's surface
