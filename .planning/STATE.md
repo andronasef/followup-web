@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 02
+current_phase: 01
 current_phase_name: Reachability and Language
 status: discussing
-stopped_at: Phase 2 context gathered
-last_updated: "2026-07-21T15:00:00.000Z"
+stopped_at: Phase 2 UI-SPEC approved
+last_updated: "2026-07-21T14:04:29.112Z"
 last_activity: 2026-07-21
-last_activity_desc: Phase 2 discussion complete -- VAPID lifecycle, iOS walkthrough, translation provider, owner draft-preview UX, notification copy, subscription refresh, gate-funnel/unreachable-conversation admin surface. Push gate softened (requirements change) -- ROADMAP.md/PROJECT.md updated.
+last_activity_desc: Phase 2 discussion complete; push gate softened from unconditional hard block to shown-once-per-device (requirements change, ROADMAP.md/PROJECT.md updated)
 progress:
-  total_phases: 3
+  total_phases: 2
   completed_phases: 1
   total_plans: 13
   completed_plans: 13
@@ -147,6 +147,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-21T15:00:00.000Z
-Stopped at: Phase 2 context gathered
-Resume file: .planning/phases/02-reachability-and-language/02-CONTEXT.md
+Last session: 2026-07-21T14:04:29.100Z
+Stopped at: Phase 2 UI-SPEC approved
+Resume file: .planning/phases/02-reachability-and-language/02-UI-SPEC.md

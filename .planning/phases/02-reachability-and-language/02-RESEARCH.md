@@ -479,22 +479,25 @@ navigator.serviceWorker.ready
 
 **If this table is empty:** N/A — see above.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Missing PWA icon assets (`icon-192.png`, `icon-512.png`)**
    - What we know: `public/manifest.webmanifest` references both files; neither exists in `public/`; flagged as a Phase 2 blocker in Phase 1's own `01-09-SUMMARY.md`.
    - What's unclear: Whether the owner wants to supply a real branded icon or accept a placeholder for now.
    - Recommendation: Planner should insert an early task (or `checkpoint:human-action`) to either receive branded icon assets from the owner or generate a simple placeholder (solid background + a glyph) at both required sizes — this blocks any real iOS Add-to-Home-Screen testing, since an app with a broken icon reference may not install cleanly.
+   - **Resolution:** Plan 02-07 Task 3 generates placeholder icons via a hand-rolled `scripts/generate-placeholder-icons.mjs` (no new dependency), committing `public/icon-192.png`/`icon-512.png` at both required sizes. The script's header comment documents these as placeholders pending real branded assets from the owner; swapping them later needs no rebuild-blocking change (static `public/` assets, not `NEXT_PUBLIC_*`).
 
 2. **Exact push probe UX when it fails (gate-probe-failed, already flagged `⚠ unresolved` in `02-UI-SPEC.md`)**
    - What we know: UI-SPEC's own planner assumption is "let the visitor into chat regardless (permission can't be un-granted programmatically), log server-side only, no user-facing error."
    - What's unclear: Whether a failed probe should still record `granted_at` in the gate funnel (the browser permission WAS granted even if the probe send failed) or whether "granted" should mean "grant + working probe."
    - Recommendation: Record `granted_at` on browser-level grant (matches OPS-11's literal wording: "how many granted" is about the permission funnel, not push-working confirmation) — track probe success separately, only as an internal signal for whether to let the visitor through immediately vs. show a rare edge-case retry. Flag this distinction explicitly for the plan-checker.
+   - **Resolution:** Plan 02-04 Task 1's `handleSubscribe` calls `gateFunnel.recordGranted(visitorId, platform)` unconditionally after the send attempt, regardless of `probeOk` — exactly the recommended split (granted = browser-level permission; probe success is a separate, server-logged-only signal). Codified as a must-have truth in 02-04's frontmatter.
 
 3. **Real-hardware verification for the entire iOS push path**
    - What we know: STATE.md already lists this as the lowest-confidence area, unresolvable by simulation.
    - What's unclear: Timing of when in the phase's plan sequence real-device verification should gate further work.
    - Recommendation: Planner should place a `checkpoint:human-verify` immediately after the push subscribe/probe/notification-click plans are built, before building anything that depends on iOS behavior being correct (e.g., before polishing the walkthrough animation).
+   - **Resolution:** Plan 02-07 Task 4 is a `checkpoint:human-verify` (gate="blocking") placed immediately after Tasks 1-3 (gate/walkthrough/service-worker) land, requiring real-iPhone + non-iOS-browser sign-off before any later plan treats the push vertical as confirmed working.
 
 ## Environment Availability
 
