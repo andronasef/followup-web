@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 01
 current_phase_name: Foundation and the Realtime Spine
 status: executing
-stopped_at: Completed 01-10-PLAN.md
-last_updated: "2026-07-20T15:15:50.488Z"
+stopped_at: Completed 01-11-PLAN.md
+last_updated: "2026-07-21T10:55:02.815Z"
 last_activity: 2026-07-20
 last_activity_desc: Translation spike go/no-go closed — owner overrode automated Swahili NO-GO, shipping all 10 languages
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 13
-  completed_plans: 10
+  completed_plans: 11
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-20)
 ## Current Position
 
 Phase: 01 (Foundation and the Realtime Spine) — EXECUTING
-Plan: 11 of 13
+Plan: 12 of 13
 Status: Ready to execute
 Last activity: 2026-07-20 — Translation spike go/no-go closed — owner overrode automated Swahili NO-GO, shipping all 10 languages
 
-Progress: [████████░░] 77%
+Progress: [█████████░] 85%
 
 ## Performance Metrics
 
@@ -68,6 +68,7 @@ Progress: [████████░░] 77%
 | Phase 01 P08 | 15min | 3 tasks | 13 files |
 | Phase 01 P09 | ~20min | 3 tasks | 20 files |
 | Phase 01 P10 | ~25min | 3 tasks | 7 files |
+| Phase 01 P11 | ~20min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -102,6 +103,8 @@ Recent decisions affecting current work:
 - [Phase ?]: [01-09]: Added src/lib/i18n/strings.ts (shared getStrings(lang) lookup) and a closeAriaLabel key across all 10 locale JSON files -- both missing-critical additions needed to satisfy UI-SPEC.md's no-hardcoded-string requirement across Header/LanguageSheet/Welcome/PresenceLine.
 - [Phase ?]: [01-10]: composer-logic.ts extracted as a framework-free state machine so Composer.tsx's TDD tests are node:test-runnable (JSX is not type-strippable) -- same class of split as 01-08's send.ts/reply.ts, applied to JSX instead of next/headers.
 - [Phase ?]: [01-10]: useChatStream.ts exposes the raw EventSource instance instead of importing usePresence.ts directly, keeping the two hook files decoupled -- Plan 01-12 wires a 'presence' listener to usePresence.setPresence.
+- [Phase ?]: 01-11: repo.conversations.listWithPreview() added (LEFT JOIN LATERAL, most-recent-message-per-conversation, coalesce fallback for message-less conversations) -- required by Task 1's own action text, not in the plan's files_modified list.
+- [Phase ?]: 01-11: Message['sender'] (drizzle infers plain string from schema.ts's untyped text column, guarded only by a Postgres CHECK constraint) is cast to the 'visitor'|'owner' union at the SSR-fetch and SSE-parse boundaries where repo/wire rows flow into MessageBubble/ThreadMessage.
 
 ### Pending Todos
 
@@ -128,6 +131,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-20T15:15:50.474Z
-Stopped at: Completed 01-10-PLAN.md
+Last session: 2026-07-21T10:55:02.803Z
+Stopped at: Completed 01-11-PLAN.md
 Resume file: None
