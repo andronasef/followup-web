@@ -8,7 +8,9 @@
 import { z } from "zod";
 import { sql as rawSql } from "drizzle-orm";
 import { db } from "../../../../server/db/pool.ts";
+import { OWNER_LANG } from "../../../../server/config/models.ts";
 import { create as createMessage, type Message } from "../../../../server/repo/messages.ts";
+import { upsert as upsertTranslation } from "../../../../server/repo/messageTranslations.ts";
 
 // Same bound as the visitor route -- Unicode-code-point-aware, not UTF-16
 // code units.
@@ -24,6 +26,13 @@ const bodySchema = z.object({
       message: "message is too long",
     }),
   clientMsgId: z.string().min(1).optional(),
+  // TRANS-02/03/04: the owner's pre-edit preview draft (OWNER_LANG),
+  // present only when the preview-then-edit flow was actually used. D-11:
+  // `body` (whatever is currently in the composer, translated or not) is
+  // already the untranslated-original fallback when translation
+  // fails/times out -- this field exists to capture the ORIGINAL when a
+  // preview succeeded, not as a fallback mechanism itself.
+  originalBody: z.string().trim().optional(),
 });
 
 export interface AdminReplyInput {
@@ -59,6 +68,18 @@ export async function handleAdminReply(input: AdminReplyInput): Promise<AdminRep
       parsed.data.clientMsgId ?? null,
       tx,
     );
+
+    // TRANS-02/03/04: persist the owner's pre-edit original in the SAME
+    // transaction as the message insert -- no second round trip, no risk
+    // of an orphaned translation row if the transaction rolls back. Only
+    // when the preview-then-edit flow was actually used AND the owner's
+    // final send differs from the previewed original (an unedited preview
+    // send that matches body exactly needs no separate "original" row --
+    // the visitor's own message list can already reconstruct it).
+    if (parsed.data.originalBody && parsed.data.originalBody !== parsed.data.body) {
+      await upsertTranslation(row.id, OWNER_LANG, parsed.data.originalBody, "ready", tx);
+    }
+
     // T-01-24: pointers only, never the message body -- same transaction as
     // the insert above.
     await tx.execute(
