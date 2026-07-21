@@ -40,13 +40,13 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 
 ### Push — the gate and the return path
 
-- [ ] **PUSH-01**: The chat does not open until the visitor grants browser notification permission, on their first attempt per device — a hard block on that first attempt only; if they decline or ignore it, they are let through to chat without push starting on their very next visit (F8; softened from an unconditional hard block — Phase 2 discussion, 2026-07-21, see D-06)
-- [ ] **PUSH-02**: A custom pre-prompt explains why before the native permission prompt is triggered, so a decline remains recoverable (the native prompt fires only once, ever)
-- [ ] **PUSH-03**: Declining shows a gentle, localized re-ask explaining the reason (F9)
+- [x] **PUSH-01**: The chat does not open until the visitor grants browser notification permission, on their first attempt per device — a hard block on that first attempt only; if they decline or ignore it, they are let through to chat without push starting on their very next visit (F8; softened from an unconditional hard block — Phase 2 discussion, 2026-07-21, see D-06)
+- [x] **PUSH-02**: A custom pre-prompt explains why before the native permission prompt is triggered, so a decline remains recoverable (the native prompt fires only once, ever)
+- [x] **PUSH-03**: Declining shows a gentle, localized re-ask explaining the reason (F9)
 - [ ] **PUSH-04**: `requestPermission()` is called as the first statement in the click handler — no `await` before it, which would launder the user gesture
-- [ ] **PUSH-05**: iOS Safari visitors get a guided, localized "Share → Add to Home Screen" screen, then the permission prompt after relaunch
-- [ ] **PUSH-06**: When the owner replies, the visitor receives a localized push that reopens their conversation (F17)
-- [ ] **PUSH-07**: Push payloads are content-free — no message preview, no sender name, no faith reference
+- [x] **PUSH-05**: iOS Safari visitors get a guided, localized "Share → Add to Home Screen" screen, then the permission prompt after relaunch
+- [x] **PUSH-06**: When the owner replies, the visitor receives a localized push that reopens their conversation (F17)
+- [x] **PUSH-07**: Push payloads are content-free — no message preview, no sender name, no faith reference
 - [ ] **PUSH-08**: Push fires only when the visitor has not acknowledged delivery, gated by a durable `delivered_at` ACK plus a short grace period — not by in-memory connection state
 - [ ] **PUSH-09**: The service worker always calls `showNotification()` on receipt; silent pushes risk permission revocation, which is fatal when push is the entry gate
 - [ ] **PUSH-10**: Subscriptions returning 404/410 are deleted and the conversation is marked unreachable in the dashboard
