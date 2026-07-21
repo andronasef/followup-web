@@ -32,6 +32,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { IosWalkthrough } from "./IosWalkthrough";
 import { getStrings } from "@/lib/i18n/strings";
 import {
   detectPlatform,
@@ -40,6 +41,17 @@ import {
   syncSubscriptionOnOpen,
 } from "@/lib/push/subscribe-client";
 import type { SupportedLanguage } from "@/server/i18n/detect";
+
+/** Safari-only property, not in the standard DOM lib typings. */
+type NavigatorWithStandalone = Navigator & { standalone?: boolean };
+
+/** True only for an iOS Safari visitor NOT already running in an installed/standalone context. */
+function isIosNotStandalone(): boolean {
+  if (typeof window === "undefined") return false;
+  const nav = window.navigator as NavigatorWithStandalone;
+  const standalone = nav.standalone === true || window.matchMedia("(display-mode: standalone)").matches;
+  return detectPlatform() === "ios" && !standalone;
+}
 
 /** localStorage key mirroring the last endpoint synced to the server — PUSH-11's re-sync comparison point. */
 const GATE_ENDPOINT_KEY = "oneChatPushEndpoint";
@@ -75,6 +87,9 @@ export function Gate({ children, lang }: GateProps) {
     () => typeof window !== "undefined" && window.localStorage.getItem("oneChatPushGateDecided") === "1",
   );
   const [screen, setScreen] = useState<GateScreen>("prompt");
+  // Lazy init for the same SSR-safe reason as showChildren above -- iOS
+  // standalone/platform detection is client-only info.
+  const [iosWalkthrough] = useState<boolean>(() => isIosNotStandalone());
   const shownBeaconFired = useRef(false);
 
   useEffect(() => {
@@ -167,6 +182,16 @@ export function Gate({ children, lang }: GateProps) {
         </Button>
       </GateFrame>
     );
+  }
+
+  // D-04: the walkthrough REPLACES the pre-prompt screen for an iOS
+  // Safari visitor not already running standalone -- permission can't even
+  // be requested from a non-installed iOS tab. An already-installed iOS
+  // visitor (standalone === true, checked fresh on this mount, i.e. after
+  // a real relaunch from the Home Screen icon) falls through to the same
+  // normal flow below, unchanged.
+  if (iosWalkthrough) {
+    return <IosWalkthrough lang={lang} />;
   }
 
   return (
