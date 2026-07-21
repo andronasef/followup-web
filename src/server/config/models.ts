@@ -63,3 +63,10 @@ export const activeProvider: TranslationProviderConfig = PROVIDERS[ACTIVE_PROVID
 export const MODEL_ID = activeProvider.modelId;
 export const BASE_URL = activeProvider.baseURL;
 export const API_KEY_ENV_VAR = activeProvider.apiKeyEnvVar;
+
+// The owner is a single, fixed person; the admin surface is entirely
+// unlocalized English (Phase 1 precedent) -- this is a plain
+// env-overridable constant, not a per-responder DB column. Consumed by
+// Plan 02-05 (translation direction), Plan 02-06 (push-trigger skip
+// check), and Plan 02-08 (admin rendering).
+export const OWNER_LANG: string = process.env.OWNER_LANG ?? "en";

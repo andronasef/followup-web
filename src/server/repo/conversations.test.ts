@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { after, test } from "node:test";
 import { sql } from "../db/pool.ts";
 import { getOrCreate as getOrCreateVisitor } from "./visitors.ts";
-import { openFor } from "./conversations.ts";
+import { getVisitorLangFor, openFor } from "./conversations.ts";
 
 // node:test runs each file in its own process; without closing the pool the
 // process never exits (open sockets keep the event loop alive) and the
@@ -38,6 +38,33 @@ test("conversations.openFor: concurrent calls for the same visitor never create 
       select count(*)::int as count from conversations where visitor_id = ${visitor.id}
     `;
     assert.equal(rows[0].count, 1, "concurrent opens for one visitor must resolve to exactly one row");
+  } finally {
+    await cleanup(visitor.id);
+  }
+});
+
+test("conversations.getVisitorLangFor: returns the visitor's stored lang for their conversation", async () => {
+  const visitor = await getOrCreateVisitor(null, "fr");
+  const conversation = await openFor(visitor.id);
+  try {
+    const lang = await getVisitorLangFor(conversation.id);
+    assert.equal(lang, "fr");
+  } finally {
+    await cleanup(visitor.id);
+  }
+});
+
+test("conversations.getVisitorLangFor: returns null for a nonexistent conversation id", async () => {
+  const lang = await getVisitorLangFor(-1);
+  assert.equal(lang, null);
+});
+
+test("conversations.getVisitorLangFor: returns null when the visitor's lang column is null", async () => {
+  const visitor = await getOrCreateVisitor();
+  const conversation = await openFor(visitor.id);
+  try {
+    const lang = await getVisitorLangFor(conversation.id);
+    assert.equal(lang, null, "caller is responsible for defaulting a null lang to 'en'");
   } finally {
     await cleanup(visitor.id);
   }

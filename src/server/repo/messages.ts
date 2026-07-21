@@ -7,7 +7,7 @@
 // This module only persists -- it never calls pg_notify. That happens in
 // the write-path route handler (Plan 01-06), in the same transaction as
 // the insert, per 01-RESEARCH.md's durability-first Anti-Pattern note.
-import { and, asc, eq, gt } from "drizzle-orm";
+import { and, asc, eq, gt, isNull } from "drizzle-orm";
 import { db } from "../db/pool.ts";
 import { messages } from "../db/schema.ts";
 
@@ -16,12 +16,12 @@ export type MessageSender = "visitor" | "owner";
 
 // Structural subset of `db` (also satisfied by a `db.transaction()`
 // callback's `tx` argument, since drizzle-orm's PgTransaction extends
-// PgDatabase) -- lets create() run either against the shared pool
-// (default) or inside a caller-supplied transaction. Plan 01-08's write
-// routes pass their own `tx` so the insert and the same-transaction
-// pg_notify call commit or roll back together (CHAT-06's durability-first
-// requirement).
-type DbExecutor = Pick<typeof db, "select" | "insert">;
+// PgDatabase) -- lets create()/markDelivered() run either against the
+// shared pool (default) or inside a caller-supplied transaction. Plan
+// 01-08's write routes pass their own `tx` so the insert and the
+// same-transaction pg_notify call commit or roll back together (CHAT-06's
+// durability-first requirement).
+type DbExecutor = Pick<typeof db, "select" | "insert" | "update">;
 
 /**
  * Inserts a message and returns the full row (its new id becomes the SSE
@@ -77,4 +77,31 @@ export async function since(conversationId: number, sinceId: number): Promise<Me
  * owner reconnect never loses a message either. */
 export async function sinceAll(sinceId: number): Promise<Message[]> {
   return db.select().from(messages).where(gt(messages.id, sinceId)).orderBy(asc(messages.id));
+}
+
+/**
+ * PUSH-08: sets the durable ACK marker for `messageId`. The `isNull` guard
+ * makes a duplicate ack call a harmless no-op rather than repeatedly
+ * overwriting the timestamp -- same set-once spirit as gateFunnel.ts's
+ * upserts.
+ */
+export async function markDelivered(messageId: number, executor: DbExecutor = db): Promise<void> {
+  await executor
+    .update(messages)
+    .set({ deliveredAt: new Date() })
+    .where(and(eq(messages.id, messageId), isNull(messages.deliveredAt)));
+}
+
+/**
+ * True if `messageId` belongs to `conversationId`. Used by Plan 02-06's ack
+ * endpoint so a visitor can only ack a message inside their own open
+ * conversation, never an arbitrary message id.
+ */
+export async function belongsToConversation(messageId: number, conversationId: number): Promise<boolean> {
+  const [row] = await db
+    .select({ id: messages.id })
+    .from(messages)
+    .where(and(eq(messages.id, messageId), eq(messages.conversationId, conversationId)))
+    .limit(1);
+  return row !== undefined;
 }

@@ -90,3 +90,23 @@ export async function listWithPreview(): Promise<ConversationPreview[]> {
     lastMessageAt: row.last_message_at,
   }));
 }
+
+/**
+ * Resolves the visitor's stored language for `conversationId` -- used by
+ * Plan 02-05's translate-preview.ts to pick the owner's draft-preview
+ * target language. Returns null if the conversation doesn't exist or the
+ * visitor's `lang` column is null; the caller (not this function) should
+ * treat a null return as "en", since assuming a hardcoded default here
+ * would hide a genuinely-missing lang value from a caller that might want
+ * to handle it differently.
+ */
+export async function getVisitorLangFor(conversationId: number): Promise<string | null> {
+  const rows = await db.execute<{ lang: string | null }>(rawSql`
+    select v.lang as lang
+    from conversations c
+    join visitors v on v.id = c.visitor_id
+    where c.id = ${conversationId}
+  `);
+  const [row] = rows;
+  return row?.lang ?? null;
+}
