@@ -3,17 +3,18 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 current_phase: 02
-current_phase_name: Reachability and Language
-status: planned
-stopped_at: Phase 2 planned (8 plans, research, patterns, coverage matrix, UI-SPEC all complete and committed)
-last_updated: "2026-07-21T20:08:06.000Z"
+current_phase_name: reachability-and-language
+current_plan: 2
+status: executing
+stopped_at: Completed 02-01-PLAN.md
+last_updated: "2026-07-21T20:38:22.222Z"
 last_activity: 2026-07-21
-last_activity_desc: Reconciled STATE.md with actual repo state -- Phase 2 already had a complete 8-plan set, RESEARCH.md, PATTERNS.md, and COVERAGE.md committed (bdcdf24, 8d20dc8) that gsd-tools' init.plan-phase query was not detecting; UI-SPEC.md added and approved this session. Ready for /gsd-execute-phase 2.
+last_activity_desc: Phase 02 execution started
 progress:
-  total_phases: 3
+  total_phases: 2
   completed_phases: 1
   total_plans: 21
-  completed_plans: 13
+  completed_plans: 14
 ---
 
 # Project State
@@ -23,14 +24,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-20)
 
 **Core value:** A person opens the URL and, within seconds, is in a warm conversation with a real human being in their own language — and can always be reached again when that human replies.
-**Current focus:** Phase 02 — Reachability and Language (planned, 8 plans ready to execute)
+**Current focus:** Phase 02 — reachability-and-language
 
 ## Current Position
 
-Phase: 01 (Foundation and the Realtime Spine) — COMPLETE (13/13 plans, live deployment verified)
+Phase: 02 (reachability-and-language) — EXECUTING
 Phase: 02 (Reachability and Language) — PLANNED (8 plans across 4 waves, RESEARCH.md/PATTERNS.md/COVERAGE.md/UI-SPEC.md all complete and committed)
-Status: Ready for `/gsd-execute-phase 2`
-Last activity: 2026-07-21 — Reconciled STATE.md with actual repo state (see Session Continuity)
+Status: Ready to execute
+Last activity: 2026-07-21 — Phase 02 execution started
+Current Plan: 2
+Total Plans in Phase: 8
 
 Progress (Phase 1): [██████████] 100%
 Progress (overall, by phase count): [███░░░░░░░░] 33%
@@ -72,6 +75,7 @@ Progress (overall, by phase count): [███░░░░░░░░] 33%
 | Phase 01 P11 | ~20min | 3 tasks | 6 files |
 | Phase 01 P12 | 45min | 2 tasks | 3 files |
 | Phase 01 P13 | ~3h | 4 tasks | 5 files |
+| Phase 02 P01 | 35min | 3 tasks | 15 files |
 
 ## Accumulated Context
 
@@ -119,6 +123,8 @@ Recent decisions affecting current work:
 - [02-CONTEXT]: **Requirements change** -- the push gate is softened from an unconditional hard block to shown-once-per-device: a visitor who declines/ignores the iOS walkthrough+permission prompt on their first attempt is let through to chat without push from their next visit onward. Owner explicitly accepted that some visitors become permanently unreachable in exchange for never permanently blocking a returning visitor. ROADMAP.md §Phase 2 success criterion 2 and PROJECT.md's "Push gate" section updated to match.
 - [02-CONTEXT]: Translation stays on NVIDIA NIM (no OVH switch, no Qwen3.6-27B cost/latency spike this phase). Owner draft-preview is an inline swap (not side-by-side) and the owner CAN edit the translated text directly (not approve/reject-only) -- a real risk since the owner may not verify a target-language edit, mitigated only by the visitor's existing show-original tap-through, not a UI-level safeguard.
 - [02-CONTEXT]: Gate funnel metrics (shown/prompt-reached/granted by platform) live as an all-time-totals stats row on the existing conversation-list screen, not a new admin screen. An unreachable conversation (revoked/expired push subscription) gets a quiet inline badge, purely informational -- no retry/re-notify action (that's Phase 3 status-control scope).
+- [Phase ?]: [02-01]: docker-compose.yml's db service host port restored as loopback-only (127.0.0.1:5433:5432) -- Plan 01-13 removed it entirely for production security, but that also broke local dev connectivity this plan's own migrate/test steps require.
+- [Phase ?]: [02-01]: gateFunnel.ts/pushSubscriptions.ts use single-statement race-free upserts (COALESCE set-once / onConflictDoUpdate), mirroring ratelimit.ts's established pattern; getVisitorLangFor returns null (not a hardcoded 'en') when the visitor's lang column is null, leaving the fallback decision to the caller (Plan 02-05).
 
 ### Pending Todos
 
@@ -147,6 +153,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-21T20:08:06.000Z
-Stopped at: Phase 2 reconciled as planned -- 8 plans, research, patterns, coverage, UI-SPEC all complete
-Resume file: .planning/phases/02-reachability-and-language/02-08-PLAN.md
+Last session: 2026-07-21T20:38:22.199Z
+Stopped at: Completed 02-01-PLAN.md
+Resume file: None

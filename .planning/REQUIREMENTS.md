@@ -24,7 +24,7 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 
 - [x] **ID-01**: On first visit the server issues an anonymous visitor ID as a signed `HttpOnly` `Secure` `SameSite=Lax` cookie (F3)
 - [x] **ID-02**: The visitor ID is mirrored to `localStorage` as a recovery copy; the cookie wins on conflict
-- [ ] **ID-03**: A visitor's push endpoint resolves back to their visitor ID, giving a third recovery anchor when cookie and localStorage are both lost
+- [x] **ID-03**: A visitor's push endpoint resolves back to their visitor ID, giving a third recovery anchor when cookie and localStorage are both lost
 - [ ] **ID-04**: The signed visitor ID is carried through the PWA `start_url` and the push click URL, so an installed app and a browser tab resolve to the same conversation
 - [x] **ID-05**: No name, email, phone, or raw IP is ever collected or stored
 
@@ -94,7 +94,7 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 - [ ] **OPS-08**: VAPID keys are generated once off-box and backed up; they are never generated in a Dockerfile or startup script
 - [x] **OPS-09**: Pastoral message content never reaches container logs — parameterized writes and `log_statement=none`
 - [ ] **OPS-10**: A health check endpoint reports app and database liveness
-- [ ] **OPS-11**: Gate funnel is instrumented — gate shown → prompt shown → granted, split by platform — since no benchmark exists for push as a hard prerequisite
+- [x] **OPS-11**: Gate funnel is instrumented — gate shown → prompt shown → granted, split by platform — since no benchmark exists for push as a hard prerequisite
 
 ### Foundation
 

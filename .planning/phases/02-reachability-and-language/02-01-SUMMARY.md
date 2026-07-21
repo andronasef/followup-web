@@ -220,3 +220,7 @@ None for this plan specifically — the `user_setup` block in 02-01-PLAN.md's fr
 ---
 *Phase: 02-reachability-and-language*
 *Completed: 2026-07-21*
+
+## Self-Check: PASSED
+
+All created files confirmed present on disk; all four commits (53a478c, 587f810, 7b782b8, 7a8f781) confirmed in git history.
