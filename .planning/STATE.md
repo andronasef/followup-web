@@ -4,17 +4,17 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 02
 current_phase_name: reachability-and-language
-current_plan: 6
+current_plan: 7
 status: executing
-stopped_at: Completed 02-05-PLAN.md
-last_updated: "2026-07-21T22:41:08.512Z"
+stopped_at: Completed 02-06-PLAN.md
+last_updated: "2026-07-21T23:05:16.277Z"
 last_activity: 2026-07-21
 last_activity_desc: Phase 02 execution started
 progress:
   total_phases: 2
   completed_phases: 1
   total_plans: 21
-  completed_plans: 18
+  completed_plans: 19
 ---
 
 # Project State
@@ -32,7 +32,7 @@ Phase: 02 (reachability-and-language) — EXECUTING
 Phase: 02 (Reachability and Language) — PLANNED (8 plans across 4 waves, RESEARCH.md/PATTERNS.md/COVERAGE.md/UI-SPEC.md all complete and committed)
 Status: Ready to execute
 Last activity: 2026-07-21 — Phase 02 execution started
-Current Plan: 6
+Current Plan: 7
 Total Plans in Phase: 8
 
 Progress (Phase 1): [██████████] 100%
@@ -80,6 +80,7 @@ Progress (overall, by phase count): [███░░░░░░░░] 33%
 | Phase 02 P03 | 20min | 2 tasks | 10 files |
 | Phase 02 P04 | 35min | 3 tasks | 13 files |
 | Phase 02 P05 | 30min | 3 tasks | 14 files |
+| Phase 02 P06 | 35min | 3 tasks | 15 files |
 
 ## Accumulated Context
 
@@ -138,6 +139,9 @@ Recent decisions affecting current work:
 - [Phase ?]: [02-04]: urlBase64ToUint8Array's return type pinned to Uint8Array<ArrayBuffer> -- applicationServerKey requires BufferSource, which a bare Uint8Array no longer satisfies under this project's TS/DOM-lib versions.
 - [Phase ?]: [02-05]: since()/sinceAll()'s OWNER_LANG LEFT JOIN is unconditional on message sender -- one field/join serves both 'translation of a visitor message' and 'pre-edit original of an owner message' semantics; Plan 02-08's UI interprets per-sender.
 - [Phase ?]: [02-05]: translate-preview.ts calls translate.translate() directly (not cache.ts's translateAndCache) since a preview has no messageId to key a cache row on and nothing is persisted until Send.
+- [Phase ?]: [02-06]: src/server/push/recover.ts added (not in plan's file list) to keep ID-03's handleRecover next/headers-free and directly node:test-able, mirroring ack.ts/route.ts's split.
+- [Phase ?]: [02-06]: conversations.getVisitorAndLangFor added -- one query resolving both visitorId+lang for the admin push trigger, also turning an unknown conversationId into a clean 400 instead of an unhandled FK error.
+- [Phase ?]: [02-06]: requireVisitor()'s next/headers import makes it unimportable under plain node:test (confirmed empirically); its vidParam behavior is verified via source inspection plus real DB-backed tests of its extractable primitives (verifySession/getOrCreate reuse) and handleRecover, plus a live scripted bootstrap/vid-token round trip against a running server.
 
 ### Pending Todos
 
@@ -166,6 +170,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-21T22:41:08.477Z
-Stopped at: Completed 02-05-PLAN.md
+Last session: 2026-07-21T23:05:16.266Z
+Stopped at: Completed 02-06-PLAN.md
 Resume file: None

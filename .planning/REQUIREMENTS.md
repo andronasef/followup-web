@@ -25,7 +25,7 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 - [x] **ID-01**: On first visit the server issues an anonymous visitor ID as a signed `HttpOnly` `Secure` `SameSite=Lax` cookie (F3)
 - [x] **ID-02**: The visitor ID is mirrored to `localStorage` as a recovery copy; the cookie wins on conflict
 - [x] **ID-03**: A visitor's push endpoint resolves back to their visitor ID, giving a third recovery anchor when cookie and localStorage are both lost
-- [ ] **ID-04**: The signed visitor ID is carried through the PWA `start_url` and the push click URL, so an installed app and a browser tab resolve to the same conversation
+- [x] **ID-04**: The signed visitor ID is carried through the PWA `start_url` and the push click URL, so an installed app and a browser tab resolve to the same conversation
 - [x] **ID-05**: No name, email, phone, or raw IP is ever collected or stored
 
 ### Language and appearance
@@ -47,7 +47,7 @@ Requirement IDs are stable. PRD traceability is noted per requirement as `(F#)`.
 - [x] **PUSH-05**: iOS Safari visitors get a guided, localized "Share → Add to Home Screen" screen, then the permission prompt after relaunch
 - [x] **PUSH-06**: When the owner replies, the visitor receives a localized push that reopens their conversation (F17)
 - [x] **PUSH-07**: Push payloads are content-free — no message preview, no sender name, no faith reference
-- [ ] **PUSH-08**: Push fires only when the visitor has not acknowledged delivery, gated by a durable `delivered_at` ACK plus a short grace period — not by in-memory connection state
+- [x] **PUSH-08**: Push fires only when the visitor has not acknowledged delivery, gated by a durable `delivered_at` ACK plus a short grace period — not by in-memory connection state
 - [x] **PUSH-09**: The service worker always calls `showNotification()` on receipt; silent pushes risk permission revocation, which is fatal when push is the entry gate
 - [x] **PUSH-10**: Subscriptions returning 404/410 are deleted and the conversation is marked unreachable in the dashboard
 - [x] **PUSH-11**: The client re-syncs `getSubscription()` on every open, because Chrome does not reliably fire `pushsubscriptionchange`

@@ -92,7 +92,7 @@ Plans:
   5. A conversation whose subscription has been revoked or expired shows as unreachable to the owner instead of silently swallowing replies, and no visitor is ever pushed for a message they have already acknowledged receiving.
   6. The owner can see how many people were shown the gate, how many reached the native prompt, and how many granted — split by platform.
 
-**Plans**: 5/8 plans executed
+**Plans**: 6/8 plans executed
 
 Plans:
 **Wave 1**
@@ -108,7 +108,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 02-06-PLAN.md — Push delivery integration: ACK endpoint, admin push-send trigger, ID-03/ID-04 identity recovery
+- [x] 02-06-PLAN.md — Push delivery integration: ACK endpoint, admin push-send trigger, ID-03/ID-04 identity recovery
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
@@ -148,7 +148,7 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation and the Realtime Spine | 13/13 | Complete | 2026-07-21 |
-| 2. Reachability and Language | 5/8 | In Progress|  |
+| 2. Reachability and Language | 6/8 | In Progress|  |
 | 3. Owner Surface, Hardening, Ship | 0/TBD | Not started | - |
 
 ## Requirement Coverage
