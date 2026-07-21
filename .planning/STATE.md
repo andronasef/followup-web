@@ -4,17 +4,17 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 02
 current_phase_name: reachability-and-language
-current_plan: 4
+current_plan: 5
 status: executing
-stopped_at: Completed 02-03-PLAN.md
-last_updated: "2026-07-21T21:37:18.912Z"
+stopped_at: Completed 02-04-PLAN.md
+last_updated: "2026-07-21T22:14:24.209Z"
 last_activity: 2026-07-21
 last_activity_desc: Phase 02 execution started
 progress:
   total_phases: 2
   completed_phases: 1
   total_plans: 21
-  completed_plans: 16
+  completed_plans: 17
 ---
 
 # Project State
@@ -32,7 +32,7 @@ Phase: 02 (reachability-and-language) — EXECUTING
 Phase: 02 (Reachability and Language) — PLANNED (8 plans across 4 waves, RESEARCH.md/PATTERNS.md/COVERAGE.md/UI-SPEC.md all complete and committed)
 Status: Ready to execute
 Last activity: 2026-07-21 — Phase 02 execution started
-Current Plan: 4
+Current Plan: 5
 Total Plans in Phase: 8
 
 Progress (Phase 1): [██████████] 100%
@@ -78,6 +78,7 @@ Progress (overall, by phase count): [███░░░░░░░░] 33%
 | Phase 02 P01 | 35min | 3 tasks | 15 files |
 | Phase 02 P02 | 12min | 2 tasks | 4 files |
 | Phase 02 P03 | 20min | 2 tasks | 10 files |
+| Phase 02 P04 | 35min | 3 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -131,6 +132,9 @@ Recent decisions affecting current work:
 - [Phase ?]: [02-02]: translate()'s signature dropped the spike's client parameter -- openaiClient is module-internal (exported only for test mocking), since there is exactly one real client instance in the running app.
 - [Phase ?]: [02-03]: Resumed a prior interrupted run cleanly -- en/ar/es already had Task 1's 7 pushGate keys uncommitted on disk; extended that same key set to the remaining 7 locales for Task 1's commit rather than reverting.
 - [Phase ?]: [02-03]: pushNotificationTitle/Body translations verified content-free (no name/preview/sender/faith-reference) in every one of the 10 languages per PUSH-07/D-14.
+- [Phase ?]: [02-04]: strings.ts's JSON locale imports gained with { type: "json" } import attributes -- required for a next/headers-free, node:test-run server module (subscribe.ts) to import getStrings for the first time; Next's bundler and TS 6 already support it.
+- [Phase ?]: [02-04]: sendPushToVisitor takes an optional 5th wait parameter (default: real ACK_GRACE_PERIOD_MS timer) instead of node:test's global mock.timers -- faking setTimeout globally also freezes the DB driver's own internal setTimeout calls, hanging tests past the tick. Production callers unaffected (4-arg default).
+- [Phase ?]: [02-04]: urlBase64ToUint8Array's return type pinned to Uint8Array<ArrayBuffer> -- applicationServerKey requires BufferSource, which a bare Uint8Array no longer satisfies under this project's TS/DOM-lib versions.
 
 ### Pending Todos
 
@@ -159,6 +163,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-21T21:37:18.900Z
-Stopped at: Completed 02-03-PLAN.md
+Last session: 2026-07-21T22:14:24.168Z
+Stopped at: Completed 02-04-PLAN.md
 Resume file: None

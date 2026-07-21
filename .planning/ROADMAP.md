@@ -92,7 +92,7 @@ Plans:
   5. A conversation whose subscription has been revoked or expired shows as unreachable to the owner instead of silently swallowing replies, and no visitor is ever pushed for a message they have already acknowledged receiving.
   6. The owner can see how many people were shown the gate, how many reached the native prompt, and how many granted — split by platform.
 
-**Plans**: 3/8 plans executed
+**Plans**: 4/8 plans executed
 
 Plans:
 **Wave 1**
@@ -103,7 +103,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 02-04-PLAN.md — Push subscribe/probe/send backend + client subscribe/re-sync/beacon helpers
+- [x] 02-04-PLAN.md — Push subscribe/probe/send backend + client subscribe/re-sync/beacon helpers
 - [ ] 02-05-PLAN.md — Translation wiring: cache layer, visitor→owner async trigger, owner→visitor draft-preview, since/sinceAll translation join
 
 **Wave 3** *(blocked on Wave 2 completion)*
@@ -148,7 +148,7 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation and the Realtime Spine | 13/13 | Complete | 2026-07-21 |
-| 2. Reachability and Language | 3/8 | In Progress|  |
+| 2. Reachability and Language | 4/8 | In Progress|  |
 | 3. Owner Surface, Hardening, Ship | 0/TBD | Not started | - |
 
 ## Requirement Coverage
