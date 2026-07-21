@@ -7,6 +7,7 @@
 import { and, eq, ne, sql as rawSql } from "drizzle-orm";
 import { db } from "../db/pool.ts";
 import { conversations } from "../db/schema.ts";
+import type { MessageSender } from "./messages.ts";
 
 export type Conversation = typeof conversations.$inferSelect;
 
@@ -39,4 +40,53 @@ export async function openFor(visitorId: string): Promise<Conversation> {
     );
   }
   return winner;
+}
+
+export interface ConversationPreview {
+  id: number;
+  lastMessageBody: string | null;
+  lastMessageSender: MessageSender | null;
+  lastMessageAt: Date;
+}
+
+/**
+ * ADMIN-03/D-12: the flat, unsorted-beyond-recency conversation list for the
+ * owner's admin dashboard -- a plain ORDER BY most-recent-message-time, never
+ * a priority/faith-decision weighting (that first slice of ADMIN-05's real
+ * inbox is Phase 3's, explicitly out of scope here). A LEFT JOIN LATERAL
+ * pulls each conversation's single most recent message, if any -- a
+ * conversation can briefly have zero persisted rows, since D-05's welcome is
+ * rendered client-side and is never a `messages` row -- falling back to the
+ * conversation's own createdAt so a brand-new, message-less conversation
+ * still sorts and renders correctly.
+ */
+export async function listWithPreview(): Promise<ConversationPreview[]> {
+  const rows = await db.execute<{
+    id: number;
+    last_message_body: string | null;
+    last_message_sender: MessageSender | null;
+    last_message_at: Date;
+  }>(rawSql`
+    select
+      c.id as id,
+      lm.body as last_message_body,
+      lm.sender as last_message_sender,
+      coalesce(lm.created_at, c.created_at) as last_message_at
+    from conversations c
+    left join lateral (
+      select body, sender, created_at
+      from messages
+      where messages.conversation_id = c.id
+      order by messages.id desc
+      limit 1
+    ) lm on true
+    order by last_message_at desc
+  `);
+
+  return rows.map((row) => ({
+    id: row.id,
+    lastMessageBody: row.last_message_body,
+    lastMessageSender: row.last_message_sender,
+    lastMessageAt: row.last_message_at,
+  }));
 }
