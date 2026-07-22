@@ -31,7 +31,7 @@ See: .planning/PROJECT.md (updated 2026-07-20)
 Phase: 02 (reachability-and-language) — EXECUTING
 Phase: 02 (Reachability and Language) — PLANNED (8 plans across 4 waves, RESEARCH.md/PATTERNS.md/COVERAGE.md/UI-SPEC.md all complete and committed)
 Status: Ready to execute
-Last activity: 2026-07-21 — Phase 02 execution started
+Last activity: 2026-07-23 - Completed quick task 260723-0vf: fixed 8 code review findings (push endpoint takeover, lang persistence, admin login rate limit, SSE reliability, hub unsubscribe, translation token budget, sw.js tag)
 Current Plan: 8
 Total Plans in Phase: 8
 
@@ -162,6 +162,14 @@ None yet.
 - **Accepted tradeoff (Phase 2, requirements change):** the push gate now lets a visitor through to chat without push after one declined/ignored attempt, per device. Some visitors will therefore be permanently unreachable by push. Owner explicitly accepted this over an unconditional hard block. See 02-CONTEXT.md D-04/D-06.
 - **Verify empirically (Phase 1 first deploy):** Traefik idle timeouts on long-lived SSE connections on the target deployment platform — silent failure mode, community-sourced only. Applies equally on Dokploy (also Traefik-fronted) as it would have on Coolify.
 - **Resolved — Platform substitution (Phase 1, Plan 01-13):** Hosting moved from Coolify (CLAUDE.md's originally documented default) to Dokploy, owner-directed. Deployment is now live and fully verified. CLAUDE.md's "Hosting" constraint line still says "Coolify" — should be updated to "Dokploy" when the user next asks for CLAUDE.md changes (project-instructions files are edited only on direct request, not proactively).
+- **Local dev environment (not a code defect):** `.env.local`'s `DATABASE_URL` uses `localhost`, which Windows resolves to `::1` first, while `web-db-1` publishes only on IPv4 `127.0.0.1:5433`. Every DB-backed test fails with `ECONNREFUSED ::1:5433` unless the host is overridden per-run. Changing `localhost` → `127.0.0.1` in `.env.local` fixes it permanently. `.env.local` also carries no VAPID keys, so `vapid.ts` throws at module load and the push test files cannot be imported at all without a throwaway keypair in the environment.
+- **Pre-existing typecheck error:** a bare `npx tsc --noEmit` fails on `tsconfig.json(26,5) TS5101` (`baseUrl` deprecated in TS 7). Present before quick task 260723-0vf. `npm run build` and `tsc --noEmit --ignoreDeprecations 6.0` both pass; adding `"ignoreDeprecations": "6.0"` to tsconfig.json is the one-line fix.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260723-0vf | Fix 8 code review findings: push endpoint visitor takeover, visitor lang persistence, admin login rate limit, SSE unhandled rejection and backfill race, hub unsubscribe, translation max_tokens, sw.js tag | 2026-07-23 | d61186c | [260723-0vf-fix-8-code-review-findings-push-endpoint](./quick/260723-0vf-fix-8-code-review-findings-push-endpoint/) |
 
 ## Deferred Items
 
