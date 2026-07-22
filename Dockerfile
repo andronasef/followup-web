@@ -38,6 +38,26 @@ COPY . .
 ARG SESSION_SECRET_BUILD_PLACEHOLDER="build-time-placeholder-not-a-real-secret-32"
 ENV SESSION_SECRET=$SESSION_SECRET_BUILD_PLACEHOLDER
 
+# src/server/push/vapid.ts throws at the same *module import time* if
+# VAPID_PUBLIC_KEY/VAPID_PRIVATE_KEY/VAPID_SUBJECT are missing, for the same
+# reason and via the same page-data-collection import chain as
+# SESSION_SECRET above. Same fix, same scope: build-time-only placeholders,
+# never real secrets, absent from the `runner` stage below -- the real
+# values are supplied fresh at container start by Coolify's runtime env.
+# Unlike SESSION_SECRET (any string >= 32 chars passes), web-push's
+# setVapidDetails() shape-validates the public key as a real EC point, so
+# the placeholder must be a syntactically valid (but never-used-for-real)
+# VAPID keypair, not an arbitrary string.
+# NEXT_PUBLIC_VAPID_PUBLIC_KEY is unrelated and NOT placeholdered here: it is
+# inlined into the client bundle, so it must be the real public key at build
+# time (a genuine Coolify build-time var, per CLAUDE.md), or push
+# subscriptions will silently target the wrong keypair.
+ARG VAPID_PUBLIC_KEY_BUILD_PLACEHOLDER="BPRDohqzHouQ1nRuP1Xcyk5sOaBE4ufTRHapAtV7XybfeJvrzTDf8dSHvHTd2JmspAy24qG_5PxID1qCztqFiJ8"
+ARG VAPID_PRIVATE_KEY_BUILD_PLACEHOLDER="RtqI0GzetbwzoiUdy4-w1j3pFPNzZU01ODT93EW9ncw"
+ENV VAPID_PUBLIC_KEY=$VAPID_PUBLIC_KEY_BUILD_PLACEHOLDER
+ENV VAPID_PRIVATE_KEY=$VAPID_PRIVATE_KEY_BUILD_PLACEHOLDER
+ENV VAPID_SUBJECT="mailto:build-placeholder@example.org"
+
 # output: "standalone" is set in next.config.ts (Plan 01-01).
 RUN npm run build
 
