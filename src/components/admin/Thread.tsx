@@ -84,8 +84,8 @@ export function Thread({ conversationId, initialMessages }: ThreadProps) {
   }
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background">
-      <header className="flex items-center gap-2 px-4 py-2">
+    <div className="flex h-dvh flex-col overflow-hidden bg-background">
+      <header className="flex shrink-0 items-center gap-2 border-b border-border bg-background px-4 py-2">
         <Link
           href="/admin"
           aria-label="Back to conversations"
@@ -95,7 +95,7 @@ export function Thread({ conversationId, initialMessages }: ThreadProps) {
         </Link>
         <h1 className="text-[20px] leading-[1.3] font-semibold text-foreground">Conversation</h1>
       </header>
-      <div ref={containerRef} className="flex flex-1 flex-col gap-2 overflow-y-auto px-4 py-2">
+      <div ref={containerRef} className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-4 py-2">
         {messages.map((message) => (
           <MessageBubble
             key={message.id}

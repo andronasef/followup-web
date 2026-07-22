@@ -171,7 +171,7 @@ export function ReplyBox({ conversationId, onSent }: ReplyBoxProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-2 border-t border-border bg-muted p-4 pb-[env(safe-area-inset-bottom)]"
+      className="flex shrink-0 flex-col gap-2 border-t border-border bg-muted p-4 pb-[env(safe-area-inset-bottom)]"
     >
       {failed ? (
         <p className="text-[14px] leading-[1.4] font-normal text-destructive">
