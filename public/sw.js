@@ -26,10 +26,22 @@ self.addEventListener("activate", (event) => {
 // shape: fixed locale title/body plus a signed `vid` token, never the
 // triggering message's own text.
 self.addEventListener("push", (event) => {
-  const data = event.data ? event.data.json() : {};
+  // event.data.json() throws on a non-JSON payload (e.g. a manual DevTools
+  // test push, which sends a plain string) -- and it throws synchronously,
+  // before waitUntil() runs, which would skip showNotification() entirely.
+  // That's the exact silent-push pattern this handler must never produce,
+  // so a parse failure falls back to an empty object instead of throwing.
+  let data = {};
+  try {
+    if (event.data) data = event.data.json();
+  } catch {
+    // Non-JSON payload -- fall through to the empty-object default below.
+  }
   event.waitUntil(
-    self.registration.showNotification(data.title, {
-      body: data.body,
+    // Fallback title/body only ever reached via a non-server test push (see
+    // the try/catch above) -- the real server payload always sets both.
+    self.registration.showNotification(data.title || "New message", {
+      body: data.body || "",
       tag: data.data && data.data.conversationId ? `conv-${data.data.conversationId}` : undefined,
       data: data.data,
     }),
