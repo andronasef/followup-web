@@ -6,8 +6,21 @@ import { requireVisitor } from "../server/auth/visitor.ts";
 import { dirFor } from "../server/i18n/dir.ts";
 import { PRE_PAINT_SCRIPT } from "./pre-paint.ts";
 
+// D-04/D-05: iOS only launches a Home Screen bookmark in standalone mode
+// (navigator.standalone === true, what IosWalkthrough.tsx/Gate.tsx's
+// isIosNotStandalone() check depends on) if the manifest is actually linked
+// and the apple-mobile-web-app-capable meta tag is present -- without both,
+// "Add to Home Screen" just creates a normal Safari bookmark, standalone
+// never becomes true no matter how many times the visitor relaunches, and
+// the iOS walkthrough gate never lets them through.
 export const metadata: Metadata = {
   title: "One Chat",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "One Chat",
+  },
 };
 
 // D-11: cookie drives the server render. requireVisitor() is called with
