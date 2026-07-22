@@ -135,3 +135,33 @@
     @apply font-sans;
     }
 }
+
+/* Thin, neutral scrollbar matching the app's monochrome oklch palette --
+   a bare-metal system scrollbar is the one un-styled element against an
+   otherwise fully themed (light/dark, RTL) UI. Firefox via scrollbar-color,
+   everything else via ::-webkit-scrollbar; both read the same --muted-
+   foreground/--background tokens so dark mode needs no separate rule. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklch, var(--muted-foreground) 40%, transparent) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: color-mix(in oklch, var(--muted-foreground) 40%, transparent);
+  border-radius: var(--radius-lg);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--foreground);
+}
