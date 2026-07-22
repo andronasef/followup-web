@@ -8,6 +8,7 @@
 import type { NextRequest } from "next/server";
 import { requireOwner } from "../../../../server/auth/guard.ts";
 import * as hub from "../../../../server/realtime/hub.ts";
+import { createPump } from "../../../../server/realtime/sse-pump.ts";
 import { sinceAll } from "../../../../server/repo/messages.ts";
 
 export const runtime = "nodejs";
@@ -65,18 +66,30 @@ export async function GET(request: NextRequest) {
         }
       };
 
-      let highWaterMark = sinceId;
-      let live = false;
-      let gotEventDuringBackfill = false;
-      let pumping = false;
-      let dirty = false;
+      // Same shared pump as the visitor stream (CR-04/CR-05), only over
+      // sinceAll() instead of the per-conversation since(). See
+      // sse-pump.ts for why it never rejects and has no live/not-live gate.
+      const pump = createPump({
+        sinceId,
+        fetchSince: (id) => sinceAll(id),
+        emit: (row) => send(row.id, "message", row),
+        onError: (error) => {
+          // CLAUDE.md: ids and status only, NEVER message bodies.
+          console.error("[sse] admin pump failed", {
+            lastEmittedId: pump.highWaterMark(),
+            error: error instanceof Error ? error.message : "unknown",
+          });
+          // Recycle deliberately -- EventSource reconnects and replays
+          // from its Last-Event-ID.
+          cleanup();
+        },
+      });
 
-      // Subscribe BEFORE the backfill query below (inside pump()) -- same
-      // literal ordering requirement as the visitor stream.
+      // Subscribe BEFORE the backfill run below -- same literal ordering
+      // requirement as the visitor stream.
       unsubscribe = hub.subscribeAll((event) => {
         if (event.type === "message") {
-          if (live) void pump();
-          else gotEventDuringBackfill = true;
+          pump.trigger();
           return;
         }
         if (event.type === "presence") {
@@ -84,29 +97,7 @@ export async function GET(request: NextRequest) {
         }
       });
 
-      async function pump() {
-        if (pumping) {
-          dirty = true;
-          return;
-        }
-        pumping = true;
-        try {
-          do {
-            dirty = false;
-            const rows = await sinceAll(highWaterMark);
-            for (const row of rows) {
-              send(row.id, "message", row);
-              highWaterMark = row.id;
-            }
-          } while (dirty);
-        } finally {
-          pumping = false;
-        }
-      }
-
-      await pump(); // initial Last-Event-ID backfill across every conversation
-      if (gotEventDuringBackfill) await pump(); // catch the subscribe-to-backfill gap
-      live = true;
+      await pump.run(); // initial Last-Event-ID backfill across every conversation
 
       heartbeat = setInterval(() => {
         if (closed) return;

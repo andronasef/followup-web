@@ -19,6 +19,8 @@ function mockFetch(impl: (...args: unknown[]) => Promise<unknown>) {
   (globalThis as unknown as { fetch: unknown }).fetch = impl;
 }
 
+const MOCK_ENDPOINT = "https://push.example.com/abc";
+
 test("urlBase64ToUint8Array: converts a URL-safe base64 VAPID key into a Uint8Array", () => {
   // "test" base64-encoded is "dGVzdA==" -- URL-safe form strips padding.
   const result = urlBase64ToUint8Array("dGVzdA");
@@ -33,11 +35,14 @@ test("subscribeToPush: calls serviceWorker.ready then pushManager.subscribe(), P
     serviceWorker: {
       ready: Promise.resolve({
         pushManager: {
+          // `this.endpoint` here does not typecheck: inside an object
+          // literal returned from an async arrow, TS types `this` as the
+          // awaited-or-thenable union, so the property lookup fails
+          // (TS2339) and the self-referential toJSON return is `any`
+          // (TS7023). The endpoint is a fixed test constant anyway.
           subscribe: async (_opts: unknown) => ({
-            endpoint: "https://push.example.com/abc",
-            toJSON() {
-              return { endpoint: this.endpoint };
-            },
+            endpoint: MOCK_ENDPOINT,
+            toJSON: () => ({ endpoint: MOCK_ENDPOINT }),
           }),
         },
       }),

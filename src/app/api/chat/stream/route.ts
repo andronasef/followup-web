@@ -11,6 +11,7 @@
 import type { NextRequest } from "next/server";
 import { requireVisitor } from "../../../../server/auth/visitor.ts";
 import * as hub from "../../../../server/realtime/hub.ts";
+import { createPump } from "../../../../server/realtime/sse-pump.ts";
 import { since } from "../../../../server/repo/messages.ts";
 import { getPresence } from "../../../../server/repo/responders.ts";
 
@@ -74,53 +75,44 @@ export async function GET(request: NextRequest) {
         }
       };
 
-      let highWaterMark = sinceId;
-      let live = false;
-      let gotEventDuringBackfill = false;
-      let pumping = false;
-      let dirty = false;
-
-      // Subscribe BEFORE the backfill query below (inside pump()) -- this
-      // is the literal ordering the plan's acceptance criteria requires.
-      unsubscribe = hub.subscribe(conversationId, (event) => {
-        if (event.type !== "message") return;
-        if (live) void pump();
-        else gotEventDuringBackfill = true;
+      // The shared DB-backed pump (CR-04/CR-05): always re-queries
+      // repo.messages.since from the last emitted id, never rejects, and
+      // has no live/not-live gate -- a message committed during the
+      // backfill run is picked up by that same run. See sse-pump.ts.
+      const pump = createPump({
+        sinceId,
+        fetchSince: (id) => since(conversationId, id),
+        emit: (row) => send(row.id, "message", row),
+        onError: (error) => {
+          // CLAUDE.md: ids and status only, NEVER message bodies -- a
+          // pastoral transcript must not reach the platform log viewer.
+          console.error("[sse] chat pump failed", {
+            conversationId,
+            lastEmittedId: pump.highWaterMark(),
+            error: error instanceof Error ? error.message : "unknown",
+          });
+          // Recycle deliberately rather than limping on: the browser's
+          // EventSource reconnects and replays from its Last-Event-ID, so
+          // "no message is ever lost" survives a DB blip.
+          cleanup();
+        },
       });
 
-      // DB-backed pump: always re-queries repo.messages.since from the last
-      // emitted id, so live-arrived and backfilled messages can never
-      // duplicate or gap regardless of exactly when a hub notification and
-      // the backfill query happen to interleave -- the DB, not a buffered
-      // event array, is the single source of ordering truth (FOUND-02).
-      async function pump() {
-        if (pumping) {
-          dirty = true;
-          return;
-        }
-        pumping = true;
-        try {
-          do {
-            dirty = false;
-            const rows = await since(conversationId, highWaterMark);
-            for (const row of rows) {
-              send(row.id, "message", row);
-              highWaterMark = row.id;
-            }
-          } while (dirty);
-        } finally {
-          pumping = false;
-        }
-      }
+      // Subscribe BEFORE the backfill run below -- this is the literal
+      // ordering the plan's acceptance criteria requires. The trigger is
+      // now unconditional; the pump itself owns the single-flight/re-run
+      // handoff.
+      unsubscribe = hub.subscribe(conversationId, (event) => {
+        if (event.type !== "message") return;
+        pump.trigger();
+      });
 
       // D-06/D-07: one initial presence read on connect. Never carries an
       // id -- only message events advance the Last-Event-ID cursor.
       const isOwnerOnline = await getPresence();
       send(null, "presence", { isOwnerOnline });
 
-      await pump(); // initial Last-Event-ID backfill
-      if (gotEventDuringBackfill) await pump(); // catch the subscribe-to-backfill gap
-      live = true;
+      await pump.run(); // initial Last-Event-ID backfill
 
       heartbeat = setInterval(() => {
         if (closed) return;

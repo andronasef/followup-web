@@ -40,25 +40,55 @@ const perConversation: Map<number, Set<Subscriber>> =
 const firehose: Set<Subscriber> =
   globalForHub.__onechatHubFirehose ?? (globalForHub.__onechatHubFirehose = new Set());
 
-/** Subscribe to one conversation's events. Returns an unsubscribe handle. */
+/**
+ * Subscribe to one conversation's events. Returns an unsubscribe handle.
+ *
+ * CR-06: the handle is called from TWO places in every stream route --
+ * `request.signal`'s abort listener and the ReadableStream's `cancel()` --
+ * so a second (and late) call is routine, not exceptional. Two guards make
+ * that safe:
+ *   1. a closure-local `done` flag, so the second call is a plain no-op;
+ *   2. an IDENTITY check on the map entry, so the delete only fires when
+ *      the map still holds the exact Set this closure captured.
+ * Without (2), a late unsubscribe from a torn-down stream could delete the
+ * map entry a freshly reconnected stream had just created for the same
+ * conversation -- silently deafening the new connection to every live
+ * event while its heartbeat and backfill (neither touches the hub) kept
+ * working, which reads as "replies never arrive live".
+ */
 export function subscribe(conversationId: number, subscriber: Subscriber): Unsubscribe {
   let subs = perConversation.get(conversationId);
   if (!subs) {
     subs = new Set();
     perConversation.set(conversationId, subs);
   }
-  subs.add(subscriber);
+  const captured = subs;
+  captured.add(subscriber);
 
+  let done = false;
   return () => {
-    subs?.delete(subscriber);
-    if (subs && subs.size === 0) perConversation.delete(conversationId);
+    if (done) return;
+    done = true;
+    captured.delete(subscriber);
+    if (captured.size === 0 && perConversation.get(conversationId) === captured) {
+      perConversation.delete(conversationId);
+    }
   };
 }
 
-/** Subscribe to every conversation's events (admin firehose, D-13). */
+/** Subscribe to every conversation's events (admin firehose, D-13).
+ * The firehose is a single Set that is never replaced, so only the
+ * double-call guard (CR-06) is needed here -- there is no map entry that
+ * could be identity-mismatched. */
 export function subscribeAll(subscriber: Subscriber): Unsubscribe {
   firehose.add(subscriber);
-  return () => firehose.delete(subscriber);
+
+  let done = false;
+  return () => {
+    if (done) return;
+    done = true;
+    firehose.delete(subscriber);
+  };
 }
 
 /** Notify every per-conversation subscriber AND every admin-scope subscriber. */
