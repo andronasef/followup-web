@@ -111,7 +111,7 @@ export function Composer({ lang, onSent, confirmedClientMsgIds }: ComposerProps)
     : bubbles;
 
   return (
-    <div className="border-t border-border bg-muted pb-[env(safe-area-inset-bottom)]">
+    <div className="shrink-0 border-t border-border bg-muted pb-[env(safe-area-inset-bottom)]">
       {visibleBubbles.length > 0 && (
         <div className="flex flex-col gap-2 px-4 pt-2">
           {visibleBubbles.map((bubble) => (

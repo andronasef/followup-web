@@ -8,7 +8,7 @@
 // message has already grown the container -- recomputing after growth
 // would always read "not at bottom" the instant a message arrives, which
 // is exactly the bug this ref avoids.
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, type ReactNode } from "react";
 import { MessageBubble, type ChatMessageLike, type DeliveryState } from "./MessageBubble";
 
 export interface MessageListItem extends ChatMessageLike {
@@ -24,6 +24,8 @@ export interface MessageListProps {
   /** D-12: locale-JSON "See original"/"Hide original" copy, forwarded to each MessageBubble's tap-to-reveal toggle. */
   showOriginalLabel?: string;
   hideOriginalLabel?: string;
+  /** Rendered above the first bubble, inside this component's scroll container -- so a tall welcome block scrolls away with history instead of permanently eating viewport height above a sticky header. */
+  leading?: ReactNode;
 }
 
 const AT_BOTTOM_THRESHOLD_PX = 32;
@@ -34,6 +36,7 @@ export function MessageList({
   onRetry,
   showOriginalLabel,
   hideOriginalLabel,
+  leading,
 }: MessageListProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const isAtBottomRef = useRef(true);
@@ -72,7 +75,8 @@ export function MessageList({
   }, [messages.length]);
 
   return (
-    <div ref={containerRef} className="flex flex-1 flex-col gap-2 overflow-y-auto px-4 py-2">
+    <div ref={containerRef} className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-4 py-2">
+      {leading}
       {messages.map((message) => (
         <MessageBubble
           key={message.id}

@@ -44,7 +44,7 @@ export function Header({ lang, isDark, onOpenLanguageSheet, onAppearanceChange }
   }
 
   return (
-    <header className="flex items-center justify-between px-4 py-2">
+    <header className="flex shrink-0 items-center justify-between border-b border-border bg-background px-4 py-2">
       <Button
         type="button"
         variant="ghost"

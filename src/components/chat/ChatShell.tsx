@@ -116,7 +116,10 @@ export function ChatShell({ initialLang, initialAppearance, initialMessages }: C
 
   return (
     <Gate lang={lang}>
-      <div className="flex min-h-dvh flex-col bg-background">
+      {/* h-dvh (not min-h-dvh) + overflow-hidden: min-height lets this column
+          grow past the viewport, which leaves MessageList's flex-1 unbounded
+          and scrolls the whole page instead of just the thread. */}
+      <div className="flex h-dvh flex-col overflow-hidden bg-background">
         <Header
           lang={lang}
           isDark={isDark}
@@ -129,12 +132,16 @@ export function ChatShell({ initialLang, initialAppearance, initialMessages }: C
           onOpenChange={setLanguageSheetOpen}
           onLanguageChange={handleLanguageChange}
         />
-        <Welcome lang={lang} />
-        <PresenceLine lang={lang} />
         <MessageList
           messages={messageListItems}
           showOriginalLabel={strings.showOriginalLabel}
           hideOriginalLabel={strings.hideOriginalLabel}
+          leading={
+            <>
+              <Welcome lang={lang} />
+              <PresenceLine lang={lang} />
+            </>
+          }
         />
         {isReconnecting && (
           <p className="px-4 pb-1 text-[14px] leading-[1.4] font-normal text-muted-foreground">
