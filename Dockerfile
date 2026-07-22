@@ -58,8 +58,19 @@ ENV VAPID_PUBLIC_KEY=$VAPID_PUBLIC_KEY_BUILD_PLACEHOLDER
 ENV VAPID_PRIVATE_KEY=$VAPID_PRIVATE_KEY_BUILD_PLACEHOLDER
 ENV VAPID_SUBJECT="mailto:build-placeholder@example.org"
 
+# The real public key, inlined into the client bundle by `next build`. Must
+# arrive as a build ARG (compose passes it via build.args) -- a runtime env
+# var cannot reach browser code. Empty here means pushManager.subscribe()
+# gets an empty applicationServerKey and the gate's Allow button no-ops.
+ARG NEXT_PUBLIC_VAPID_PUBLIC_KEY=""
+ENV NEXT_PUBLIC_VAPID_PUBLIC_KEY=$NEXT_PUBLIC_VAPID_PUBLIC_KEY
+
 # output: "standalone" is set in next.config.ts (Plan 01-01).
-RUN npm run build
+# Fail the build rather than ship a bundle with an empty applicationServerKey
+# -- the failure would otherwise be invisible until a visitor taps Allow.
+RUN test -n "$NEXT_PUBLIC_VAPID_PUBLIC_KEY" \
+  || (echo "NEXT_PUBLIC_VAPID_PUBLIC_KEY build arg is empty -- push would silently break" && exit 1) \
+  && npm run build
 
 # ---------------------------------------------------------------------------
 # runner: minimal runtime image, non-root user, migrate-then-start CMD
