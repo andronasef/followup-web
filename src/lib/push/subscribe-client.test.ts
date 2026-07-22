@@ -55,10 +55,27 @@ test("subscribeToPush: calls serviceWorker.ready then pushManager.subscribe(), P
   assert.equal(capturedUrl, "/api/push/subscribe");
   assert.ok(capturedBody);
   assert.equal((capturedBody as { platform: string }).platform, "other");
-  assert.deepEqual(result, { probeOk: true });
+  assert.deepEqual(result, { outcome: "ok", probeOk: true });
 });
 
-test("subscribeToPush: returns null (never throws) when pushManager.subscribe() rejects", async () => {
+test("subscribeToPush: CR-01 a 409 resolves to the conflict outcome", async () => {
+  mockNavigator({
+    serviceWorker: {
+      ready: Promise.resolve({
+        pushManager: {
+          subscribe: async () => ({ endpoint: "https://push.example.com/abc" }),
+        },
+      }),
+    },
+    userAgent: "test-agent",
+  });
+  mockFetch(async () => ({ ok: false, status: 409, json: async () => ({}) }));
+
+  const result = await subscribeToPush("dGVzdA");
+  assert.deepEqual(result, { outcome: "conflict", probeOk: false });
+});
+
+test("subscribeToPush: resolves to the failed outcome (never throws) when pushManager.subscribe() rejects", async () => {
   mockNavigator({
     serviceWorker: {
       ready: Promise.resolve({
@@ -73,7 +90,7 @@ test("subscribeToPush: returns null (never throws) when pushManager.subscribe() 
   });
 
   const result = await subscribeToPush("dGVzdA");
-  assert.equal(result, null);
+  assert.deepEqual(result, { outcome: "failed", probeOk: false });
 });
 
 test("syncSubscriptionOnOpen: is a no-op (no fetch call) when getSubscription() resolves null", async () => {
@@ -91,8 +108,9 @@ test("syncSubscriptionOnOpen: is a no-op (no fetch call) when getSubscription() 
     return { ok: true, json: async () => ({}) };
   });
 
-  await syncSubscriptionOnOpen("https://push.example.com/old");
+  const outcome = await syncSubscriptionOnOpen("https://push.example.com/old");
   assert.equal(fetchCalled, false);
+  assert.equal(outcome, "skipped", "no subscription at all resolves to the skipped outcome");
 });
 
 test("syncSubscriptionOnOpen: is a no-op when the current subscription's endpoint equals lastKnownEndpoint", async () => {
@@ -135,9 +153,39 @@ test("syncSubscriptionOnOpen: re-POSTs to /api/push/subscribe exactly once when 
     return { ok: true, json: async () => ({}) };
   });
 
-  await syncSubscriptionOnOpen("https://push.example.com/old");
+  const outcome = await syncSubscriptionOnOpen("https://push.example.com/old");
   assert.equal(callCount, 1);
   assert.equal(capturedUrl, "/api/push/subscribe");
+  assert.equal(outcome, "ok", "a 2xx re-sync resolves to the ok outcome");
+});
+
+test("syncSubscriptionOnOpen: CR-01 a 409 resolves to the conflict outcome so the caller can run ID-03 recovery", async () => {
+  mockNavigator({
+    serviceWorker: {
+      ready: Promise.resolve({
+        pushManager: {
+          getSubscription: async () => ({ endpoint: "https://push.example.com/new" }),
+        },
+      }),
+    },
+    userAgent: "test-agent",
+  });
+  mockFetch(async () => ({ ok: false, status: 409, json: async () => ({}) }));
+
+  assert.equal(await syncSubscriptionOnOpen("https://push.example.com/old"), "conflict");
+});
+
+test("syncSubscriptionOnOpen: a thrown error resolves to the failed outcome and never rejects", async () => {
+  mockNavigator({
+    serviceWorker: {
+      get ready() {
+        return Promise.reject(new Error("no service worker"));
+      },
+    },
+    userAgent: "test-agent",
+  });
+
+  assert.equal(await syncSubscriptionOnOpen(null), "failed");
 });
 
 test("sendGateEventBeacon: calls navigator.sendBeacon with the correct URL and a JSON body containing {kind, platform}", async () => {

@@ -37,12 +37,20 @@ self.addEventListener("push", (event) => {
   } catch {
     // Non-JSON payload -- fall through to the empty-object default below.
   }
+  // D-13/CR-08: the coalescing tag is a TOP-LEVEL payload field written by
+  // buildContentFreePayload (a conv-/probe-scoped routing key, never
+  // message content). Previously this read data.data.conversationId, which
+  // the payload has never carried -- so the tag was always undefined and
+  // every unread reply stacked as its own notification. Falls back to no
+  // tag when the field is absent or not a string (the non-JSON DevTools
+  // push path above), and showNotification stays unconditional either way.
+  const tag = typeof data.tag === "string" ? data.tag : undefined;
   event.waitUntil(
     // Fallback title/body only ever reached via a non-server test push (see
     // the try/catch above) -- the real server payload always sets both.
     self.registration.showNotification(data.title || "New message", {
       body: data.body || "",
-      tag: data.data && data.data.conversationId ? `conv-${data.data.conversationId}` : undefined,
+      tag: tag,
       data: data.data,
     }),
   );

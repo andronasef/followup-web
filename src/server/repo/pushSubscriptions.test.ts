@@ -51,6 +51,33 @@ test("pushSubscriptions.create: re-subscribing an existing endpoint updates in p
   }
 });
 
+test("pushSubscriptions.create: CR-01 the endpoint-to-visitor binding is set-once -- a different visitor never takes the row over", async () => {
+  const owner = await getOrCreateVisitor();
+  const intruder = await getOrCreateVisitor();
+  try {
+    const endpoint = `https://push.example.com/${randomUUID()}`;
+    const original = await create(owner.id, endpoint, "owner-p256dh", "owner-auth");
+    assert.equal(original.visitorId, owner.id);
+
+    const afterIntruder = await create(intruder.id, endpoint, "intruder-p256dh", "intruder-auth");
+
+    assert.equal(afterIntruder.id, original.id, "must still be the same row");
+    assert.equal(
+      afterIntruder.visitorId,
+      owner.id,
+      "the owning visitor must NOT be reassigned -- that orphans the original visitor's conversation",
+    );
+    assert.equal(afterIntruder.p256dh, "intruder-p256dh", "the encryption keys must still be refreshed");
+    assert.equal(afterIntruder.auth, "intruder-auth");
+
+    assert.equal((await listForVisitor(owner.id)).length, 1, "the row must still belong to the original owner");
+    assert.equal((await listForVisitor(intruder.id)).length, 0, "the caller must not have acquired the row");
+  } finally {
+    await cleanup(owner.id);
+    await cleanup(intruder.id);
+  }
+});
+
 test("pushSubscriptions.deleteByEndpoint: removes the subscription (PUSH-10 404/410 cleanup)", async () => {
   const visitor = await getOrCreateVisitor();
   try {

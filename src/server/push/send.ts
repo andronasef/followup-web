@@ -20,15 +20,22 @@ import type { SupportedLanguage } from "../i18n/detect.ts";
 export const ACK_GRACE_PERIOD_MS = 8_000;
 
 /**
- * Same content-free shape subscribe.ts's Task 1 probe builds, extracted
- * here so both files share one definition rather than duplicating the
- * shape (T-02-12).
+ * Same content-free shape subscribe.ts's probe builds -- and now actually
+ * called by it, so the two really do share one definition (T-02-12).
+ *
+ * CR-08: `tag` is emitted as a TOP-LEVEL field because that is the only
+ * place `public/sw.js` can read it from; it is a routing/coalescing key
+ * (the same conversation- or probe-scoped string used as the web-push
+ * `topic`), never message content, so ID-05/T-02-12 are preserved.
+ * Without it every unread reply stacked as its own notification instead of
+ * coalescing into one (D-13).
  */
-export function buildContentFreePayload(lang: string, vid: string) {
+export function buildContentFreePayload(lang: string, vid: string, tag: string) {
   const strings = getStrings(lang as SupportedLanguage);
   return {
     title: strings.pushNotificationTitle,
     body: strings.pushNotificationBody,
+    tag,
     data: { vid },
   };
 }
@@ -64,7 +71,11 @@ export async function sendPushToVisitor(
   // visitor owns, so it is reused across the loop below, never re-signed
   // per subscription.
   const vid = await signVisitorId(visitorId, { lang });
-  const payload = buildContentFreePayload(lang, vid);
+  // The SAME conversation-scoped value used as the web-push `topic` below
+  // -- `topic` coalesces at the push service, `tag` coalesces on the
+  // device; both are needed for D-13 to actually hold.
+  const topic = `conv-${conversationId}`;
+  const payload = buildContentFreePayload(lang, vid, topic);
   const payloadJson = JSON.stringify(payload);
 
   const subscriptions = await pushSubscriptions.listForVisitor(visitorId);
@@ -80,7 +91,7 @@ export async function sendPushToVisitor(
           // Conversation-scoped -- coalesces multiple unread replies while
           // the phone is locked into one notification (D-13), distinct
           // from subscribe.ts's visitor-scoped probe topic.
-          topic: `conv-${conversationId}`,
+          topic,
         },
       );
       await pushSubscriptions.markSuccess(sub.endpoint);

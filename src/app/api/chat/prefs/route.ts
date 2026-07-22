@@ -5,6 +5,7 @@ import { z } from "zod";
 import { requireVisitor, VISITOR_COOKIE_NAME, VISITOR_COOKIE_OPTIONS } from "../../../../server/auth/visitor.ts";
 import { signVisitorId } from "../../../../server/auth/session.ts";
 import { SUPPORTED_LANGUAGES } from "../../../../server/i18n/detect.ts";
+import { updatePrefs } from "../../../../server/repo/visitors.ts";
 import { cookies } from "next/headers";
 
 export const dynamic = "force-dynamic";
@@ -35,6 +36,13 @@ export async function PATCH(request: Request) {
   const session = await requireVisitor();
   const nextLang = lang ?? session.lang;
   const nextAppearance = appearance ?? session.appearance;
+
+  // CR-02: the cookie alone is not enough -- every server-side reader of a
+  // visitor's language (translate-preview's getVisitorLangFor, the reply/
+  // push path's getVisitorAndLangFor, and ID-03's handleRecover) reads the
+  // visitors ROW, so the manual choice has to land there too or it silently
+  // reverts to the Accept-Language guess frozen at insert.
+  await updatePrefs(session.visitorId!, nextLang, nextAppearance);
 
   const signed = await signVisitorId(session.visitorId!, {
     lang: nextLang,

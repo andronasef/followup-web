@@ -63,6 +63,30 @@ export interface GateProps {
   lang: SupportedLanguage;
 }
 
+/**
+ * ID-03/CR-01: swaps a freshly minted, orphaned identity for the one this
+ * device's live push subscription is already bound to. Returns true when
+ * the server accepted the recovery (and therefore re-issued the visitor
+ * cookie), false on every other branch. Never throws.
+ */
+async function recoverIdentityByEndpoint(): Promise<boolean> {
+  try {
+    if (!("serviceWorker" in navigator)) return false;
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.getSubscription();
+    if (!subscription) return false;
+    const response = await fetch("/api/push/recover", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ endpoint: subscription.endpoint }),
+    });
+    return response.ok;
+  } catch (error) {
+    console.debug("[push] ID-03 endpoint recovery failed silently", error);
+    return false;
+  }
+}
+
 async function refreshStoredEndpoint(): Promise<void> {
   try {
     if (!("serviceWorker" in navigator)) return;
@@ -109,34 +133,35 @@ export function Gate({ children, lang }: GateProps) {
       sendGateEventBeacon("shown", detectPlatform());
     }
 
-    // ID-03: a fresh identity was just minted THIS render (layout.tsx's
-    // data-cookie-present="0") — if this device already has a live push
-    // subscription, recover the prior visitor identity instead of
-    // orphaning a brand-new one.
+    // CR-01: ONE sequential effect, not two concurrent IIFEs. Recovery and
+    // the PUSH-11 re-sync both POST this device's endpoint; running them
+    // concurrently made correctness depend on which request the server
+    // happened to handle first. Recovery now deterministically goes first,
+    // and the re-sync only runs if recovery did not already reload the page
+    // with the right identity.
     (async () => {
-      try {
-        if (document.documentElement.dataset.cookiePresent !== "0") return;
-        if (!("serviceWorker" in navigator)) return;
-        const registration = await navigator.serviceWorker.ready;
-        const subscription = await registration.pushManager.getSubscription();
-        if (!subscription) return;
-        const response = await fetch("/api/push/recover", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ endpoint: subscription.endpoint }),
-        });
-        if (response.ok) {
+      // ID-03: a fresh identity was just minted THIS render (layout.tsx's
+      // data-cookie-present="0") — if this device already has a live push
+      // subscription, recover the prior visitor identity instead of
+      // orphaning a brand-new one.
+      if (document.documentElement.dataset.cookiePresent === "0") {
+        if (await recoverIdentityByEndpoint()) {
           window.location.reload();
+          return;
         }
-      } catch (error) {
-        console.debug("[push] ID-03 recovery piggyback failed silently", error);
       }
-    })();
 
-    // PUSH-11: re-sync on every mount, regardless of the gate-decided flag.
-    (async () => {
+      // PUSH-11: re-sync on every mount, regardless of the gate-decided flag.
       const lastKnownEndpoint = window.localStorage.getItem(GATE_ENDPOINT_KEY);
-      await syncSubscriptionOnOpen(lastKnownEndpoint);
+      const outcome = await syncSubscriptionOnOpen(lastKnownEndpoint);
+      // The server refused to rebind a device it already owns under
+      // another visitor — that is the authoritative signal that THIS
+      // identity is the orphan, so recover even without the no-cookie
+      // marker.
+      if (outcome === "conflict" && (await recoverIdentityByEndpoint())) {
+        window.location.reload();
+        return;
+      }
       await refreshStoredEndpoint();
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only
@@ -149,7 +174,14 @@ export function Gate({ children, lang }: GateProps) {
       sendGateEventBeacon("prompt_reached", detectPlatform());
       setScreen("confirming");
       const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? "";
-      await subscribeToPush(publicKey);
+      const { outcome } = await subscribeToPush(publicKey);
+      // CR-01: this device is already bound to another visitor id — the
+      // one holding this conversation. Recover into it rather than letting
+      // the grant land on an orphaned identity.
+      if (outcome === "conflict" && (await recoverIdentityByEndpoint())) {
+        window.location.reload();
+        return;
+      }
       await refreshStoredEndpoint();
       // PUSH-12: let the visitor in either way — a probe failure is
       // server-logged only, never surfaced here.

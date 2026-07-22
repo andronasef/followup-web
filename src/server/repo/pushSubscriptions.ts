@@ -3,6 +3,16 @@
 // lifecycle"), never `visitor_id` -- one visitor can have several
 // browsers/devices, so create() upserts on endpoint rather than erroring on
 // a re-subscribe.
+//
+// CR-01: the endpoint-to-visitor binding is SET-ONCE. create()'s conflict
+// branch refreshes only the encryption keys and never rewrites
+// `visitor_id`, so a subscribe from a different (e.g. freshly minted,
+// cookie-less) visitor can never take a device over. Both
+// `getByEndpoint()` and `handleRecover()` (ID-03) depend on this: they
+// resolve a device back to the visitor it was ORIGINALLY bound to, and if
+// that binding could drift, a visitor who cleared their cookie would be
+// permanently orphaned from their own conversation. `handleSubscribe()`
+// detects the mismatch and returns 409 rather than silently rebinding.
 import { eq, sql as rawSql } from "drizzle-orm";
 import { db } from "../db/pool.ts";
 import { pushSubscriptions } from "../db/schema.ts";
@@ -13,6 +23,12 @@ export type PushSubscriptionRow = typeof pushSubscriptions.$inferSelect;
  * Creates a new push subscription, or updates the existing row in place if
  * `endpoint` already exists (PUSH-11's re-sync can re-POST an unchanged or
  * refreshed subscription -- this must never error on a duplicate endpoint).
+ *
+ * CR-01: on conflict ONLY `p256dh`/`auth` are refreshed. The returned row
+ * therefore carries the ORIGINAL owning `visitorId`, which may differ from
+ * the `visitorId` argument -- callers must compare the two and treat a
+ * mismatch as a conflict rather than assuming the write bound the device
+ * to them.
  */
 export async function create(
   visitorId: string,
@@ -25,7 +41,8 @@ export async function create(
     .values({ visitorId, endpoint, p256dh, auth })
     .onConflictDoUpdate({
       target: pushSubscriptions.endpoint,
-      set: { visitorId, p256dh, auth },
+      // No `visitorId` here, deliberately -- see the CR-01 note above.
+      set: { p256dh, auth },
     })
     .returning();
   return row;

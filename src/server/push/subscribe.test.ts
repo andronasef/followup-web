@@ -104,6 +104,75 @@ test("handleSubscribe: calls gateFunnel.recordGranted exactly once per call, on 
   }
 });
 
+test("handleSubscribe: CR-01 an endpoint owned by another visitor returns 409, sends no probe, and records no grant", async (t) => {
+  const owner = await getOrCreateVisitor();
+  const intruder = await getOrCreateVisitor();
+  try {
+    const endpoint = `https://push.example.com/${randomUUID()}`;
+    t.mock.method(webpush, "sendNotification", async () => ({ statusCode: 201 }));
+    await handleSubscribe({ visitorId: owner.id, lang: "en", rawBody: subscriptionBody(endpoint) });
+
+    const sendMock = t.mock.method(webpush, "sendNotification", async () => ({ statusCode: 201 }));
+    const result = await handleSubscribe({
+      visitorId: intruder.id,
+      lang: "en",
+      rawBody: subscriptionBody(endpoint),
+    });
+
+    assert.deepEqual(result, { status: 409, body: { error: "endpoint_owned_by_other_visitor" } });
+    assert.equal(sendMock.mock.calls.length, 0, "no probe may be sent to another visitor's device");
+
+    const funnelRows = await sql`select 1 from push_gate_funnel where visitor_id = ${intruder.id}`;
+    assert.equal(funnelRows.length, 0, "a conflicting subscribe must not pollute the gate funnel");
+
+    assert.equal((await listForVisitor(owner.id)).length, 1, "the row must still belong to the original owner");
+    assert.equal((await listForVisitor(intruder.id)).length, 0);
+  } finally {
+    await cleanup(owner.id);
+    await cleanup(intruder.id);
+  }
+});
+
+test("handleSubscribe: re-subscribing an endpoint the SAME visitor already owns is unchanged (200, probe sent, grant recorded)", async (t) => {
+  const visitor = await getOrCreateVisitor();
+  try {
+    const endpoint = `https://push.example.com/${randomUUID()}`;
+    t.mock.method(webpush, "sendNotification", async () => ({ statusCode: 201 }));
+    await handleSubscribe({ visitorId: visitor.id, lang: "en", rawBody: subscriptionBody(endpoint) });
+
+    const sendMock = t.mock.method(webpush, "sendNotification", async () => ({ statusCode: 201 }));
+    const result = await handleSubscribe({ visitorId: visitor.id, lang: "en", rawBody: subscriptionBody(endpoint) });
+
+    assert.deepEqual(result, { status: 200, body: { probeOk: true } });
+    assert.equal(sendMock.mock.calls.length, 1, "the same-owner path must still probe");
+  } finally {
+    await cleanup(visitor.id);
+  }
+});
+
+test("handleSubscribe: CR-08 the probe payload carries a top-level tag equal to its web-push topic, and still no message content", async (t) => {
+  let capturedPayload = "";
+  let capturedTopic = "";
+  t.mock.method(webpush, "sendNotification", async (_sub: unknown, payload: string, options: { topic: string }) => {
+    capturedPayload = payload;
+    capturedTopic = options.topic;
+    return { statusCode: 201 };
+  });
+  const visitor = await getOrCreateVisitor();
+  try {
+    const endpoint = `https://push.example.com/${randomUUID()}`;
+    await handleSubscribe({ visitorId: visitor.id, lang: "en", rawBody: subscriptionBody(endpoint) });
+
+    const parsed = JSON.parse(capturedPayload);
+    assert.equal(parsed.tag, `probe-${visitor.id}`);
+    assert.equal(parsed.tag, capturedTopic, "the tag and the topic must be the one same routing key");
+    assert.equal(typeof parsed.data.vid, "string");
+    assert.deepEqual(Object.keys(parsed.data), ["vid"], "the payload's data must carry nothing but the vid token");
+  } finally {
+    await cleanup(visitor.id);
+  }
+});
+
 test("handleSubscribe: rejects a malformed subscription body (missing endpoint or keys) with {status:400}", async () => {
   const visitor = await getOrCreateVisitor();
   try {

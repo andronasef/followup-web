@@ -50,12 +50,26 @@ export function detectPlatform(): "ios" | "other" {
 }
 
 /**
- * PUSH-12: subscribes and POSTs to /api/push/subscribe, returning the
- * server's `{probeOk}` response. Never throws -- any failure (permission
- * not actually granted, `pushManager.subscribe()` rejecting, a network
- * error) returns `null` so the gate UI's caller can treat it uniformly.
+ * CR-01: what the server said about this device's identity binding.
+ *  - "ok"       the subscription is bound to the calling visitor.
+ *  - "conflict" HTTP 409 -- the endpoint is already owned by a DIFFERENT
+ *               visitor (the binding is set-once server-side). The caller's
+ *               correct response is to run the ID-03 endpoint recovery, not
+ *               to retry the subscribe.
+ *  - "skipped"  there is no push subscription on this device at all.
+ *  - "failed"   any other non-2xx, or a thrown browser/network error.
  */
-export async function subscribeToPush(publicKey: string): Promise<{ probeOk: boolean } | null> {
+export type SubscribeOutcome = "ok" | "conflict" | "skipped" | "failed";
+
+/**
+ * PUSH-12: subscribes and POSTs to /api/push/subscribe, returning the
+ * server's `{probeOk}` response alongside the CR-01 identity `outcome`.
+ * Never throws -- any failure (permission not actually granted,
+ * `pushManager.subscribe()` rejecting, a network error) resolves to the
+ * "failed" outcome so the gate UI's caller can treat every branch
+ * uniformly.
+ */
+export async function subscribeToPush(publicKey: string): Promise<{ outcome: SubscribeOutcome; probeOk: boolean }> {
   try {
     const registration = await navigator.serviceWorker.ready;
     const subscription = await registration.pushManager.subscribe({
@@ -68,10 +82,12 @@ export async function subscribeToPush(publicKey: string): Promise<{ probeOk: boo
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ subscription, platform: detectPlatform() }),
     });
-    if (!response.ok) return null;
-    return (await response.json()) as { probeOk: boolean };
+    if (response.status === 409) return { outcome: "conflict", probeOk: false };
+    if (!response.ok) return { outcome: "failed", probeOk: false };
+    const body = (await response.json()) as { probeOk?: boolean };
+    return { outcome: "ok", probeOk: body.probeOk === true };
   } catch {
-    return null;
+    return { outcome: "failed", probeOk: false };
   }
 }
 
@@ -80,27 +96,35 @@ export async function subscribeToPush(publicKey: string): Promise<{ probeOk: boo
  * `pushsubscriptionchange` -- RESEARCH.md Pitfall 3). Silent on every
  * branch per D-15/D-16 -- no throw, no visitor-facing surface, only a
  * debug-level log.
+ *
+ * CR-01: resolves to a `SubscribeOutcome` rather than void, so a "conflict"
+ * (this device already belongs to another visitor id) can drive the
+ * caller's ID-03 recovery instead of being swallowed here.
  */
-export async function syncSubscriptionOnOpen(lastKnownEndpoint: string | null): Promise<void> {
+export async function syncSubscriptionOnOpen(lastKnownEndpoint: string | null): Promise<SubscribeOutcome> {
   try {
     const registration = await navigator.serviceWorker.ready;
     const subscription = await registration.pushManager.getSubscription();
     if (!subscription) {
       // Never granted, or the gate hasn't been reached yet on this device.
-      return;
+      return "skipped";
     }
     if (subscription.endpoint === lastKnownEndpoint) {
-      // Unchanged -- nothing to re-sync.
-      return;
+      // Unchanged -- nothing to re-sync, and nothing the server could tell
+      // us that it didn't already tell us last time.
+      return "ok";
     }
 
-    await fetch("/api/push/subscribe", {
+    const response = await fetch("/api/push/subscribe", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ subscription, platform: detectPlatform() }),
     });
+    if (response.status === 409) return "conflict";
+    return response.ok ? "ok" : "failed";
   } catch (error) {
     console.debug("[push] syncSubscriptionOnOpen failed silently", error);
+    return "failed";
   }
 }
 

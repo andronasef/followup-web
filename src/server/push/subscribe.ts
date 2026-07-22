@@ -17,8 +17,7 @@ import { webpush } from "./vapid.ts";
 import { signVisitorId } from "../auth/session.ts";
 import * as pushSubscriptions from "../repo/pushSubscriptions.ts";
 import * as gateFunnel from "../repo/gateFunnel.ts";
-import { getStrings } from "../../lib/i18n/strings.ts";
-import type { SupportedLanguage } from "../i18n/detect.ts";
+import { buildContentFreePayload } from "./send.ts";
 
 const subscribeSchema = z.object({
   subscription: z.object({
@@ -40,7 +39,12 @@ export interface HandleSubscribeInput {
 export type HandleSubscribeResult =
   | { status: 200; body: { probeOk: boolean } }
   | { status: 400; body: { error: string } }
-  | { status: 401; body: { error: string } };
+  | { status: 401; body: { error: string } }
+  // CR-01: this endpoint is already bound to a DIFFERENT visitor. The
+  // binding is set-once (see pushSubscriptions.create), so the caller's
+  // identity is the wrong one -- the client's correct response is to run
+  // the ID-03 endpoint recovery, not to retry.
+  | { status: 409; body: { error: "endpoint_owned_by_other_visitor" } };
 
 /**
  * Upserts the subscription, fires the PUSH-12 synchronous probe send, and
@@ -56,33 +60,44 @@ export async function handleSubscribe(input: HandleSubscribeInput): Promise<Hand
 
   const { subscription, platform } = parsed.data;
 
-  await pushSubscriptions.create(
+  const row = await pushSubscriptions.create(
     input.visitorId,
     subscription.endpoint,
     subscription.keys.p256dh,
     subscription.keys.auth,
   );
 
+  // CR-01: the binding is set-once, so on an already-known endpoint the
+  // returned row still carries its ORIGINAL owner. A mismatch means this
+  // caller is a different (typically freshly minted, cookie-less) visitor
+  // claiming someone else's device. Return BEFORE the probe send and
+  // BEFORE recordGranted, so a mistakenly-minted visitor neither fires a
+  // spurious notification at the real owner's device nor pollutes the
+  // gate funnel with a grant that never belonged to it.
+  if (row.visitorId !== input.visitorId) {
+    return { status: 409, body: { error: "endpoint_owned_by_other_visitor" } };
+  }
+
   // FIRST call site of signVisitorId's data.vid mechanism -- a real signed
   // JWT, never null, decodable back to this same visitorId via
   // verifySession (T-02-14).
   const vid = await signVisitorId(input.visitorId, { lang: input.lang });
-  const strings = getStrings(input.lang as SupportedLanguage);
-  const payload = {
-    title: strings.pushNotificationTitle,
-    body: strings.pushNotificationBody,
-    data: { vid },
-  };
+  // Visitor-scoped, not conversation-scoped -- no conversationId is known
+  // or needed at subscribe-time (send.ts uses a separate, conv-scoped
+  // topic for live replies). Used as BOTH the web-push topic and the
+  // payload's device-side coalescing tag (CR-08).
+  const topic = `probe-${input.visitorId}`;
+  // CR-08: the shared builder from send.ts, not a hand-rolled duplicate --
+  // send.ts's header always claimed the two call sites shared one
+  // definition; now they actually do.
+  const payload = buildContentFreePayload(input.lang, vid, topic);
 
   let probeOk: boolean;
   try {
     await webpush.sendNotification(subscription, JSON.stringify(payload), {
       TTL: 86400,
       urgency: "high",
-      // Visitor-scoped, not conversation-scoped -- no conversationId is
-      // known or needed at subscribe-time (send.ts's Task 2 uses a
-      // separate, conv-scoped topic for live replies).
-      topic: `probe-${input.visitorId}`,
+      topic,
     });
     probeOk = true;
     await pushSubscriptions.markSuccess(subscription.endpoint);

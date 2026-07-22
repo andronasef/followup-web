@@ -8,7 +8,7 @@ import { getOrCreate as getOrCreateVisitor } from "../repo/visitors.ts";
 import { openFor } from "../repo/conversations.ts";
 import { create as createMessage, markDelivered } from "../repo/messages.ts";
 import { create as createSubscription, listForVisitor } from "../repo/pushSubscriptions.ts";
-import { sendPushToVisitor } from "./send.ts";
+import { buildContentFreePayload, sendPushToVisitor } from "./send.ts";
 
 // Skips the real 8s ACK_GRACE_PERIOD_MS sleep via send.ts's injectable
 // `wait` seam, rather than globally faking setTimeout (node:test's
@@ -142,6 +142,41 @@ test("sendPushToVisitor: the payload never contains the triggering message's own
 
     assert.ok(capturedPayload.length > 0);
     assert.ok(!capturedPayload.includes(distinctiveBody), "payload must never contain the message's own body text");
+  } finally {
+    await cleanup(visitor.id, conversation.id);
+  }
+});
+
+test("buildContentFreePayload: CR-08 emits the caller's tag at the top level, alongside the fixed locale copy and the vid, and nothing else", () => {
+  const payload = buildContentFreePayload("en", "signed-vid-token", "conv-42");
+
+  assert.equal(payload.tag, "conv-42");
+  assert.equal(typeof payload.title, "string");
+  assert.ok(payload.title.length > 0);
+  assert.equal(typeof payload.body, "string");
+  assert.deepEqual(payload.data, { vid: "signed-vid-token" });
+  assert.deepEqual(Object.keys(payload).sort(), ["body", "data", "tag", "title"]);
+});
+
+test("sendPushToVisitor: CR-08 the sent payload's top-level tag matches the conversation-scoped web-push topic", async (t) => {
+  const { visitor, conversation } = await makeVisitorConversation();
+  try {
+    const message = await createMessage(conversation.id, "owner", "hello");
+    await createSubscription(visitor.id, `https://push.example.com/${randomUUID()}`, "p256dh", "auth");
+
+    let capturedPayload = "";
+    let capturedTopic = "";
+    t.mock.method(webpush, "sendNotification", async (_sub: unknown, payload: string, options: { topic: string }) => {
+      capturedPayload = payload;
+      capturedTopic = options.topic;
+      return { statusCode: 201 };
+    });
+
+    await sendPushToVisitor(conversation.id, message.id, visitor.id, "en", noWait);
+
+    const parsed = JSON.parse(capturedPayload);
+    assert.equal(parsed.tag, `conv-${conversation.id}`);
+    assert.equal(parsed.tag, capturedTopic, "device-side tag and push-service topic must be the same key");
   } finally {
     await cleanup(visitor.id, conversation.id);
   }
