@@ -14,12 +14,18 @@
 // language-conversion/AI provider happen anywhere in this write path in
 // Phase 1 -- see 01-RESEARCH.md's Anti-Patterns, "Blocking message
 // durability on the OVH call".
-import { createHmac } from "node:crypto";
 import { z } from "zod";
 import { sql as rawSql } from "drizzle-orm";
 import { db } from "../../../../server/db/pool.ts";
 import { create as createMessage, type Message } from "../../../../server/repo/messages.ts";
 import { check as checkRateLimit } from "../../../../server/repo/ratelimit.ts";
+import { clientIp, hashIp } from "../../../../server/http/ip.ts";
+
+// CR-03: `clientIp`/`hashIp` now live in server/http/ip.ts so the admin
+// login route can use the same primitives WITHOUT importing this visitor
+// chat send module. Re-exported here so route.ts and the existing tests
+// keep importing them from exactly where they always did.
+export { clientIp, hashIp };
 
 // OPS-01's researcher-recommended shape (01-RESEARCH.md, "Claude's
 // Discretion"): a generous burst absorbed instantly, sustained flooding
@@ -44,24 +50,6 @@ const bodySchema = z.object({
     }),
   clientMsgId: z.string().min(1).optional(),
 });
-
-// T-01-25: HMAC-SHA256 the IP inline -- the raw IP variable is never passed
-// to a log call, a DB column, or the pg_notify payload, only its hash.
-// Falls back to SESSION_SECRET (already required to be >=32 bytes, see
-// session.ts) when a dedicated IP_HASH_SECRET isn't configured, so this
-// route works without a second mandatory env var -- see the plan's SUMMARY
-// for the recommended dedicated rotating secret.
-const IP_HASH_SECRET = process.env.IP_HASH_SECRET ?? process.env.SESSION_SECRET ?? "";
-
-export function hashIp(ip: string): string {
-  return createHmac("sha256", IP_HASH_SECRET).update(ip).digest("hex");
-}
-
-export function clientIp(request: Request): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0]!.trim();
-  return request.headers.get("x-real-ip") ?? "unknown";
-}
 
 export interface SendVisitorMessageInput {
   conversationId: number;

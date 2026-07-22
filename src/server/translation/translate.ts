@@ -104,6 +104,53 @@ export const openaiClient = new OpenAI({
   timeout: 20_000,
 });
 
+// --- CR-07: input-sized output token budget ------------------------------
+// A fixed `max_tokens: 500` truncated any message longer than roughly a
+// couple of paragraphs. A truncated translation fails `lengthRatioOk`,
+// which marks the row failed AND trips circuit-breaker.recordFailure() in
+// cache.ts -- so one long message suppressed translation for every short
+// message behind it. The fix is to size the budget to the input; the four
+// validators and their thresholds are deliberately NOT retuned (they are
+// corpus-tested, TRANS-07).
+//
+// Constants are defined locally on purpose -- importing across the
+// server/app layer boundary just to read a bound is not worth the
+// coupling.
+
+/** The message-length bound the budget is derived from: 4000 code points,
+ * matching MAX_MESSAGE_CODEPOINTS in src/app/api/chat/messages/send.ts and
+ * the identical bound on the admin reply path. */
+const MAX_INPUT_CODEPOINTS = 4000;
+/** Rough code-points-per-token for the scripts in play. Conservative (low)
+ * on purpose: under-estimating tokens-per-codepoint over-estimates the
+ * budget, and an over-generous ceiling costs nothing (the model stops when
+ * it is done) while an under-estimate truncates. */
+const CODEPOINTS_PER_TOKEN = 2;
+/** Covers the upper end of lengthRatioOk's own accepted 0.4-2.5 band, so a
+ * legitimately expanding translation is never cut off mid-sentence. */
+const EXPANSION_ALLOWANCE = 2.5;
+/** `{"translation": "..."}` plus JSON escaping of the payload. */
+const JSON_ENVELOPE_TOKENS = 64;
+/** Floor for very short inputs -- a two-word message still needs room for
+ * the envelope and a little expansion. */
+const MIN_OUTPUT_TOKENS = 256;
+/** Hard cap so a single call can never run away, derived from the same
+ * 4000-code-point bound. */
+const MAX_OUTPUT_TOKENS = Math.ceil((MAX_INPUT_CODEPOINTS / CODEPOINTS_PER_TOKEN) * EXPANSION_ALLOWANCE) + JSON_ENVELOPE_TOKENS;
+
+/**
+ * The `max_tokens` budget for translating `text`. Measured in CODE POINTS,
+ * not UTF-16 code units, so an astral-plane-heavy message (emoji, CJK
+ * extensions) is budgeted by the same unit MAX_MESSAGE_CODEPOINTS bounds
+ * it by. Monotonically non-decreasing in input length, floored at
+ * MIN_OUTPUT_TOKENS and capped at MAX_OUTPUT_TOKENS.
+ */
+export function maxTokensFor(text: string): number {
+  const codepoints = [...text].length;
+  const estimated = Math.ceil((codepoints / CODEPOINTS_PER_TOKEN) * EXPANSION_ALLOWANCE) + JSON_ENVELOPE_TOKENS;
+  return Math.min(MAX_OUTPUT_TOKENS, Math.max(MIN_OUTPUT_TOKENS, estimated));
+}
+
 export type TranslateResult = { ok: true; text: string } | { ok: false; error: string };
 
 export async function translate(
@@ -127,7 +174,8 @@ export async function translate(
     const res = await openaiClient.chat.completions.create({
       model: MODEL_ID,
       temperature: 0,
-      max_tokens: 500,
+      max_tokens: maxTokensFor(text), // CR-07: sized to the input, never a fixed cap
+
       messages,
       response_format: { type: "json_object" },
     });

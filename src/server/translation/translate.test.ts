@@ -3,6 +3,7 @@ import { test } from "node:test";
 import {
   hasRefusalMarker,
   lengthRatioOk,
+  maxTokensFor,
   openaiClient,
   preservesTokens,
   scriptBlockMatch,
@@ -16,6 +17,59 @@ import {
 function chatResponse(content: string) {
   return { choices: [{ message: { content } }] };
 }
+
+// --- CR-07: maxTokensFor ---------------------------------------------------
+
+test("maxTokensFor: a short input yields the floor budget", () => {
+  assert.equal(maxTokensFor("Hi"), 256);
+  assert.equal(maxTokensFor(""), 256);
+});
+
+test("maxTokensFor: a 4000-codepoint input yields a budget far above the old fixed 500 and at or below the hard cap", () => {
+  const long = "a".repeat(4000);
+  const budget = maxTokensFor(long);
+
+  assert.ok(budget > 500, `a full-length message must not be budgeted at the old fixed cap (got ${budget})`);
+  assert.ok(budget >= 5000, `expected real headroom for a 4000-codepoint message (got ${budget})`);
+  assert.equal(budget, maxTokensFor("a".repeat(8000)), "the hard cap must bound a longer-than-allowed input");
+});
+
+test("maxTokensFor: is monotonically non-decreasing in input length", () => {
+  let previous = 0;
+  for (const length of [0, 1, 10, 100, 500, 1000, 2000, 3000, 4000, 6000]) {
+    const budget = maxTokensFor("a".repeat(length));
+    assert.ok(budget >= previous, `budget decreased at length ${length}: ${budget} < ${previous}`);
+    previous = budget;
+  }
+});
+
+test("maxTokensFor: counts CODE POINTS, not UTF-16 code units", () => {
+  // Each of these astral-plane emoji is 2 UTF-16 code units but 1 code
+  // point -- budgeting by .length would double-count them.
+  const emoji = "🙏".repeat(1000); // 1000 code points, 2000 code units
+  const ascii = "a".repeat(1000); // 1000 code points, 1000 code units
+  assert.equal(maxTokensFor(emoji), maxTokensFor(ascii));
+});
+
+test("translate: CR-07 passes maxTokensFor(text) to the SDK as max_tokens, not a fixed cap", async (t) => {
+  const captured: Record<string, unknown>[] = [];
+  t.mock.method(openaiClient.chat.completions, "create", async (params: Record<string, unknown>) => {
+    captured.push(params);
+    return chatResponse('{"translation": "x"}');
+  });
+
+  const short = "Hi";
+  const long = "a".repeat(4000);
+  await translate(short, "en", "es");
+  await translate(long, "en", "es");
+
+  assert.equal(captured[0].max_tokens, maxTokensFor(short));
+  assert.equal(captured[1].max_tokens, maxTokensFor(long));
+  assert.ok(
+    (captured[1].max_tokens as number) > (captured[0].max_tokens as number),
+    "the budget actually sent must scale with the input",
+  );
+});
 
 test("translate: a well-formed JSON response returns { ok: true, text }", async (t) => {
   t.mock.method(openaiClient.chat.completions, "create", async () =>
