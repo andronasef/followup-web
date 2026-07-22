@@ -66,10 +66,14 @@ test("visitors.updatePrefs: an omitted argument leaves that column untouched", a
 });
 
 test("visitors.updatePrefs: an unknown visitor id is a silent no-op returning null, never an insert", async () => {
-  const before = await sql<{ count: string }[]>`select count(*)::text as count from visitors`;
-  const result = await updatePrefs(randomUUID(), "ar", "dark");
-  const after = await sql<{ count: string }[]>`select count(*)::text as count from visitors`;
+  // Assert on this id specifically, not on a global count(*) — node:test runs
+  // the test files in parallel, so a sibling file inserting or deleting a
+  // visitor in this window would move a whole-table count for reasons that
+  // have nothing to do with updatePrefs.
+  const unknownId = randomUUID();
+  const result = await updatePrefs(unknownId, "ar", "dark");
+  const minted = await sql`select id from visitors where id = ${unknownId}`;
 
   assert.equal(result, null);
-  assert.equal(after[0].count, before[0].count, "updatePrefs must never mint a visitor row");
+  assert.equal(minted.length, 0, "updatePrefs must never mint a visitor row");
 });
