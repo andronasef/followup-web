@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import { after, test } from "node:test";
 import { sql } from "../db/pool.ts";
 import { getOrCreate as getOrCreateVisitor } from "./visitors.ts";
-import { getVisitorLangFor, openFor } from "./conversations.ts";
+import { getVisitorLangFor, listWithPreview, openFor } from "./conversations.ts";
+import { create as createMessage } from "./messages.ts";
 
 // node:test runs each file in its own process; without closing the pool the
 // process never exits (open sockets keep the event loop alive) and the
@@ -67,5 +68,28 @@ test("conversations.getVisitorLangFor: returns null when the visitor's lang colu
     assert.equal(lang, null, "caller is responsible for defaulting a null lang to 'en'");
   } finally {
     await cleanup(visitor.id);
+  }
+});
+
+test("conversations.listWithPreview: excludes a conversation with zero messages and includes one with a message", async () => {
+  const emptyVisitor = await getOrCreateVisitor();
+  const messagedVisitor = await getOrCreateVisitor();
+  const emptyConversation = await openFor(emptyVisitor.id);
+  const messagedConversation = await openFor(messagedVisitor.id);
+  await createMessage(messagedConversation.id, "visitor", "hello, is anyone there?");
+  try {
+    const rows = await listWithPreview();
+    const ids = rows.map((r) => r.id);
+    assert.ok(
+      !ids.includes(emptyConversation.id),
+      "a conversation with zero messages must not appear -- matches the page's own empty-state copy",
+    );
+    const messagedRow = rows.find((r) => r.id === messagedConversation.id);
+    assert.ok(messagedRow, "a conversation with a message must appear");
+    assert.equal(messagedRow?.lastMessageBody, "hello, is anyone there?");
+  } finally {
+    await sql`delete from messages where conversation_id = ${messagedConversation.id}`;
+    await cleanup(emptyVisitor.id);
+    await cleanup(messagedVisitor.id);
   }
 });

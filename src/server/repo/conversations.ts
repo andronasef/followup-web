@@ -61,12 +61,15 @@ export interface ConversationPreview {
  * ADMIN-03/D-12: the flat, unsorted-beyond-recency conversation list for the
  * owner's admin dashboard -- a plain ORDER BY most-recent-message-time, never
  * a priority/faith-decision weighting (that first slice of ADMIN-05's real
- * inbox is Phase 3's, explicitly out of scope here). A LEFT JOIN LATERAL
- * pulls each conversation's single most recent message, if any -- a
- * conversation can briefly have zero persisted rows, since D-05's welcome is
- * rendered client-side and is never a `messages` row -- falling back to the
- * conversation's own createdAt so a brand-new, message-less conversation
- * still sorts and renders correctly.
+ * inbox is Phase 3's, explicitly out of scope here). An INNER JOIN LATERAL
+ * pulls each conversation's single most recent message -- a conversation
+ * row exists as soon as a visitor is recognized (openFor() runs on every
+ * requireVisitor() call, before D-05's client-side-only welcome and before
+ * any message is ever sent), so an unfiltered list would surface every
+ * visitor who merely opened the URL and never wrote anything. The page's
+ * own locked empty-state copy ("When someone opens the chat and sends a
+ * message, it will appear here") is the spec for this: only conversations
+ * that have sent at least one message belong in the owner's inbox.
  */
 export async function listWithPreview(): Promise<ConversationPreview[]> {
   const rows = await db.execute<{
@@ -80,7 +83,7 @@ export async function listWithPreview(): Promise<ConversationPreview[]> {
       c.id as id,
       lm.body as last_message_body,
       lm.sender as last_message_sender,
-      coalesce(lm.created_at, c.created_at) as last_message_at,
+      lm.created_at as last_message_at,
       (
         gf.granted_at is not null
         and not exists (
@@ -88,7 +91,7 @@ export async function listWithPreview(): Promise<ConversationPreview[]> {
         )
       ) as unreachable
     from conversations c
-    left join lateral (
+    inner join lateral (
       select body, sender, created_at
       from messages
       where messages.conversation_id = c.id
